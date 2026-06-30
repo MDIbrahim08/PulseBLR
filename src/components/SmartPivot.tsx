@@ -81,13 +81,20 @@ export default function SmartPivot() {
         <GradientCard className="p-8 md:p-12">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500/10 blur-[100px] rounded-full -mr-40 -mt-40 pointer-events-none transition-all duration-500" />
           
-          <div className="relative z-10 flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 bg-rose-500/20 rounded-2xl flex items-center justify-center border border-rose-500/30">
-              <AlertTriangle size={24} className="text-rose-400" />
+          <div className="relative z-10 flex items-center gap-5 mb-8">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-rose-500/40 blur-xl rounded-2xl group-hover:bg-rose-500/60 transition-all duration-500"></div>
+              <div className="relative w-14 h-14 bg-gradient-to-br from-rose-500/20 to-slate-900/80 rounded-2xl flex items-center justify-center border border-rose-500/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-md">
+                <AlertTriangle size={26} className="text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-black text-white tracking-tight">AI Smart Pivot</h1>
-              <p className="text-slate-400 font-medium mt-1">The Commute Escape Hatch</p>
+            <div className="flex flex-col">
+              <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-rose-100 to-rose-300 drop-shadow-sm">
+                AI Smart Pivot
+              </h1>
+              <p className="text-rose-200/70 font-medium text-sm tracking-wide uppercase mt-1">
+                The Commute Escape Hatch
+              </p>
             </div>
           </div>
 
