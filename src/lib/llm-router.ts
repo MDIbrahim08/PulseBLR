@@ -164,13 +164,13 @@ const safeParseJSON = (text: string, timeString: string, destination: string, or
     expectedArrival: formattedArrival,
     timeSavedMinutes: 18,
     confidenceScore: 94,
-    estimatedCost: "₹150-250",
+    estimatedCost: "N/A",
     explanation: `I've analyzed the live signals for your commute from ${origin} to ${destination}.\n\nIf your goal is to ${timeMode.toLowerCase()} ${formattedInputTime}, I recommend ${timeMode === 'Depart At' ? `arriving at ${formattedArrival}` : `leaving at ${formattedDeparture}`}.\n\nLive Weather: ${weather}\nLive Traffic: ${traffic}\n\nTravelling this way should save you approximately 18 minutes compared to other options.`,
-    disclaimer: "⚠️ Route Disclaimer: Standard city traffic expected. Please drive safely.",
+    disclaimer: "⚠️ Route Disclaimer: Standard conditions expected. Please travel safely.",
     alternativeRoute: {
-      transport: "Standard Cab",
-      time: "1 hr 15 mins",
-      reason: "If you prefer comfort over speed, taking a cab is an option, though you may face moderate congestion."
+      transport: "Alternative Transport",
+      time: "Varies",
+      reason: "Consider alternative transport based on live conditions."
     }
   };
 
@@ -305,30 +305,28 @@ Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
 ALL times must include AM or PM. Never output 24-hour time.
-IMPORTANT CRITICAL RULE: DO NOT copy the times or transport from the JSON example below. You MUST mathematically calculate the "recommendedDeparture", and you MUST dynamically determine the "recommendedTransport" based on the actual geography of Bangalore (e.g., Devanahalli has no Metro, use Airport Bus/Taxi; Koramangala needs Auto/Bus to reach Metro).
+IMPORTANT CRITICAL RULE: DO NOT copy ANY text, times, or transport modes from the JSON example below. You MUST mathematically calculate times, dynamically determine the "recommendedTransport", and generate fresh, context-aware "reasoning", "alternativeRoute", and "disclaimer".
 
 Output JSON EXACTLY like this (NO markdown, raw JSON only):
 {
   "recommendedDeparture": "[COMPUTED_DEPARTURE_TIME]",
   "recommendedTransport": "[DYNAMIC_TRANSPORT_MODE_HERE]",
   "expectedArrival": "[COMPUTED_ARRIVAL_TIME]",
-  "timeSavedMinutes": 32,
-  "confidenceScore": 94,
+  "timeSavedMinutes": 15,
+  "confidenceScore": 90,
   "estimatedCost": "[DYNAMIC_COST_ESTIMATE_HERE]",
   "explanation": "I've analyzed today's traffic, weather, and road conditions.\\n\\nIf your goal is to ${timeMode.toLowerCase()} ${timeString}, I recommend using [TRANSPORT].\\n\\n[INSERT DYNAMIC REASONING ABOUT TRAFFIC/WEATHER HERE].\\n\\nTravelling this way should save approximately [MINUTES] minutes.",
-  "disclaimer": "⚠️ Weather Disclaimer: Heavy rain is expected today. Watch out for waterlogging and leave 15 mins earlier than usual.",
+  "disclaimer": "⚠️ [INSERT RELEVANT DISCLAIMER OR LEAVE EMPTY STRING]",
   "alternativeRoute": {
-    "transport": "AC Bus (BMTC)",
-    "time": "1 hr 25 mins",
-    "reason": "If you have more time and want to avoid standing in the metro, the AC bus is a comfortable alternative."
+    "transport": "[ALTERNATIVE_TRANSPORT_MODE]",
+    "time": "[ESTIMATED_TIME]",
+    "reason": "[WHY_CONSIDER_THIS_ALTERNATIVE]"
   },
   "reasoning": [
-    "Rain begins in 25 min",
-    "Metro arrival in 4 min",
-    "Road congestion increasing",
-    "Construction on ORR",
-    "Metro saves 32 min",
-    "Confidence 94%"
+    "[DYNAMIC_REASON_1 (e.g. Traffic is light)]",
+    "[DYNAMIC_REASON_2 (e.g. Rain expected in 10 mins)]",
+    "[DYNAMIC_REASON_3]",
+    "[DYNAMIC_REASON_4]"
   ]
 }`;
   try {
