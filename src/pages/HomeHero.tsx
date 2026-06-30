@@ -96,8 +96,6 @@ export default function HomeHero() {
             
             <div className="hidden md:flex items-center gap-8">
               <a href="#" className="text-sm text-gray-100 hover:text-gray-300 transition-colors">Commute</a>
-              <a href="#" className="text-sm text-gray-100 hover:text-gray-300 transition-colors">Analytics</a>
-              <a href="#" className="text-sm text-gray-100 hover:text-gray-300 transition-colors">Advisory</a>
             </div>
 
             <button 
