@@ -164,6 +164,7 @@ const safeParseJSON = (text: string, timeString: string, destination: string, or
     expectedArrival: formattedArrival,
     timeSavedMinutes: 18,
     confidenceScore: 94,
+    estimatedCost: "₹150-250",
     explanation: `I've analyzed the live signals for your commute from ${origin} to ${destination}.\n\nIf your goal is to ${timeMode.toLowerCase()} ${formattedInputTime}, I recommend ${timeMode === 'Depart At' ? `arriving at ${formattedArrival}` : `leaving at ${formattedDeparture}`}.\n\nLive Weather: ${weather}\nLive Traffic: ${traffic}\n\nTravelling this way should save you approximately 18 minutes compared to other options.`,
     disclaimer: "⚠️ Route Disclaimer: Standard city traffic expected. Please drive safely.",
     alternativeRoute: {
@@ -282,7 +283,7 @@ export const chronosAdvisor = async (weather: string, traffic: string, transit: 
   }
 };
 
-export const pulseCoreAgent = async (weather: string, traffic: string, transit: string, origin: string, destination: string, timeString: string, timeMode: string = 'Arrive By', userPrompt: string = '') => {
+export const pulseCoreAgent = async (weather: string, traffic: string, transit: string, origin: string, destination: string, timeString: string, timeMode: string = 'Arrive By', userPrompt: string = '', avoidTollsOrTraffic: boolean = false) => {
   const o = obs();
   o.setAgentStatus('pulsemind', 'fetching');
   o.addEvent('PulseMind — generating route recommendation', 'info', 'PulseMind');
@@ -301,6 +302,7 @@ Extract the origin, destination, and timing constraints from their request. If t
   const prompt = `You are an AI commute assistant named PulseMind. 
 ${goalInstruction}
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
+User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
 ALL times must include AM or PM. Never output 24-hour time.
 IMPORTANT CRITICAL RULE: DO NOT copy the times from the JSON example below. You MUST mathematically calculate the "recommendedDeparture" and "expectedArrival".
@@ -312,6 +314,7 @@ Output JSON EXACTLY like this (NO markdown, raw JSON only):
   "expectedArrival": "[COMPUTED_ARRIVAL_TIME]",
   "timeSavedMinutes": 32,
   "confidenceScore": 94,
+  "estimatedCost": "₹45 (Metro Ticket)",
   "explanation": "I've analyzed today's traffic, weather, metro operations and road construction.\\n\\nIf your goal is to ${timeMode.toLowerCase()} ${timeString}, I recommend using the Purple Line Metro.\\n\\nHeavy congestion is expected on Outer Ring Road.\\n\\nTravelling this way should save approximately 32 minutes.",
   "disclaimer": "⚠️ Weather Disclaimer: Heavy rain is expected today. Watch out for waterlogging and leave 15 mins earlier than usual.",
   "alternativeRoute": {

@@ -31,7 +31,7 @@ export default function Planner() {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const { origin: currentAddress, setOrigin: setCurrentAddress, destination, setDestination } = useRouteStore();
+  const { origin: currentAddress, setOrigin: setCurrentAddress, destination, setDestination, avoidTollsOrTraffic, setAvoidTollsOrTraffic } = useRouteStore();
   const { setAPIStatus, addEvent, setAuthStatus } = usePulseObserver();
   // Set auth status on mount (user is in the dashboard = authenticated)
   useEffect(() => { setAuthStatus('authenticated'); addEvent('Authentication verified — session active', 'success', 'Auth'); }, []);
@@ -117,7 +117,7 @@ export default function Planner() {
     const trafficSignal = trafficData?.summary ?? 'Moderate congestion on ORR.';
     
     try {
-      const rec = await pulseCoreAgent(weatherSignal, trafficSignal, transitData, currentAddress, destination, arrivalTime, timeMode, chatInput);
+      const rec = await pulseCoreAgent(weatherSignal, trafficSignal, transitData, currentAddress, destination, arrivalTime, timeMode, chatInput, avoidTollsOrTraffic);
       
       const newMsg: ChatMessage = {
         id: Date.now().toString(),
@@ -288,6 +288,12 @@ export default function Planner() {
                       <option value="PM" className="bg-slate-900 text-white">PM</option>
                     </select>
                   </div>
+                  <div className="flex items-center gap-2 ml-2 md:ml-4 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" onClick={() => setAvoidTollsOrTraffic(!avoidTollsOrTraffic)}>
+                    <div className={`w-4 h-4 rounded-sm border ${avoidTollsOrTraffic ? 'bg-[#5AE14C] border-[#5AE14C]' : 'border-white/40'} flex items-center justify-center transition-all`}>
+                      {avoidTollsOrTraffic && <CheckCircle2 size={12} className="text-black" />}
+                    </div>
+                    <span className="text-white/80 text-sm">Avoid Tolls & Traffic</span>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-white font-schibsted font-semibold text-[13px] bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
@@ -402,15 +408,19 @@ export default function Planner() {
                               </div>
                             </div>
 
-                            {/* Transport & Confidence Row */}
-                            <div className="grid grid-cols-2 gap-3">
+                            {/* Transport, Cost, & Confidence Row */}
+                            <div className="grid grid-cols-3 gap-3">
                               <div className="bg-pulse-500/10 p-4 rounded-xl border border-pulse-500/20 flex flex-col">
                                 <span className="text-pulse-400 text-xs font-bold uppercase tracking-wider mb-1">Transport</span>
-                                <span className="text-white font-schibsted font-bold text-lg">{msg.recommendation.recommendedTransport}</span>
+                                <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.recommendedTransport}</span>
+                              </div>
+                              <div className="bg-yellow-500/10 p-4 rounded-xl border border-yellow-500/20 flex flex-col">
+                                <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-1">Est. Cost</span>
+                                <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.estimatedCost || '₹--'}</span>
                               </div>
                               <div className="bg-[#5AE14C]/10 p-4 rounded-xl border border-[#5AE14C]/20 flex flex-col">
                                 <span className="text-[#5AE14C] text-xs font-bold uppercase tracking-wider mb-1">Confidence</span>
-                                <span className="text-white font-schibsted font-bold text-lg">{msg.recommendation.confidenceScore}%</span>
+                                <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.confidenceScore}%</span>
                               </div>
                             </div>
 
