@@ -136,47 +136,51 @@ export default function SmartPivot() {
               )}
             </div>
           ) : (
-            <div className="relative z-10 space-y-6">
-              <h3 className="text-xl font-bold text-white mb-4">Recommended Pivots Near {pivotOrigin}</h3>
-              {cafes.map((cafe, i) => (
-                <div key={i} className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-6 flex flex-col md:flex-row gap-6">
-                  
-                  {/* Left Info */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h4 className="text-2xl font-bold text-slate-100">{cafe.name}</h4>
-                      <div className="px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center gap-1.5">
-                        <Wifi size={12} /> {cafe.wifiSpeed}
+            <div className="relative z-10 flex flex-col max-h-[60vh]">
+              <h3 className="text-xl font-bold text-white mb-4 shrink-0">Recommended Pivots Near {pivotOrigin}</h3>
+              <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar pb-4">
+                {cafes.map((cafe, i) => (
+                  <GradientCard key={i} className="p-6 flex flex-col md:flex-row gap-6 hover:scale-[1.01] transition-transform duration-300">
+                    
+                    {/* Left Info */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="text-2xl font-bold text-slate-100">{cafe.name}</h4>
+                        <div className="px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                          <Wifi size={12} /> {cafe.wifiSpeed}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm font-medium text-slate-400 mb-4">
+                        <span className="flex items-center gap-1"><Navigation size={14} /> {cafe.distance}</span>
+                        <span>•</span>
+                        <span>{cafe.atmosphere}</span>
+                      </div>
+                      <div className="relative p-[1px] rounded-xl bg-gradient-to-r from-slate-800 to-slate-700 overflow-hidden">
+                        <p className="text-slate-300 bg-slate-900/90 backdrop-blur-sm p-4 rounded-xl text-sm italic font-medium">
+                          "{cafe.slackMessage}"
+                        </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm font-medium text-slate-400 mb-4">
-                      <span className="flex items-center gap-1"><Navigation size={14} /> {cafe.distance}</span>
-                      <span>•</span>
-                      <span>{cafe.atmosphere}</span>
+                    
+                    {/* Actions */}
+                    <div className="flex flex-col gap-3 justify-center md:w-48 shrink-0">
+                      <button 
+                        onClick={() => copyToClipboard(`slack-${i}`, cafe.slackMessage)}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800/80 hover:bg-slate-700 text-white rounded-xl text-sm font-bold transition-all shadow-md border border-slate-700 hover:border-slate-500"
+                      >
+                        {copiedId === `slack-${i}` ? <CheckCircle2 size={16} className="text-emerald-400" /> : <Copy size={16} />}
+                        {copiedId === `slack-${i}` ? 'Copied Message' : 'Copy Slack Msg'}
+                      </button>
+                      <button 
+                        onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cafe.name + ' ' + pivotOrigin)}`, '_blank')}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-pulse-600 to-pulse-500 hover:from-pulse-500 hover:to-pulse-400 text-white rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                      >
+                        Route Here <ArrowRight size={16} />
+                      </button>
                     </div>
-                    <p className="text-slate-300 bg-slate-900 p-4 rounded-xl text-sm italic font-medium border border-slate-800">
-                      "{cafe.slackMessage}"
-                    </p>
-                  </div>
-                  
-                  {/* Actions */}
-                  <div className="flex flex-col gap-3 justify-center md:w-48 shrink-0">
-                    <button 
-                      onClick={() => copyToClipboard(`slack-${i}`, cafe.slackMessage)}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-bold transition-colors"
-                    >
-                      {copiedId === `slack-${i}` ? <CheckCircle2 size={16} className="text-emerald-400" /> : <Copy size={16} />}
-                      {copiedId === `slack-${i}` ? 'Copied Message' : 'Copy Slack Msg'}
-                    </button>
-                    <button 
-                      onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cafe.name + ' ' + pivotOrigin)}`, '_blank')}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-pulse-600 hover:bg-pulse-500 text-white rounded-xl text-sm font-bold transition-colors"
-                    >
-                      Route Here <ArrowRight size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  </GradientCard>
+                ))}
+              </div>
             </div>
           )}
         </GradientCard>
