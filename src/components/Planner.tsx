@@ -7,7 +7,7 @@ import {
   pulseCoreAgent,
   nimbusAdvisor, velocityAdvisor, transitIQAdvisor, urbanSenseAdvisor, chronosAdvisor, pulseFollowUpAgent
 } from '../lib/llm-router';
-import { getCurrentLocation, getReverseGeocode, getLiveWeather, getLiveRoute } from '../lib/signals';
+import { getCurrentLocation, getReverseGeocode, getForwardGeocode, getLiveWeather, getLiveRoute } from '../lib/signals';
 import AgentAnimation from './AgentAnimation';
 import { useRouteStore } from '../store/routeStore';
 import { usePulseObserver } from '../store/pulseObserver';
@@ -51,8 +51,7 @@ export default function Planner() {
 
   const arrivalTime = `${arrivalHour}:${arrivalMin} ${arrivalAmPm}`;
 
-  const DEST_LAT = 13.045;
-  const DEST_LON = 77.6206;
+  // Removed hardcoded DEST_LAT and DEST_LON
 
   useEffect(() => {
     const gatherSignals = async () => {
@@ -76,13 +75,9 @@ export default function Planner() {
         setAPIStatus('weather', 'online', wMs);
         addEvent(`Weather API — live data fetched in ${wMs}ms`, 'success', 'Nimbus');
 
-        // Fetch traffic and emit to observer
-        const tt0 = performance.now();
-        tData = await getLiveRoute(lat, lon, DEST_LAT, DEST_LON);
-        const tMs = Math.round(performance.now() - tt0);
-        if (tData) setTrafficData(tData);
-        setAPIStatus('traffic', 'online', tMs);
-        addEvent(`Traffic API — route data fetched in ${tMs}ms`, 'success', 'Velocity');
+        // Removed hardcoded traffic fetch on mount. It will be fetched dynamically on Analyze Route.
+        setAPIStatus('traffic', 'cached');
+        tData = { summary: 'Waiting for route analysis...' };
         
         const hour = new Date().getHours();
         transit = hour >= 23 || hour <= 5 ? 'Metro Closed' : 'Purple Line Operational';
@@ -113,11 +108,33 @@ export default function Planner() {
     setIsAnalyzing(true);
     setChatHistory([]);
     
+    let dynamicTrafficSignal = trafficData?.summary ?? 'Moderate congestion.';
+    
+    // Dynamically fetch live traffic for specific route
+    try {
+      if (currentAddress && destination) {
+        addEvent(`Geocoding ${currentAddress} and ${destination}...`, 'info', 'PulseCore');
+        const startCoords = await getForwardGeocode(currentAddress);
+        const endCoords = await getForwardGeocode(destination);
+        if (startCoords && endCoords) {
+           const t0 = performance.now();
+           const liveTraffic = await getLiveRoute(startCoords.lat, startCoords.lon, endCoords.lat, endCoords.lon);
+           if (liveTraffic) {
+             setTrafficData(liveTraffic);
+             dynamicTrafficSignal = liveTraffic.summary;
+             setAPIStatus('traffic', 'online', Math.round(performance.now() - t0));
+             addEvent(`Traffic API — dynamic route data fetched`, 'success', 'Velocity');
+           }
+        }
+      }
+    } catch (e) {
+       console.error("Dynamic routing failed", e);
+    }
+    
     const weatherSignal = weatherData?.summary ?? 'Partly Cloudy, 26°C';
-    const trafficSignal = trafficData?.summary ?? 'Moderate congestion on ORR.';
     
     try {
-      const rec = await pulseCoreAgent(weatherSignal, trafficSignal, transitData, currentAddress, destination, arrivalTime, timeMode, chatInput, avoidTollsOrTraffic);
+      const rec = await pulseCoreAgent(weatherSignal, dynamicTrafficSignal, transitData, currentAddress, destination, arrivalTime, timeMode, chatInput, avoidTollsOrTraffic);
       
       const newMsg: ChatMessage = {
         id: Date.now().toString(),
