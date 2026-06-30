@@ -305,17 +305,17 @@ Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
 ALL times must include AM or PM. Never output 24-hour time.
-IMPORTANT CRITICAL RULE: DO NOT copy the times from the JSON example below. You MUST mathematically calculate the "recommendedDeparture" and "expectedArrival".
+IMPORTANT CRITICAL RULE: DO NOT copy the times or transport from the JSON example below. You MUST mathematically calculate the "recommendedDeparture", and you MUST dynamically determine the "recommendedTransport" based on the actual geography of Bangalore (e.g., Devanahalli has no Metro, use Airport Bus/Taxi; Koramangala needs Auto/Bus to reach Metro).
 
 Output JSON EXACTLY like this (NO markdown, raw JSON only):
 {
   "recommendedDeparture": "[COMPUTED_DEPARTURE_TIME]",
-  "recommendedTransport": "Purple Line Metro",
+  "recommendedTransport": "[DYNAMIC_TRANSPORT_MODE_HERE]",
   "expectedArrival": "[COMPUTED_ARRIVAL_TIME]",
   "timeSavedMinutes": 32,
   "confidenceScore": 94,
-  "estimatedCost": "₹45 (Metro Ticket)",
-  "explanation": "I've analyzed today's traffic, weather, metro operations and road construction.\\n\\nIf your goal is to ${timeMode.toLowerCase()} ${timeString}, I recommend using the Purple Line Metro.\\n\\nHeavy congestion is expected on Outer Ring Road.\\n\\nTravelling this way should save approximately 32 minutes.",
+  "estimatedCost": "[DYNAMIC_COST_ESTIMATE_HERE]",
+  "explanation": "I've analyzed today's traffic, weather, and road conditions.\\n\\nIf your goal is to ${timeMode.toLowerCase()} ${timeString}, I recommend using [TRANSPORT].\\n\\nHeavy congestion is expected on Outer Ring Road.\\n\\nTravelling this way should save approximately 32 minutes.",
   "disclaimer": "⚠️ Weather Disclaimer: Heavy rain is expected today. Watch out for waterlogging and leave 15 mins earlier than usual.",
   "alternativeRoute": {
     "transport": "AC Bus (BMTC)",
