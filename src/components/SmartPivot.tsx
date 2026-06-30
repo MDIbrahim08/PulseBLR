@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Coffee, Wifi, Copy, CheckCircle2, Navigation, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Coffee, Wifi, Copy, CheckCircle2, Navigation, Compass, ArrowRight } from 'lucide-react';
 import { useRouteStore } from '../store/routeStore';
 import { getCurrentLocation, getReverseGeocode, getForwardGeocode, getNearbyCafes } from '../lib/signals';
 import { pulseSmartPivotAgent } from '../lib/llm-router';
@@ -83,16 +83,16 @@ export default function SmartPivot() {
           
           <div className="relative z-10 flex items-center gap-5 mb-8">
             <div className="relative group">
-              <div className="absolute inset-0 bg-rose-500/40 blur-xl rounded-2xl group-hover:bg-rose-500/60 transition-all duration-500"></div>
-              <div className="relative w-14 h-14 bg-gradient-to-br from-rose-500/20 to-slate-900/80 rounded-2xl flex items-center justify-center border border-rose-500/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-md">
-                <AlertTriangle size={26} className="text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+              <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-2xl group-hover:bg-blue-500/50 transition-all duration-500"></div>
+              <div className="relative w-14 h-14 bg-gradient-to-br from-blue-500/20 to-slate-900/80 rounded-2xl flex items-center justify-center border border-blue-500/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-md">
+                <Compass size={26} className="text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]" />
               </div>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-rose-100 to-rose-300 drop-shadow-sm">
+              <h1 className="text-3xl font-schibsted font-semibold tracking-tight text-white drop-shadow-sm">
                 AI Smart Pivot
               </h1>
-              <p className="text-rose-200/70 font-medium text-sm tracking-wide uppercase mt-1">
+              <p className="text-slate-400 font-medium text-sm tracking-wide uppercase mt-1">
                 The Commute Escape Hatch
               </p>
             </div>
