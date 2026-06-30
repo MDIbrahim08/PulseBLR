@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const FadeIn = ({ children, delay = 0, duration = 1000, className = "" }: any) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -71,6 +72,17 @@ const AnimatedHeading = ({ text, initialDelay = 200 }: { text: string; initialDe
 
 export default function HomeHero() {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.user_metadata?.full_name) {
+        setUserName(user.user_metadata.full_name.split(' ')[0]);
+      } else if (user?.email) {
+        setUserName(user.email.split('@')[0]);
+      }
+    });
+  }, []);
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black font-sans">
@@ -113,7 +125,7 @@ export default function HomeHero() {
             
             {/* Left Column */}
             <div>
-              <AnimatedHeading text={"Mastering commutes\nwith intelligence and action."} />
+              <AnimatedHeading text={`Namaste ${userName ? userName + ',' : 'Explorer,'}\nMastering commutes\nwith intelligence and action.`} />
               
               <FadeIn delay={800} duration={1000}>
                 <p className="text-base md:text-lg text-gray-300 mb-5 max-w-xl">
