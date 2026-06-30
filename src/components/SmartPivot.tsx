@@ -4,6 +4,7 @@ import { Coffee, Wifi, Copy, CheckCircle2, Navigation, AlertTriangle, ArrowRight
 import { useRouteStore } from '../store/routeStore';
 import { getCurrentLocation, getReverseGeocode, getForwardGeocode, getNearbyCafes } from '../lib/signals';
 import { pulseSmartPivotAgent } from '../lib/llm-router';
+import { GradientCard } from './ui/gradient-card';
 
 export default function SmartPivot() {
   const { origin: globalOrigin, destination: globalDestination } = useRouteStore();
@@ -72,12 +73,12 @@ export default function SmartPivot() {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }}
-      className="flex-1 overflow-y-auto px-4 md:px-8 pb-24"
+      className="w-full max-w-5xl px-4 md:px-8 pb-24 flex flex-col items-center"
     >
-      <div className="max-w-4xl mx-auto flex flex-col gap-12 mt-6">
+      <div className="w-full flex flex-col gap-12 mt-6">
 
         {/* Hero Section */}
-        <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden transition-all duration-300">
+        <GradientCard className="p-8 md:p-12">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500/10 blur-[100px] rounded-full -mr-40 -mt-40 pointer-events-none transition-all duration-500" />
           
           <div className="relative z-10 flex items-center gap-4 mb-6">
@@ -178,7 +179,7 @@ export default function SmartPivot() {
               ))}
             </div>
           )}
-        </div>
+        </GradientCard>
       </div>
     </motion.div>
   );

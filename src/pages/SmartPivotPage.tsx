@@ -7,7 +7,7 @@ export default function SmartPivotPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen w-full bg-slate-950 font-sans text-white">
+    <div className="min-h-screen w-full bg-slate-950 font-sans text-white flex flex-col overflow-hidden">
       {/* Navigation Bar */}
       <header className="w-full px-[120px] py-4 flex justify-between items-center bg-slate-950 border-b border-white/10 relative z-50">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard')}>
@@ -44,7 +44,7 @@ export default function SmartPivotPage() {
       </header>
 
       {/* Content */}
-      <main className="w-full flex items-center justify-center pt-20">
+      <main className="flex-1 w-full h-full flex flex-col items-center justify-start overflow-y-auto pt-10 pb-20">
         <SmartPivot />
       </main>
     </div>
