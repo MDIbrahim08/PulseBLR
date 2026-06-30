@@ -134,10 +134,10 @@ export default function SmartPivot() {
 
                   <button 
                     onClick={handlePivot}
-                    className="w-full bg-rose-600 hover:bg-rose-500 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-colors shadow-[0_0_20px_rgba(244,63,94,0.3)] flex items-center justify-center gap-3 mt-2"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-schibsted font-semibold text-lg transition-all shadow-md flex items-center justify-center gap-3 mt-2"
                   >
                     <Coffee size={20} />
-                    Trigger Escape Hatch
+                    {gettingLocation ? 'Locating...' : 'Trigger Escape Hatch'}
                   </button>
                 </div>
               )}
