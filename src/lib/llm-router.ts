@@ -300,11 +300,13 @@ Extract the origin, destination, and timing constraints from their request. If t
       : `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}" and wants to ARRIVE EXACTLY BY "${timeString}".\nCalculate the optimal departure time by subtracting the estimated travel duration (based on traffic/transit) from the requested arrival time.`;
 
   const prompt = `You are an AI commute assistant named PulseMind. 
+The Current Clock Time right now is: ${currentActualTime}.
 ${goalInstruction}
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
 ALL times must include AM or PM. Never output 24-hour time.
+CRITICAL TEMPORAL RULE: If the mathematical departure time you calculated is IN THE PAST compared to the "Current Clock Time", you MUST set the "recommendedDeparture" to "Now" and explicitly warn the user in the "explanation" that they are running late and will miss their target arrival time.
 IMPORTANT CRITICAL RULE: DO NOT copy ANY text, times, or transport modes from the JSON example below. You MUST mathematically calculate times, dynamically determine the "recommendedTransport", and generate fresh, context-aware "reasoning", "alternativeRoute", and "disclaimer".
 
 Output JSON EXACTLY like this (NO markdown, raw JSON only):
