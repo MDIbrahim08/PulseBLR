@@ -452,12 +452,12 @@ export default function Planner() {
 
                             {/* Disclaimer (if provided) */}
                             {msg.recommendation.disclaimer && (
-                              <div className="bg-orange-500/10 p-4 rounded-xl border border-orange-500/20 mt-2">
-                                <p className="font-bold text-orange-400 mb-1 flex items-center gap-2">
-                                  <AlertCircle size={16} />
+                              <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 border-l-4 border-l-orange-500 mt-2">
+                                <p className="font-semibold text-white mb-1 flex items-center gap-2">
+                                  <AlertCircle size={16} className="text-orange-500" />
                                   Important Notice
                                 </p>
-                                <p className="text-orange-200/90 text-sm font-schibsted leading-relaxed">
+                                <p className="text-slate-300 text-sm font-schibsted leading-relaxed">
                                   {msg.recommendation.disclaimer}
                                 </p>
                               </div>
@@ -465,17 +465,17 @@ export default function Planner() {
 
                             {/* Alternative Route (if provided) */}
                             {msg.recommendation.alternativeRoute && (
-                              <div className="bg-blue-500/10 p-4 rounded-xl border border-blue-500/20 mt-2">
-                                <p className="font-bold text-blue-400 mb-2 flex items-center gap-2">
-                                  <MapPin size={16} />
+                              <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 border-l-4 border-l-blue-500 mt-2">
+                                <p className="font-semibold text-white mb-2 flex items-center gap-2">
+                                  <MapPin size={16} className="text-blue-500" />
                                   Alternative Route
                                 </p>
                                 <div className="flex items-center gap-4 mb-2">
-                                  <span className="text-white font-schibsted font-bold">{msg.recommendation.alternativeRoute.transport}</span>
-                                  <span className="text-white/60 text-sm">•</span>
-                                  <span className="text-blue-300 font-schibsted">{msg.recommendation.alternativeRoute.time}</span>
+                                  <span className="text-white font-schibsted font-semibold">{msg.recommendation.alternativeRoute.transport}</span>
+                                  <span className="text-slate-500 text-sm">•</span>
+                                  <span className="text-slate-300 font-schibsted">{msg.recommendation.alternativeRoute.time}</span>
                                 </div>
-                                <p className="text-blue-100/80 text-sm font-schibsted leading-relaxed">
+                                <p className="text-slate-400 text-sm font-schibsted leading-relaxed">
                                   {msg.recommendation.alternativeRoute.reason}
                                 </p>
                               </div>
