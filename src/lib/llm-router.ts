@@ -350,7 +350,6 @@ Output JSON EXACTLY like this (NO markdown, raw JSON only):
     const result = safeParseJSON(raw, timeString, destination, origin, weather, traffic, timeMode);
     o.setAgentStatus('pulsemind', 'success', ms);
     o.addEvent(`PulseMind — recommendation delivered in ${ms}ms`, 'success', 'PulseMind');
-    o.addEvent(`ArmorIQ — schema validation ${schemaValid ? 'passed' : 'warning'}`, schemaValid ? 'success' : 'warning', 'ArmorIQ');
 
     // Write real audit record
     const routerState = o.router;

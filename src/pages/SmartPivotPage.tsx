@@ -27,9 +27,6 @@ export default function SmartPivotPage() {
              Smart Pivot
              <div className="absolute -bottom-1 left-0 w-full h-[2px] bg-white" />
            </button>
-           <button onClick={() => navigate('/armor-iq')} className="hover:text-white/80 transition-colors">
-             ArmorIQ
-           </button>
         </nav>
 
         <div className="flex items-center gap-4 font-schibsted font-medium text-base tracking-[-0.2px]">

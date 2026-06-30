@@ -56,12 +56,6 @@ export default function Dashboard() {
              >
                Smart Pivot
              </button>
-             <button 
-               onClick={() => navigate('/armor-iq')} 
-               className="transition-all duration-300 relative hover:text-black/80"
-             >
-               ArmorIQ
-             </button>
           </nav>
 
           {/* Actions */}

@@ -1,9 +1,8 @@
 /**
  * PulseObserver — Global Observability Store
  *
- * This is the single source of truth for ArmorIQ.
+ *
  * Every agent, API call, and AI router event writes here.
- * ArmorIQ reads from here. Zero duplicate API calls.
  */
 import { create } from 'zustand';
 
@@ -186,8 +185,8 @@ export const usePulseObserver = create<PulseObserverState>((set, get) => ({
     {
       id: uid(),
       timestamp: new Date(),
-      message: 'ArmorIQ Security Layer initialized',
-      type: 'success',
+      message: 'PulseObserver initialized',
+      type: 'info',
     },
   ],
 
@@ -276,7 +275,6 @@ export const usePulseObserver = create<PulseObserverState>((set, get) => ({
 
 /**
  * Computes a 0–100 trust score from live state.
- * Used by ArmorIQ to display the Security Score.
  */
 export const computeTrustScore = (state: PulseObserverState): { score: number; breakdown: string[] } => {
   const breakdown: string[] = [];
