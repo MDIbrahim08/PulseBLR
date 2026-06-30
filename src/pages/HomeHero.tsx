@@ -125,7 +125,7 @@ export default function HomeHero() {
             
             {/* Left Column */}
             <div>
-              <AnimatedHeading text={`Namaste ${userName ? userName + ',' : 'Explorer,'}\nMastering commutes\nwith intelligence and action.`} />
+              <AnimatedHeading key={userName} text={`Namaste ${userName ? userName + ',' : 'Explorer,'}\nMastering commutes\nwith intelligence and action.`} />
               
               <FadeIn delay={800} duration={1000}>
                 <p className="text-base md:text-lg text-gray-300 mb-5 max-w-xl">
