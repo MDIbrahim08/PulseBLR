@@ -315,7 +315,7 @@ Output JSON EXACTLY like this (NO markdown, raw JSON only):
   "timeSavedMinutes": 32,
   "confidenceScore": 94,
   "estimatedCost": "[DYNAMIC_COST_ESTIMATE_HERE]",
-  "explanation": "I've analyzed today's traffic, weather, and road conditions.\\n\\nIf your goal is to ${timeMode.toLowerCase()} ${timeString}, I recommend using [TRANSPORT].\\n\\nHeavy congestion is expected on Outer Ring Road.\\n\\nTravelling this way should save approximately 32 minutes.",
+  "explanation": "I've analyzed today's traffic, weather, and road conditions.\\n\\nIf your goal is to ${timeMode.toLowerCase()} ${timeString}, I recommend using [TRANSPORT].\\n\\n[INSERT DYNAMIC REASONING ABOUT TRAFFIC/WEATHER HERE].\\n\\nTravelling this way should save approximately [MINUTES] minutes.",
   "disclaimer": "⚠️ Weather Disclaimer: Heavy rain is expected today. Watch out for waterlogging and leave 15 mins earlier than usual.",
   "alternativeRoute": {
     "transport": "AC Bus (BMTC)",

@@ -492,21 +492,7 @@ export default function Planner() {
                               </div>
                             )}
 
-                            {/* Governed Actions */}
-                            <div className="flex items-center gap-3 mt-4 pt-4 border-t border-white/10">
-                              <button 
-                                onClick={() => handleGovernedAction('Save Commute', 'Saving recommended route to user profile and location history', 'Low')}
-                                className="flex items-center gap-2 text-xs font-semibold bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-colors border border-white/10"
-                              >
-                                <Bookmark size={14} /> Save Route
-                              </button>
-                              <button 
-                                onClick={() => handleGovernedAction('Create Reminder', 'Granting calendar write access to set departure alarm', 'Medium')}
-                                className="flex items-center gap-2 text-xs font-semibold bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-colors border border-white/10"
-                              >
-                                <Bell size={14} /> Set Reminder
-                              </button>
-                            </div>
+
                           </div>
                         )}
                       </div>
