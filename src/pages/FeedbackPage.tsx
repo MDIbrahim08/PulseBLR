@@ -38,7 +38,6 @@ export default function FeedbackPage() {
 
     setIsSubmitting(false);
     if (!error) {
-      setMessageIndex(Math.floor(Math.random() * 10)); // Pick a random index for the message
       setStep(2);
     } else {
       console.error(error);
@@ -180,18 +179,18 @@ export default function FeedbackPage() {
               <div className="space-y-2">
                 <BlurFade delay={0.25} inView>
                   <h2 className="text-3xl font-bold">
-                    {emotion === 2 ? goodMessages[messageIndex % goodMessages.length].title 
-                      : emotion === 1 ? midMessages[messageIndex % midMessages.length].title 
-                      : badMessages[messageIndex % badMessages.length].title}
+                    {emotion === 2 ? goodMessage.title 
+                      : emotion === 1 ? midMessage.title 
+                      : badMessage.title}
                   </h2>
                 </BlurFade>
                 <BlurFade delay={0.5} inView>
                   <p className="text-white/60 text-lg">
                     {emotion === 2 
-                      ? goodMessages[messageIndex % goodMessages.length].desc
+                      ? goodMessage.desc
                       : emotion === 1 
-                        ? midMessages[messageIndex % midMessages.length].desc
-                        : badMessages[messageIndex % badMessages.length].desc}
+                        ? midMessage.desc
+                        : badMessage.desc}
                   </p>
                 </BlurFade>
               </div>
@@ -215,27 +214,17 @@ export default function FeedbackPage() {
   );
 }
 
-const goodMessages = [
-  { title: "Benki! 🔥", desc: "Macha, you made our day! We're thrilled you had a bombat experience with PulseBLR." },
-  { title: "Thank you! 🙏", desc: "We truly appreciate your valuable feedback and continued support." },
-  { title: "Sakkath! 🚀", desc: "Thanks for the love! Keep cruising through the traffic like a boss." },
-  { title: "You are awesome! 🎉", desc: "Glad we could save you from the Silk Board madness today." },
-  { title: "Grateful for you 🌟", desc: "Your positive feedback fuels our team to build even better features for you." },
-  { title: "Bombat Guru! 💯", desc: "We love hearing this! PulseBLR is always here to make your commute smooth." }
-];
+const goodMessage = { 
+  title: "Thank you! 🙏", 
+  desc: "We truly appreciate your valuable feedback. Your positive thoughts fuel our team to build even better features for you." 
+};
 
-const midMessages = [
-  { title: "Got it! 🛠️", desc: "Thanks macha, we've noted this down. We'll tune it up to make it bombat next time." },
-  { title: "Thank you for sharing.", desc: "We are committed to improving your experience based on your insights." },
-  { title: "Fair enough. 🤔", desc: "Every bit of feedback helps us improve. We'll try to wow you next time!" },
-  { title: "Feedback received 📝", desc: "We appreciate your honest thoughts. Our team will review this closely." },
-  { title: "Thanks for sharing!", desc: "We'll work on smoothing out the bumps for your next ride." }
-];
+const midMessage = { 
+  title: "Thank you for sharing. 📝", 
+  desc: "We are committed to improving your experience based on your insights. Our team will review this closely." 
+};
 
-const badMessages = [
-  { title: "Aiyo! 🤦", desc: "Yappa, our bad! We're sorry it wasn't a perfect trip. We'll fix this immediately." },
-  { title: "Our sincere apologies.", desc: "We deeply apologize for the inconvenience. Your feedback is crucial for our improvement." },
-  { title: "Sorry guru. 😔", desc: "That's completely on us. We're actively working on making this better." },
-  { title: "We hear you. 📉", desc: "Thank you for bringing this to our attention. We are taking immediate steps to resolve it." },
-  { title: "Oof! 🚨", desc: "Traffic is bad enough, our app shouldn't be. Thanks for the heads up, we'll sort it out!" }
-];
+const badMessage = { 
+  title: "Our sincere apologies. 📉", 
+  desc: "We deeply apologize for the inconvenience. Your feedback is crucial, and we are taking immediate steps to resolve it." 
+};

@@ -381,23 +381,31 @@ export const pulseFollowUpAgent = async (
   transit: string,
   origin: string,
   destination: string,
-  arrivalTime: string
+  arrivalTime: string,
+  isFirstMessage: boolean = true
 ) => {
   const now = new Date();
   const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   const dateString = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
+  const greetingRule = isFirstMessage 
+    ? `Ensure any greetings match the current time of day (${timeString}).` 
+    : `DO NOT say hello, good morning, good evening, or greet the user. Dive straight into answering the question.`;
+
   const prompt = `You are PulseMind, a premium AI commute advisor for Bangalore.
 The user is traveling from "${origin}" to "${destination}" aiming to arrive by "${arrivalTime}".
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
-Live Context -> Time: ${timeString}, Date: ${dateString}. Ensure any greetings match the current time of day.
+Live Context -> Time: ${timeString}, Date: ${dateString}.
 
 The user asked a follow-up question: "${question}"
 
-Respond directly, concisely, and professionally to their question.
-Use natural language, similar to how ChatGPT or Apple Intelligence would speak.
-Do not use bullet points unless absolutely necessary.
-Limit your response to 2-3 short, highly readable sentences.`;
+RULES:
+1. Respond directly, concisely, and professionally. Limit your main response to 2-3 short sentences.
+2. ${greetingRule}
+3. At the very end of your response, ALWAYS provide exactly 2 short, actionable suggestions based on the user's problem (e.g., "Take a 2-wheeler", "Wait 15 mins", "Take the Metro"). 
+4. Format these suggestions EXACTLY like this on their own lines:
+SUGGESTION: [short text here]
+SUGGESTION: [short text here]`;
 
   try {
     const raw = await callLLM(prompt);

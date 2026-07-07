@@ -209,13 +209,13 @@ export default function Planner() {
     }
   };
 
-  const handleChatSubmit = async (e?: React.FormEvent) => {
+  const handleChatSubmit = async (e?: React.FormEvent, overrideText?: string) => {
     if (e) e.preventDefault();
-    if (!chatInput.trim() || isThinking) {
+    const question = overrideText || chatInput;
+    if (!question.trim() || isThinking) {
       return;
     }
     
-    const question = chatInput;
     setChatInput('');
     
     const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', text: question };
@@ -225,9 +225,10 @@ export default function Planner() {
     
     const weatherSignal = weatherData?.summary ?? 'Partly Cloudy, 26°C';
     const trafficSignal = trafficData?.summary ?? 'Moderate congestion on ORR.';
+    const isFirstMessage = chatHistory.length === 0;
     
     try {
-      const responseText = await pulseFollowUpAgent(question, weatherSignal, trafficSignal, transitData, currentAddress, destination, arrivalTime);
+      const responseText = await pulseFollowUpAgent(question, weatherSignal, trafficSignal, transitData, currentAddress, destination, arrivalTime, isFirstMessage);
       
       const aiMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -491,9 +492,41 @@ export default function Planner() {
                         )}
                       </div>
                     ) : (
-                      <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-schibsted">
-                        {msg.text}
-                      </div>
+                      (() => {
+                        const lines = msg.text?.split('\n') || [];
+                        const cleanLines = [];
+                        const suggestions = [];
+                        
+                        for (const line of lines) {
+                          if (line.trim().startsWith('SUGGESTION:')) {
+                            suggestions.push(line.replace('SUGGESTION:', '').trim());
+                          } else {
+                            cleanLines.push(line);
+                          }
+                        }
+
+                        return (
+                          <div className="flex flex-col gap-3">
+                            <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-schibsted">
+                              {cleanLines.join('\n').trim()}
+                            </div>
+                            {suggestions.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-2 border-t border-white/10 pt-3">
+                                {suggestions.map((s, idx) => (
+                                  <button 
+                                    key={idx}
+                                    onClick={() => handleChatSubmit(undefined, s)}
+                                    className="text-xs bg-pulse-500/10 hover:bg-pulse-500/30 text-pulse-300 border border-pulse-500/30 px-3 py-1.5 rounded-full transition-colors font-medium flex items-center gap-1"
+                                  >
+                                    <Sparkles size={12} />
+                                    {s}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()
                     )}
                   </div>
 
