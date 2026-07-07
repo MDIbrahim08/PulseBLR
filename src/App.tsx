@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import HomeHero from './pages/HomeHero';
 import SmartPivotPage from './pages/SmartPivotPage';
 import FeedbackPage from './pages/FeedbackPage';
+import ReviewsPage from './pages/ReviewsPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/smart-pivot" element={<SmartPivotPage />} />
       <Route path="/feedback" element={<FeedbackPage />} />
+      <Route path="/reviews" element={<ReviewsPage />} />
       <Route path="/app/*" element={<Dashboard />} />
       </Routes>
     </>

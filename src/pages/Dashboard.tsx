@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, MessageSquareHeart } from 'lucide-react';
+import { LogOut, MessageSquareHeart, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Planner from '../components/Planner';
 import { supabase } from '../lib/supabase';
@@ -62,6 +62,13 @@ export default function Dashboard() {
              >
                <MessageSquareHeart size={14} className="opacity-60" />
                Feedback
+             </button>
+             <button 
+               onClick={() => navigate('/reviews')} 
+               className="flex items-center gap-1 transition-all duration-300 relative hover:text-black/80"
+             >
+               <Star size={14} className="opacity-60" />
+               Reviews
              </button>
           </nav>
 
