@@ -44,7 +44,7 @@ export default function Planner() {
   const [transitData, setTransitData] = useState('Checking transit...');
 
   useEffect(() => {
-    if (!destination) setDestination('Manyata Tech Park');
+    // Leave destination empty by default
   }, []);
 
   const timeMode = 'Dynamic';
@@ -56,7 +56,7 @@ export default function Planner() {
     const gatherSignals = async () => {
       let wData: any = null;
       let tData: any = null;
-      let address = 'Indiranagar, Bengaluru';
+      let address = currentAddress || '';
       let transit = 'Standard Bangalore Transit (Metro/BMTC) operating normally';
 
       try {
