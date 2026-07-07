@@ -287,13 +287,10 @@ export const pulseCoreAgent = async (weather: string, traffic: string, transit: 
   
   const currentActualTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-  const goalInstruction = (userPrompt.trim().length > 0 && (!origin || !destination))
-    ? `The user provided this request: "${userPrompt}". 
+  const goalInstruction = `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}".
+The user provided this request/timing: "${userPrompt || 'No specific time provided. Assume they want to leave now.'}". 
 The current time right now is ${currentActualTime}.
-Extract the origin, destination, and timing constraints from their request. If they say "now" or don't specify a time, use the current time (${currentActualTime}) as their departure time. Calculate the expected departure and arrival times based on an estimated travel time of roughly 45-60 minutes.`
-    : timeMode === 'Depart At'
-      ? `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}" and plans to DEPART EXACTLY AT "${timeString}".\nCalculate the expected arrival time by adding the estimated travel duration (based on traffic/transit) to the departure time.`
-      : `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}" and wants to ARRIVE EXACTLY BY "${timeString}".\nCalculate the optimal departure time by subtracting the estimated travel duration (based on traffic/transit) from the requested arrival time.`;
+Extract their desired timing from the request. If they say "now" or don't specify a time, use the current time (${currentActualTime}) as their departure time. Calculate the expected departure and arrival times based on an estimated travel time of roughly 45-60 minutes.`;
 
   const prompt = `You are an AI commute assistant named PulseMind. 
 The Current Clock Time right now is: ${currentActualTime}.
@@ -313,7 +310,7 @@ Output JSON EXACTLY like this (NO markdown, raw JSON only):
   "timeSavedMinutes": 15,
   "confidenceScore": 90,
   "estimatedCost": "[DYNAMIC_COST_ESTIMATE_HERE]",
-  "explanation": "I've analyzed today's traffic, weather, and road conditions.\\n\\nIf your goal is to ${timeMode.toLowerCase()} ${timeString}, I recommend using [TRANSPORT].\\n\\n[INSERT DYNAMIC REASONING ABOUT TRAFFIC/WEATHER HERE].\\n\\nTravelling this way should save approximately [MINUTES] minutes.",
+  "explanation": "I've analyzed today's traffic, weather, and road conditions.\\n\\nBased on your requested timing, I recommend using [TRANSPORT].\\n\\n[INSERT DYNAMIC REASONING ABOUT TRAFFIC/WEATHER HERE].\\n\\nTravelling this way should save approximately [MINUTES] minutes.",
   "disclaimer": "⚠️ [INSERT RELEVANT DISCLAIMER OR LEAVE EMPTY STRING]",
   "alternativeRoute": {
     "transport": "[ALTERNATIVE_TRANSPORT_MODE]",

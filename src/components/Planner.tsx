@@ -47,12 +47,8 @@ export default function Planner() {
     if (!destination) setDestination('Manyata Tech Park');
   }, []);
 
-  const [arrivalHour, setArrivalHour] = useState('09');
-  const [arrivalMin, setArrivalMin] = useState('00');
-  const [arrivalAmPm, setArrivalAmPm] = useState('AM');
-  const [timeMode, setTimeMode] = useState('Arrive By');
-
-  const arrivalTime = `${arrivalHour}:${arrivalMin} ${arrivalAmPm}`;
+  const timeMode = 'Dynamic';
+  const arrivalTime = 'Dynamic';
 
   // Removed hardcoded DEST_LAT and DEST_LON
 
@@ -299,23 +295,6 @@ export default function Planner() {
                       className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-[160px] md:w-[180px] text-white placeholder-white/60 pb-1"
                       placeholder="Destination"
                     />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <select value={timeMode} onChange={e => setTimeMode(e.target.value)} className="bg-transparent font-bold outline-none appearance-none cursor-pointer border-b-2 border-transparent hover:border-white/30 focus:border-white pb-1 text-pulse-400">
-                      <option value="Arrive By" className="bg-slate-900 text-white">Arrive By</option>
-                      <option value="Depart At" className="bg-slate-900 text-white">Depart At</option>
-                    </select>
-                    <select value={arrivalHour} onChange={e => setArrivalHour(e.target.value)} className="bg-transparent outline-none appearance-none cursor-pointer border-b-2 border-transparent hover:border-white/30 focus:border-white pb-1">
-                      {['01','02','03','04','05','06','07','08','09','10','11','12'].map(h => <option key={h} value={h} className="bg-slate-900 text-white">{h}</option>)}
-                    </select>
-                    <span className="font-bold">:</span>
-                    <select value={arrivalMin} onChange={e => setArrivalMin(e.target.value)} className="bg-transparent outline-none appearance-none cursor-pointer border-b-2 border-transparent hover:border-white/30 focus:border-white pb-1">
-                      {['00','15','30','45'].map(m => <option key={m} value={m} className="bg-slate-900 text-white">{m}</option>)}
-                    </select>
-                    <select value={arrivalAmPm} onChange={e => setArrivalAmPm(e.target.value)} className="bg-transparent outline-none appearance-none cursor-pointer border-b-2 border-transparent hover:border-white/30 focus:border-white pb-1">
-                      <option value="AM" className="bg-slate-900 text-white">AM</option>
-                      <option value="PM" className="bg-slate-900 text-white">PM</option>
-                    </select>
                   </div>
                   <div className="flex items-center gap-2 ml-2 md:ml-4 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" onClick={() => setAvoidTollsOrTraffic(!avoidTollsOrTraffic)}>
                     <div className={`w-4 h-4 rounded-sm border ${avoidTollsOrTraffic ? 'bg-[#5AE14C] border-[#5AE14C]' : 'border-white/40'} flex items-center justify-center transition-all`}>
