@@ -309,10 +309,12 @@ export const pulseCoreAgent = async (weather: string, traffic: string, transit: 
   
   const currentActualTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-  const goalInstruction = `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}".
+    const goalInstruction = `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}".
 The user provided this request/timing: "${userPrompt || 'No specific time provided. Assume they want to leave now.'}". 
 The current time right now is ${currentActualTime}.
-Extract their desired timing from the request. If they say "now" or don't specify a time, use the current time (${currentActualTime}) as their departure time. Calculate the expected departure and arrival times based on an estimated travel time of roughly 45-60 minutes.`;
+Extract their desired timing from the request. If they say "now" or don't specify a time, use the current time (${currentActualTime}) as their departure time. Calculate the expected departure and arrival times based on an estimated travel time of roughly 45-60 minutes.
+
+PREDICTIVE TRAFFIC RULE: If the user asks for the "best time to leave" or wants to avoid traffic, analyze the current time against Bangalore's known peak hours (Morning: 8:30-11:30 AM, Evening: 5:30-8:30 PM). If they are currently in a peak hour or approaching one, mathematically calculate and suggest the exact time the peak hour ends (e.g., 8:40 PM) or begins (e.g., 5:10 PM) as the best time to leave for a much faster commute. Explain this traffic drop-off logic clearly in your explanation!`;
 
   const prompt = `You are an AI commute assistant named PulseMind. 
 The Current Clock Time right now is: ${currentActualTime}.
@@ -425,8 +427,9 @@ RULES:
 1. Respond directly, concisely, and professionally. Limit your main response to 2-3 short sentences.
 2. ${greetingRule}
 3. CRITICAL TEMPORAL RULE: The Current Clock Time is EXACTLY ${timeString}. YOU MUST NOT SUGGEST ANY TIMES IN THE PAST. If a suggested time has already passed today, you MUST instruct the user to leave "Now".
-4. At the very end of your response, ALWAYS provide exactly 2 short, actionable suggestions based on the user's problem (e.g., "Take a 2-wheeler", "Wait 15 mins", "Take the Metro"). 
-5. You MUST format these suggestions EXACTLY like this on their own lines at the very bottom:
+4. PREDICTIVE TRAFFIC RULE: If the user asks for the "best time to leave" or wants to avoid traffic, analyze the current time against Bangalore's known peak hours (Morning: 8:30-11:30 AM, Evening: 5:30-8:30 PM). If they are currently in or near a peak hour, mathematically calculate and confidently suggest the exact time the peak hour ends (e.g., "traffic will drop significantly at 8:40 PM, leave then") for a much faster commute. Show off this predictive capability!
+5. At the very end of your response, ALWAYS provide exactly 2 short, actionable suggestions based on the user's problem (e.g., "Wait until 8:40 PM", "Take the Metro"). 
+6. You MUST format these suggestions EXACTLY like this on their own lines at the very bottom:
 
 SUGGESTION: [short text here]
 SUGGESTION: [short text here]`;
