@@ -57,7 +57,7 @@ export default function Planner() {
       let wData: any = null;
       let tData: any = null;
       let address = 'Indiranagar, Bengaluru';
-      let transit = 'Purple Line Operational';
+      let transit = 'Standard Bangalore Transit (Metro/BMTC) operating normally';
 
       try {
         const position = await getCurrentLocation();
@@ -79,7 +79,7 @@ export default function Planner() {
         tData = { summary: 'Waiting for route analysis...' };
         
         const hour = new Date().getHours();
-        transit = hour >= 23 || hour <= 5 ? 'Metro Closed' : 'Purple Line Operational';
+        transit = hour >= 23 || hour <= 5 ? 'Metro/Bus Services Closed' : 'Standard Bangalore Transit (Metro/BMTC) operating normally';
         setTransitData(transit);
         setAPIStatus('metro', 'online');
         addEvent('Metro API — transit status verified', 'success', 'TransitIQ');
@@ -498,8 +498,9 @@ export default function Planner() {
                         const suggestions = [];
                         
                         for (const line of lines) {
-                          if (line.trim().startsWith('SUGGESTION:')) {
-                            suggestions.push(line.replace('SUGGESTION:', '').trim());
+                          const trimmed = line.trim();
+                          if (trimmed.toUpperCase().startsWith('SUGGESTION:') || trimmed.toUpperCase().startsWith('- SUGGESTION:')) {
+                            suggestions.push(trimmed.replace(/^-?\s*SUGGESTION:\s*/i, ''));
                           } else {
                             cleanLines.push(line);
                           }
