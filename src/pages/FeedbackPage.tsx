@@ -21,10 +21,10 @@ export default function FeedbackPage() {
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col items-center justify-center relative z-10 w-full px-4 md:px-8 py-8 space-y-16">
+      <main className="flex-1 flex flex-col items-center justify-center relative z-10 w-full px-4 md:px-8 py-4 md:py-8 space-y-8 md:space-y-16">
         
         {/* Step 1: Overall Experience Slider */}
-        <div className="w-full max-w-lg h-[600px] flex flex-col items-center space-y-4">
+        <div className="w-full max-w-lg h-[450px] md:h-[600px] flex flex-col items-center space-y-4">
           <FeedbackSlider className="w-full h-full" />
         </div>
 

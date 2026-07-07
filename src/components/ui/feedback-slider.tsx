@@ -94,7 +94,7 @@ const FeedbackSlider = React.forwardRef<HTMLDivElement, FeedbackSliderProps>(
         transition={transition}
         {...props}
       >
-        <div className="flex h-full w-[400px] flex-col items-center justify-center p-4 py-12">
+        <div className="flex h-full w-full max-w-[400px] flex-col items-center justify-center p-4 py-8 md:py-12 scale-90 md:scale-100">
           <motion.h3
             className="mb-10 w-72 text-center text-xl font-semibold"
             animate={{ color: currentAnim.titleColor }}
