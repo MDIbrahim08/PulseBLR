@@ -236,16 +236,16 @@ export default function FeedbackPage() {
 }
 
 const goodMessage = { 
-  title: "Thank you! 🙏", 
-  desc: "We truly appreciate your valuable feedback. Your positive thoughts fuel our team to build even better features for you." 
+  title: "Bombat Feedback! 🙏", 
+  desc: "Thank you for the amazing support! Your positive thoughts fuel our team to build even better features. Sakkath vibes only!" 
 };
 
 const midMessage = { 
-  title: "Thank you for sharing. 📝", 
-  desc: "We are committed to improving your experience based on your insights. Our team will review this closely." 
+  title: "Thanks for sharing, Guru. 📝", 
+  desc: "We are committed to improving your experience based on your insights. Swalpa adjust maadi while our team reviews this closely." 
 };
 
 const badMessage = { 
-  title: "Our sincere apologies. 📉", 
-  desc: "We deeply apologize for the inconvenience. Your feedback is crucial, and we are taking immediate steps to resolve it." 
+  title: "Ayyo, our sincere apologies. 📉", 
+  desc: "We deeply apologize for the inconvenience. Your feedback is crucial, and we are working full-throttle to resolve it, Macha." 
 };
