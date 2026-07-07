@@ -13,6 +13,7 @@ export default function FeedbackPage() {
   const [emotion, setEmotion] = useState(1); // 0: bad, 1: mid, 2: good
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
 
   const handleSubmit = async () => {
     if (!message.trim()) return;
@@ -34,6 +35,7 @@ export default function FeedbackPage() {
 
     setIsSubmitting(false);
     if (!error) {
+      setMessageIndex(Math.floor(Math.random() * 10)); // Pick a random index for the message
       setStep(2);
     } else {
       console.error(error);
@@ -165,14 +167,16 @@ export default function FeedbackPage() {
 
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold">
-                  {emotion === 2 ? 'You are awesome! 🎉' : emotion === 1 ? 'Thanks for sharing!' : 'We hear you.'}
+                  {emotion === 2 ? goodMessages[messageIndex % goodMessages.length].title 
+                    : emotion === 1 ? midMessages[messageIndex % midMessages.length].title 
+                    : badMessages[messageIndex % badMessages.length].title}
                 </h2>
                 <p className="text-white/60 text-lg">
                   {emotion === 2 
-                    ? "We're thrilled you had a great experience with PulseBLR." 
+                    ? goodMessages[messageIndex % goodMessages.length].desc
                     : emotion === 1 
-                      ? "Every bit of feedback helps us improve." 
-                      : "We're sorry it wasn't a perfect trip. We'll work on fixing this immediately."}
+                      ? midMessages[messageIndex % midMessages.length].desc
+                      : badMessages[messageIndex % badMessages.length].desc}
                 </p>
               </div>
 
@@ -194,3 +198,22 @@ export default function FeedbackPage() {
     </div>
   );
 }
+
+const goodMessages = [
+  { title: "Benki! 🔥", desc: "Macha, you made our day! We're thrilled you had a bombat experience with PulseBLR." },
+  { title: "Sakkath! 🚀", desc: "Thanks for the love! Keep cruising through the traffic like a boss." },
+  { title: "You are awesome! 🎉", desc: "Glad we could save you from the Silk Board madness today." },
+  { title: "Bombat Guru! 💯", desc: "We love hearing this! PulseBLR is always here to make your commute smooth." }
+];
+
+const midMessages = [
+  { title: "Got it! 🛠️", desc: "Thanks macha, we've noted this down. We'll tune it up to make it bombat next time." },
+  { title: "Fair enough. 🤔", desc: "Every bit of feedback helps us improve. We'll try to wow you next time!" },
+  { title: "Thanks for sharing!", desc: "We'll work on smoothing out the bumps for your next ride." }
+];
+
+const badMessages = [
+  { title: "Aiyo! 🤦", desc: "Yappa, our bad! We're sorry it wasn't a perfect trip. We'll fix this immediately." },
+  { title: "Sorry guru. 😔", desc: "That's completely on us. We're actively working on making this better." },
+  { title: "Oof! 🚨", desc: "Traffic is bad enough, our app shouldn't be. Thanks for the heads up, we'll sort it out!" }
+];
