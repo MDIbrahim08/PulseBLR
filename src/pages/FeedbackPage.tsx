@@ -104,14 +104,14 @@ export default function FeedbackPage() {
                 <Button 
                   onClick={() => setStep(0)}
                   variant="unstyled"
-                  className="flex-1 border border-white/20 text-white hover:bg-white/10 rounded-md"
+                  className="flex-1 flex items-center justify-center border border-white/20 text-white hover:bg-white/10 rounded-xl py-3 transition-colors duration-200 font-medium"
                 >
                   Back
                 </Button>
                 <Button 
                   onClick={handleSubmit}
                   disabled={!message.trim() || isSubmitting}
-                  className="flex-1 bg-pulse-500 hover:bg-pulse-600 text-white gap-2"
+                  className="flex-1 flex items-center justify-center bg-pulse-500 hover:bg-pulse-600 text-white gap-2 rounded-xl py-3 shadow-lg shadow-pulse-500/20 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Sending...' : 'Submit'} <Send size={16} />
                 </Button>
