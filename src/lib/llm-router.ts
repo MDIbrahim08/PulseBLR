@@ -324,6 +324,7 @@ User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you 
 
 ALL times must include AM or PM. Never output 24-hour time.
 CRITICAL TEMPORAL RULE: The Current Clock Time is exactly ${currentActualTime}. YOU MUST NOT SUGGEST A DEPARTURE TIME IN THE PAST. If the user's requested time or calculated departure time is earlier than ${currentActualTime} today, you MUST set "recommendedDeparture" to "Now" and explicitly explain in the "explanation" that their target time has already passed.
+GEOGRAPHY & METRO REALITY CHECK: You MUST NOT hallucinate Namma Metro lines in Bangalore. If the origin or destination is in areas WITHOUT metro connectivity (e.g., RT Nagar, Koramangala, Devanahalli, Airport, Bellandur, Marathahalli, Sarjapur, HSR Layout), you MUST NOT suggest the Metro as the primary transport mode. Instead, confidently suggest BMTC Airport AC Buses (Vayu Vajra), Cab, Auto, or 2-wheeler. ONLY suggest Metro for areas with known active stations (e.g., Indiranagar, MG Road, Majestic, Jayanagar, Yeshwanthpur, Whitefield).
 IMPORTANT CRITICAL RULE: DO NOT copy ANY text, times, or transport modes from the JSON example below. You MUST mathematically calculate times, dynamically determine the "recommendedTransport", and generate fresh, context-aware "reasoning", "alternativeRoute", and "disclaimer".
 
 Output JSON EXACTLY like this (NO markdown, raw JSON only):
@@ -428,8 +429,9 @@ RULES:
 2. ${greetingRule}
 3. CRITICAL TEMPORAL RULE: The Current Clock Time is EXACTLY ${timeString}. YOU MUST NOT SUGGEST ANY TIMES IN THE PAST. If a suggested time has already passed today, you MUST instruct the user to leave "Now".
 4. PREDICTIVE TRAFFIC RULE: If the user asks for the "best time to leave" or wants to avoid traffic, analyze the current time against Bangalore's known peak hours (Morning: 8:30-11:30 AM, Evening: 5:30-8:30 PM). If they are currently in or near a peak hour, mathematically calculate and confidently suggest the exact time the peak hour ends (e.g., "traffic will drop significantly at 8:40 PM, leave then") for a much faster commute. Show off this predictive capability!
-5. At the very end of your response, ALWAYS provide exactly 2 short, actionable suggestions based on the user's problem (e.g., "Wait until 8:40 PM", "Take the Metro"). 
-6. You MUST format these suggestions EXACTLY like this on their own lines at the very bottom:
+5. GEOGRAPHY & METRO REALITY CHECK: You MUST NOT hallucinate Namma Metro lines in Bangalore. If the origin or destination is in areas WITHOUT metro connectivity (e.g., RT Nagar, Koramangala, Devanahalli, Airport, Bellandur, Marathahalli, Sarjapur, HSR Layout), you MUST NOT suggest the Metro as a transport mode. Instead, confidently suggest BMTC Airport AC Buses (Vayu Vajra), Cab, Auto, or 2-wheeler.
+6. At the very end of your response, ALWAYS provide exactly 2 short, actionable suggestions based on the user's problem (e.g., "Wait until 8:40 PM", "Take a Cab"). 
+7. You MUST format these suggestions EXACTLY like this on their own lines at the very bottom:
 
 SUGGESTION: [short text here]
 SUGGESTION: [short text here]`;
