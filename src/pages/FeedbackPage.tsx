@@ -25,13 +25,19 @@ export default function FeedbackPage() {
     const ratingMap = [1, 3, 5]; 
     const rating = ratingMap[emotion];
 
+    const { data: { session } } = await supabase.auth.getSession();
+    const userName = session?.user?.user_metadata?.full_name || 'Anonymous User';
+    const userAvatar = session?.user?.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800&q=80';
+    const profileString = `${userName}||${userAvatar}`;
+
     const { error } = await supabase
       .from('feedback')
       .insert([
         { 
           rating,
           category: 'User Journey',
-          message: message.trim()
+          message: message.trim(),
+          email: profileString
         }
       ]);
 

@@ -55,13 +55,26 @@ export default function AdminFeedbacksPage() {
     }
   };
 
-  const formattedTestimonials: Testimonial[] = feedbacks.map((fb) => ({
-    id: fb.id,
-    quote: fb.message,
-    name: "User",
-    designation: `${fb.rating}/5 Stars - ${fb.category}`,
-    src: fb.email || "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800&q=80"
-  }));
+  const formattedTestimonials: Testimonial[] = feedbacks.map((fb) => {
+    let name = "Anonymous User";
+    let src = "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800&q=80";
+    
+    if (fb.email && fb.email.includes('||')) {
+      const parts = fb.email.split('||');
+      name = parts[0] || name;
+      src = parts[1] || src;
+    } else if (fb.email) {
+      src = fb.email; // Fallback if it was just a URL
+    }
+
+    return {
+      id: fb.id,
+      quote: fb.message,
+      name: name,
+      designation: `${fb.rating}/5 Stars - ${fb.category}`,
+      src: src
+    };
+  });
 
   const nextFeedback = () => {
     setCurrentIndex((prev) => (prev + 1) % feedbacks.length);
