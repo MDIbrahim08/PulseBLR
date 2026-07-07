@@ -262,7 +262,7 @@ export default function Planner() {
             className="flex flex-col items-center text-center w-full max-w-[1000px] px-4"
           >
             {/* Headline */}
-            <h1 className="font-fustat font-bold text-[60px] md:text-[80px] text-black drop-shadow-sm leading-none tracking-[-4.8px] mb-[34px]">
+            <h1 className="font-fustat font-bold text-[44px] sm:text-[60px] md:text-[80px] text-black drop-shadow-sm leading-[1.1] md:leading-none tracking-[-2px] md:tracking-[-4.8px] mb-[20px] md:mb-[34px]">
               Master Commutes Quickly
             </h1>
 
@@ -275,10 +275,10 @@ export default function Planner() {
             <div className="w-full max-w-[728px] h-auto min-h-[220px] rounded-[18px] bg-black/40 backdrop-blur-xl p-5 flex flex-col justify-between shadow-2xl border border-white/20">
               
               {/* Top Row: Commute Inputs */}
-              <div className="flex flex-wrap gap-y-3 justify-between items-center px-2 mb-4">
-                <div className="flex flex-wrap items-center gap-4 md:gap-6 text-white font-schibsted font-medium text-[14px]">
-                  <div className="flex items-center gap-2">
-                    <MapPin size={16} className="text-white/80" />
+              <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center px-2 mb-4 w-full">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 text-white font-schibsted font-medium text-[14px] w-full md:w-auto">
+                  <div className="flex items-center gap-2 w-full md:w-auto">
+                    <MapPin size={16} className="text-white/80 shrink-0" />
                     <input 
                       type="text" 
                       value={currentAddress}
@@ -297,9 +297,9 @@ export default function Planner() {
                       placeholder="Destination"
                     />
                   </div>
-                  <div className="flex items-center gap-2 ml-2 md:ml-4 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" onClick={() => setAvoidTollsOrTraffic(!avoidTollsOrTraffic)}>
-                    <div className={`w-4 h-4 rounded-sm border ${avoidTollsOrTraffic ? 'bg-[#5AE14C] border-[#5AE14C]' : 'border-white/40'} flex items-center justify-center transition-all`}>
-                      {avoidTollsOrTraffic && <CheckCircle2 size={12} className="text-black" />}
+                  <div className="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" onClick={() => setAvoidTollsOrTraffic(!avoidTollsOrTraffic)}>
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${avoidTollsOrTraffic ? 'bg-pulse-500 border-pulse-500' : 'border-white/50'}`}>
+                      {avoidTollsOrTraffic && <CheckCircle2 size={12} className="text-white" />}
                     </div>
                     <span className="text-white/80 text-sm">Avoid Tolls & Traffic</span>
                   </div>
@@ -398,7 +398,7 @@ export default function Planner() {
                     </div>
                   )}
 
-                  <div className={`max-w-[85%] overflow-hidden ${msg.role === 'user' ? 'bg-pulse-600/90 text-white px-5 py-3 rounded-2xl rounded-tr-sm backdrop-blur-md shadow-lg border border-pulse-400/30' : 'bg-black/40 backdrop-blur-md border border-white/10 text-white/90 px-6 py-5 rounded-3xl rounded-tl-sm shadow-xl'}`}>
+                  <div className={`w-full md:max-w-[85%] overflow-hidden ${msg.role === 'user' ? 'bg-pulse-600/90 text-white px-5 py-3 rounded-2xl rounded-tr-sm backdrop-blur-md shadow-lg border border-pulse-400/30' : 'bg-black/40 backdrop-blur-md border border-white/10 text-white/90 px-4 sm:px-6 py-4 sm:py-5 rounded-3xl rounded-tl-sm shadow-xl'}`}>
                     {msg.isStructuredRec ? (
                       <div className="space-y-6">
                         <div className="flex items-center gap-3">
@@ -421,7 +421,7 @@ export default function Planner() {
                             </div>
 
                             {/* Transport, Cost, & Confidence Row */}
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                               <div className="bg-pulse-500/10 p-4 rounded-xl border border-pulse-500/20 flex flex-col">
                                 <span className="text-pulse-400 text-xs font-bold uppercase tracking-wider mb-1">Transport</span>
                                 <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.recommendedTransport}</span>
@@ -548,7 +548,7 @@ export default function Planner() {
             </div>
 
             {/* Chat Input */}
-            <div className="p-4 bg-black/20 border-t border-white/10 backdrop-blur-lg">
+            <div className="p-3 md:p-4 bg-black/40 border-t border-white/10 backdrop-blur-xl shrink-0 pb-6 md:pb-4">
               <form onSubmit={handleChatSubmit} className="relative flex items-center">
                 <input
                   type="text"

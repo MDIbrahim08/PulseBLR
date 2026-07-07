@@ -72,15 +72,16 @@ export default function VideoBackground() {
   }, []);
 
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden bg-black pointer-events-none">
+    <div className="absolute inset-0 z-0 overflow-hidden bg-[#0a0a0a] pointer-events-none">
       <video
         ref={videoRef}
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260329_050842_be71947f-f16e-4a14-810c-06e83d23ddb5.mp4"
         muted
         playsInline
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[115%] h-[115%] object-cover object-top max-w-none"
+        className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 w-[115%] h-[115%] object-cover object-top max-w-none"
         style={{ opacity: 0 }} // Start hidden for manual fade logic
       />
+      <div className="md:hidden absolute inset-0 w-full h-full bg-gradient-to-b from-[#1a1a1a] to-black" />
     </div>
   );
 }
