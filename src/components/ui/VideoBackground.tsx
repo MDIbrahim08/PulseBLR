@@ -92,8 +92,9 @@ export default function VideoBackground() {
           style={{ opacity: 0 }} // Start hidden for manual fade logic
         />
       )}
-      <div className="md:hidden absolute inset-0 w-full h-full bg-[linear-gradient(120deg,#e0c3fc_0%,#8ec5fc_100%)] opacity-80" style={{ animation: "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite" }} />
-      <div className="md:hidden absolute inset-0 w-full h-full bg-white/30 backdrop-blur-sm" />
+      {/* Vibrant mobile fallback background */}
+      <div className="md:hidden absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 animate-pulse" />
+      <div className="md:hidden absolute inset-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-pulse-500/20 via-transparent to-transparent opacity-60" />
     </div>
   );
 }
