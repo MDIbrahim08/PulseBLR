@@ -13,7 +13,6 @@ export default function FeedbackPage() {
   const [step, setStep] = useState(0); // 0: slider, 1: text form, 2: thank you
   const [emotion, setEmotion] = useState(1); // 0: bad, 1: mid, 2: good
   const [message, setMessage] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
@@ -32,8 +31,7 @@ export default function FeedbackPage() {
         { 
           rating,
           category: 'User Journey',
-          message: message.trim(),
-          email: avatarUrl.trim() || null
+          message: message.trim()
         }
       ]);
 
@@ -103,19 +101,8 @@ export default function FeedbackPage() {
                   if (submitError) setSubmitError('');
                 }}
                 placeholder="I really loved how..."
-                className="min-h-[120px] bg-white/10 border-white/20 text-white placeholder:text-white/40 rounded-xl"
+                className="min-h-[150px] bg-white/10 border-white/20 text-white placeholder:text-white/40 rounded-xl"
               />
-
-              <div className="w-full flex flex-col items-start space-y-2">
-                <label className="text-sm text-white/70 font-medium">Profile Image URL (Optional)</label>
-                <input 
-                  type="text"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  placeholder="https://example.com/avatar.jpg"
-                  className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/30 rounded-xl px-4 py-3 outline-none focus:border-pulse-500 transition-colors text-sm"
-                />
-              </div>
 
               {submitError && (
                 <div className="w-full text-red-400 text-sm text-center bg-red-500/10 py-2 rounded-lg border border-red-500/20">
