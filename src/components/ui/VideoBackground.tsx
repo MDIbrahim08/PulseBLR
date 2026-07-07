@@ -82,19 +82,14 @@ export default function VideoBackground() {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-[#0a0a0a] pointer-events-none">
-      {!isMobile && (
-        <video
-          ref={videoRef}
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260329_050842_be71947f-f16e-4a14-810c-06e83d23ddb5.mp4"
-          muted
-          playsInline
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[115%] h-[115%] object-cover object-top max-w-none"
-          style={{ opacity: 0 }} // Start hidden for manual fade logic
-        />
-      )}
-      {/* Vibrant mobile fallback background */}
-      <div className="md:hidden absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 animate-pulse" />
-      <div className="md:hidden absolute inset-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-pulse-500/20 via-transparent to-transparent opacity-60" />
+      <video
+        ref={videoRef}
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260329_050842_be71947f-f16e-4a14-810c-06e83d23ddb5.mp4"
+        muted
+        playsInline
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[115%] h-[115%] object-cover object-top max-w-none"
+        style={{ opacity: 0 }} // Start hidden for manual fade logic
+      />
     </div>
   );
 }
