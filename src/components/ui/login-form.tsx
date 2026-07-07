@@ -207,6 +207,16 @@ export function LoginForm() {
     }, 2500);
   };
 
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/home');
+      }
+    };
+    checkSession();
+  }, [navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
