@@ -13,11 +13,13 @@ export default function FeedbackPage() {
   const [emotion, setEmotion] = useState(1); // 0: bad, 1: mid, 2: good
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [messageIndex, setMessageIndex] = useState(0);
 
   const handleSubmit = async () => {
     if (!message.trim()) return;
     setIsSubmitting(true);
+    setSubmitError('');
     
     // Map emotion to rating (1-5 scale)
     const ratingMap = [1, 3, 5]; 
@@ -39,7 +41,7 @@ export default function FeedbackPage() {
       setStep(2);
     } else {
       console.error(error);
-      alert("Failed to submit feedback. Please try again.");
+      setSubmitError(error.message || "Failed to submit feedback. Please try again.");
     }
   };
 
@@ -95,10 +97,19 @@ export default function FeedbackPage() {
 
               <Textarea 
                 value={message}
-                onChange={(val) => setMessage(val || '')}
+                onChange={(val) => {
+                  setMessage(val || '');
+                  if (submitError) setSubmitError('');
+                }}
                 placeholder="I really loved how..."
                 className="min-h-[150px] bg-white/10 border-white/20 text-white placeholder:text-white/40 rounded-xl"
               />
+
+              {submitError && (
+                <div className="w-full text-red-400 text-sm text-center bg-red-500/10 py-2 rounded-lg border border-red-500/20">
+                  {submitError}
+                </div>
+              )}
 
               <div className="flex gap-4 w-full">
                 <Button 
