@@ -110,10 +110,10 @@ export default function FeedbackPage() {
                 </Button>
                 <Button 
                   onClick={handleSubmit}
-                  disabled={!message.trim() || isSubmitting}
+                  disabled={message.trim().length < 10 || isSubmitting}
                   className="flex-1 flex items-center justify-center bg-pulse-500 hover:bg-pulse-600 text-white gap-2 rounded-xl py-3 shadow-lg shadow-pulse-500/20 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Sending...' : 'Submit'} <Send size={16} />
+                  {isSubmitting ? 'Sending...' : message.trim().length < 10 ? 'Keep typing...' : 'Submit'} <Send size={16} />
                 </Button>
               </div>
             </motion.div>
@@ -201,19 +201,25 @@ export default function FeedbackPage() {
 
 const goodMessages = [
   { title: "Benki! 🔥", desc: "Macha, you made our day! We're thrilled you had a bombat experience with PulseBLR." },
+  { title: "Thank you! 🙏", desc: "We truly appreciate your valuable feedback and continued support." },
   { title: "Sakkath! 🚀", desc: "Thanks for the love! Keep cruising through the traffic like a boss." },
   { title: "You are awesome! 🎉", desc: "Glad we could save you from the Silk Board madness today." },
+  { title: "Grateful for you 🌟", desc: "Your positive feedback fuels our team to build even better features for you." },
   { title: "Bombat Guru! 💯", desc: "We love hearing this! PulseBLR is always here to make your commute smooth." }
 ];
 
 const midMessages = [
   { title: "Got it! 🛠️", desc: "Thanks macha, we've noted this down. We'll tune it up to make it bombat next time." },
+  { title: "Thank you for sharing.", desc: "We are committed to improving your experience based on your insights." },
   { title: "Fair enough. 🤔", desc: "Every bit of feedback helps us improve. We'll try to wow you next time!" },
+  { title: "Feedback received 📝", desc: "We appreciate your honest thoughts. Our team will review this closely." },
   { title: "Thanks for sharing!", desc: "We'll work on smoothing out the bumps for your next ride." }
 ];
 
 const badMessages = [
   { title: "Aiyo! 🤦", desc: "Yappa, our bad! We're sorry it wasn't a perfect trip. We'll fix this immediately." },
+  { title: "Our sincere apologies.", desc: "We deeply apologize for the inconvenience. Your feedback is crucial for our improvement." },
   { title: "Sorry guru. 😔", desc: "That's completely on us. We're actively working on making this better." },
+  { title: "We hear you. 📉", desc: "Thank you for bringing this to our attention. We are taking immediate steps to resolve it." },
   { title: "Oof! 🚨", desc: "Traffic is bad enough, our app shouldn't be. Thanks for the heads up, we'll sort it out!" }
 ];
