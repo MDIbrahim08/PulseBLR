@@ -264,8 +264,8 @@ const Inline = ({ label }: { label: string }) => {
   return (
     <div
       className={clsx(
-        "bg-background-100 shadow-border-small duration-200 overflow-hidden w-fit flex flex-col justify-start z-50",
-        expanded ? "max-h-[243px] rounded-xl" : "max-h-12 rounded-[30px]"
+        "bg-background-100 shadow-border-small duration-200 w-fit flex flex-col justify-start z-50",
+        expanded ? "max-h-[350px] overflow-y-auto overflow-x-hidden rounded-xl" : "max-h-12 overflow-hidden rounded-[30px]"
       )}
       ref={ref}
     >
