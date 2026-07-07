@@ -78,11 +78,14 @@ const HandDrawnSmileIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export interface FeedbackSliderProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+  extends React.HTMLAttributes<HTMLDivElement> {
+  value?: number;
+  onChange?: (value: number) => void;
+}
 
 const FeedbackSlider = React.forwardRef<HTMLDivElement, FeedbackSliderProps>(
-  ({ className, ...props }, ref) => {
-    const [selectedIndex, setSelectedIndex] = useState(0);
+  ({ className, value, onChange, ...props }, ref) => {
+    const [selectedIndex, setSelectedIndex] = useState(value !== undefined ? value : 1);
     const currentAnim = animationStates[selectedIndex];
     const transition = { type: "spring", stiffness: 300, damping: 30 };
 
@@ -161,7 +164,10 @@ const FeedbackSlider = React.forwardRef<HTMLDivElement, FeedbackSliderProps>(
                 <button
                   key={i}
                   className="z-[2] h-6 w-6 rounded-full cursor-pointer hover:scale-125 transition-transform"
-                  onClick={() => setSelectedIndex(i)}
+                  onClick={() => {
+                    setSelectedIndex(i);
+                    onChange?.(i);
+                  }}
                   style={{ backgroundColor: currentAnim.trackColor }}
                 />
               ))}

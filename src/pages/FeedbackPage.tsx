@@ -1,70 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, CheckCircle2, Heart, Send, Frown, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import FeedbackSlider from '../components/ui/feedback-slider';
-import { Feedback } from '../components/ui/feedback';
-import { TestimonialCarousel } from '../components/ui/testimonial';
-import type { TestimonialData } from '../components/ui/testimonial';
+import { Button } from '../components/ui/button-1';
+import { Textarea } from '../components/ui/textarea';
 import { supabase } from '../lib/supabase';
-
-const fallbackReviews: TestimonialData[] = [
-  {
-    id: 1,
-    name: "Arjun Reddy",
-    role: "Route Suggestions",
-    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=arjun",
-    quote: "PulseBLR completely changed my commute to RMZ Ecospace. It suggested taking the metro and a short auto ride instead of sitting in traffic for 2 hours on ORR. Pure magic!",
-    accent: "#38bdf8"
-  },
-  {
-    id: 2,
-    name: "Priya Sharma",
-    role: "Feature Request",
-    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=priya",
-    quote: "I love the 'Avoid Tolls & Traffic' feature. It found a backroad through Indiranagar that I didn't even know existed. Saves me 25 minutes every morning.",
-    accent: "#a855f7"
-  }
-];
 
 export default function FeedbackPage() {
   const navigate = useNavigate();
-  const [reviews, setReviews] = useState<TestimonialData[]>(fallbackReviews);
+  const [step, setStep] = useState(0); // 0: slider, 1: text form, 2: thank you
+  const [emotion, setEmotion] = useState(1); // 0: bad, 1: mid, 2: good
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      const { data, error } = await supabase
-        .from('feedback')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-      
-      if (data && !error) {
-        const formattedReviews: TestimonialData[] = data.map((item) => ({
-          id: item.id,
-          name: item.email ? item.email.split('@')[0] : 'PulseBLR User',
-          role: item.category,
-          quote: item.message,
-          avatar: `https://api.dicebear.com/7.x/notionists/svg?seed=${item.id}`,
-          accent: "#38bdf8"
-        }));
-        
-        // If we have real reviews, show them. Otherwise fallback to placeholders.
-        if (formattedReviews.length > 0) {
-          setReviews(formattedReviews);
-        } else {
-          setReviews(fallbackReviews);
-        }
-      } else {
-        setReviews(fallbackReviews);
-      }
-    };
+  const handleSubmit = async () => {
+    if (!message.trim()) return;
+    setIsSubmitting(true);
     
-    fetchReviews();
-  }, []);
+    // Map emotion to rating (1-5 scale)
+    const ratingMap = [1, 3, 5]; 
+    const rating = ratingMap[emotion];
+
+    const { error } = await supabase
+      .from('feedback')
+      .insert([
+        { 
+          rating,
+          category: 'User Journey',
+          message: message.trim()
+        }
+      ]);
+
+    setIsSubmitting(false);
+    if (!error) {
+      setStep(2);
+    } else {
+      console.error(error);
+      alert("Failed to submit feedback. Please try again.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#020617] text-white flex flex-col relative overflow-x-hidden font-inter">
-      {/* Top Navigation */}
       <nav className="flex items-center p-6 md:px-12 relative z-10 w-full">
         <button 
           onClick={() => navigate('/dashboard')}
@@ -75,33 +55,139 @@ export default function FeedbackPage() {
         </button>
       </nav>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col items-center justify-start relative z-10 w-full px-4 md:px-8 py-4 md:py-8 space-y-12 md:space-y-24 pb-32">
-        
-        {/* Step 1: Overall Experience Slider */}
-        <div className="w-full max-w-lg h-[400px] md:h-[500px] max-h-[70vh] flex flex-col items-center space-y-4">
-          <FeedbackSlider className="w-full h-full" />
-        </div>
+      <main className="flex-1 flex flex-col items-center justify-start relative z-10 w-full px-4 md:px-8 py-8 md:py-16">
+        <AnimatePresence mode="wait">
+          
+          {step === 0 && (
+            <motion.div 
+              key="step-0"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+              transition={{ duration: 0.4 }}
+              className="w-full max-w-lg flex flex-col items-center space-y-8"
+            >
+              <div className="h-[400px] md:h-[500px] max-h-[70vh] w-full">
+                <FeedbackSlider value={emotion} onChange={setEmotion} className="w-full h-full" />
+              </div>
+              <Button 
+                onClick={() => setStep(1)}
+                className="w-full max-w-[200px] text-lg py-6 bg-pulse-500 hover:bg-pulse-600 text-white rounded-full shadow-lg shadow-pulse-500/20"
+              >
+                Continue
+              </Button>
+            </motion.div>
+          )}
 
-        {/* Step 2: Inline Quick Feedback for thoughts/bugs */}
-        <div className="w-full max-w-lg flex flex-col items-center pt-8 space-y-4">
-          <h4 className="text-white/80 font-medium mb-4 text-center">Tell us what you loved or what we can improve</h4>
-          <div className="bg-white rounded-3xl p-2 w-full flex justify-center">
-            <Feedback type="inline" label="Write a review" />
-          </div>
-        </div>
+          {step === 1 && (
+            <motion.div 
+              key="step-1"
+              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.4 }}
+              className="w-full max-w-lg flex flex-col items-center space-y-6 bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-md"
+            >
+              <div className="text-center space-y-2">
+                <h3 className="text-2xl font-semibold">Tell us more</h3>
+                <p className="text-white/60">What made your experience {emotion === 0 ? 'bad' : emotion === 1 ? 'just okay' : 'great'}?</p>
+              </div>
 
-        {/* Step 3: Real User Testimonials */}
-        <div className="w-full max-w-4xl pt-16 flex flex-col items-center border-t border-white/10">
-          <h4 className="text-white font-semibold text-3xl mb-12 text-center">Community Suggestions</h4>
-          <TestimonialCarousel 
-            items={reviews} 
-            autoplay={true}
-            autoplayMs={4000}
-            variant="card"
-          />
-        </div>
-        
+              <Textarea 
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="I really loved how..."
+                className="min-h-[150px] bg-white/10 border-white/20 text-white placeholder:text-white/40 rounded-xl"
+              />
+
+              <div className="flex gap-4 w-full">
+                <Button 
+                  onClick={() => setStep(0)}
+                  variant="outline"
+                  className="flex-1 border-white/20 text-white hover:bg-white/10"
+                >
+                  Back
+                </Button>
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={!message.trim() || isSubmitting}
+                  className="flex-1 bg-pulse-500 hover:bg-pulse-600 text-white gap-2"
+                >
+                  {isSubmitting ? 'Sending...' : 'Submit'} <Send size={16} />
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div 
+              key="step-2"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: 'spring', bounce: 0.5, duration: 0.6 }}
+              className="w-full max-w-md flex flex-col items-center text-center space-y-6"
+            >
+              {emotion === 2 && (
+                <div className="relative">
+                  <motion.div 
+                    animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
+                    transition={{ duration: 1, repeat: Infinity, repeatDelay: 1 }}
+                    className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center text-green-400"
+                  >
+                    <Heart size={48} className="fill-green-400" />
+                  </motion.div>
+                  <motion.div 
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 bg-green-500/10 rounded-full blur-xl -z-10"
+                  />
+                </div>
+              )}
+
+              {emotion === 1 && (
+                <motion.div 
+                  initial={{ y: -20 }}
+                  animate={{ y: 0 }}
+                  className="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-400"
+                >
+                  <CheckCircle2 size={48} />
+                </motion.div>
+              )}
+
+              {emotion === 0 && (
+                <motion.div 
+                  initial={{ rotate: -180, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  transition={{ type: 'spring' }}
+                  className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center text-red-400"
+                >
+                  <Frown size={48} />
+                </motion.div>
+              )}
+
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold">
+                  {emotion === 2 ? 'You are awesome! 🎉' : emotion === 1 ? 'Thanks for sharing!' : 'We hear you.'}
+                </h2>
+                <p className="text-white/60 text-lg">
+                  {emotion === 2 
+                    ? "We're thrilled you had a great experience with PulseBLR." 
+                    : emotion === 1 
+                      ? "Every bit of feedback helps us improve." 
+                      : "We're sorry it wasn't a perfect trip. We'll work on fixing this immediately."}
+                </p>
+              </div>
+
+              <Button 
+                onClick={() => navigate('/dashboard')}
+                className="mt-8 bg-white text-black hover:bg-gray-200 rounded-full px-8 py-6"
+              >
+                Back to Dashboard
+              </Button>
+            </motion.div>
+          )}
+
+        </AnimatePresence>
       </main>
 
       {/* Ambient Background Effects */}
