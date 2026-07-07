@@ -84,6 +84,12 @@ export default function Dashboard() {
                <MessageSquareHeart size={14} className="opacity-60" />
                Feedback
              </button>
+             <button 
+               onClick={() => navigate('/admin/feedbacks')} 
+               className="flex items-center gap-1 transition-all duration-300 relative hover:text-black/80 text-orange-600 font-semibold"
+             >
+               Admin Portal
+             </button>
           </nav>
 
           {/* Actions */}
