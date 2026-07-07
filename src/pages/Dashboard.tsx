@@ -10,8 +10,8 @@ import TextThree from '../components/ui/text-three';
 export default function Dashboard() {
   const [userName, setUserName] = useState<string | null>(null);
   
-  // Only show splash if we haven't shown it this session
-  const shouldShowSplash = !sessionStorage.getItem('hasShownSplash');
+  // Only show splash if we haven't shown it ever (or we can use localStorage to persist across tabs)
+  const shouldShowSplash = !localStorage.getItem('hasShownSplash');
   const [showSplash, setShowSplash] = useState(shouldShowSplash);
   
   const navigate = useNavigate();
@@ -26,10 +26,12 @@ export default function Dashboard() {
     fetchUser();
     
     if (shouldShowSplash) {
+      // Mark it immediately so if they navigate away quickly it doesn't trigger again later
+      localStorage.setItem('hasShownSplash', 'true');
+      
       // Hide splash screen after 3.5 seconds
       const timer = setTimeout(() => {
         setShowSplash(false);
-        sessionStorage.setItem('hasShownSplash', 'true');
       }, 3500);
       return () => clearTimeout(timer);
     }
