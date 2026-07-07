@@ -109,6 +109,22 @@ const callLLM = async (prompt: string): Promise<string> => {
   throw new Error('All LLM providers failed');
 };
 
+const isTimeInPast = (timeStr: string): boolean => {
+  const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!match) return false;
+  let h = parseInt(match[1]);
+  const m = parseInt(match[2]);
+  const ampm = match[3].toUpperCase();
+  if (ampm === 'PM' && h < 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+
+  const now = new Date();
+  const target = new Date();
+  target.setHours(h, m, 0, 0);
+
+  return target.getTime() < now.getTime();
+};
+
 const safeParseJSON = (text: string, timeString: string, destination: string, origin: string, weather: string, traffic: string, timeMode: string = 'Arrive By') => {
   // Parse timeString like "09:00 AM" 
   const match = timeString.match(/(\d+):(\d+)\s*(AM|PM)/i);
@@ -174,6 +190,12 @@ const safeParseJSON = (text: string, timeString: string, destination: string, or
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
+      
+      if (parsed.recommendedDeparture && isTimeInPast(parsed.recommendedDeparture)) {
+         parsed.recommendedDeparture = "Now";
+         parsed.explanation = `⚠️ Your target time has already passed! You should leave NOW to get there as quickly as possible. \n\n${parsed.explanation}`;
+      }
+      
       return { ...defaults, ...parsed };
     }
     return defaults;
@@ -299,7 +321,7 @@ Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
 ALL times must include AM or PM. Never output 24-hour time.
-CRITICAL TEMPORAL RULE: If the mathematical departure time you calculated is IN THE PAST compared to the "Current Clock Time", you MUST set the "recommendedDeparture" to "Now" and explicitly warn the user in the "explanation" that they are running late and will miss their target arrival time.
+CRITICAL TEMPORAL RULE: The Current Clock Time is exactly ${currentActualTime}. YOU MUST NOT SUGGEST A DEPARTURE TIME IN THE PAST. If the user's requested time or calculated departure time is earlier than ${currentActualTime} today, you MUST set "recommendedDeparture" to "Now" and explicitly explain in the "explanation" that their target time has already passed.
 IMPORTANT CRITICAL RULE: DO NOT copy ANY text, times, or transport modes from the JSON example below. You MUST mathematically calculate times, dynamically determine the "recommendedTransport", and generate fresh, context-aware "reasoning", "alternativeRoute", and "disclaimer".
 
 Output JSON EXACTLY like this (NO markdown, raw JSON only):
