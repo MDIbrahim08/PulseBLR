@@ -7,9 +7,28 @@ import { TestimonialCarousel } from '../components/ui/testimonial';
 import type { TestimonialData } from '../components/ui/testimonial';
 import { supabase } from '../lib/supabase';
 
+const fallbackReviews: TestimonialData[] = [
+  {
+    id: 1,
+    name: "Arjun Reddy",
+    role: "Route Suggestions",
+    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=arjun",
+    quote: "PulseBLR completely changed my commute to RMZ Ecospace. It suggested taking the metro and a short auto ride instead of sitting in traffic for 2 hours on ORR. Pure magic!",
+    accent: "#38bdf8"
+  },
+  {
+    id: 2,
+    name: "Priya Sharma",
+    role: "Feature Request",
+    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=priya",
+    quote: "I love the 'Avoid Tolls & Traffic' feature. It found a backroad through Indiranagar that I didn't even know existed. Saves me 25 minutes every morning.",
+    accent: "#a855f7"
+  }
+];
+
 export default function FeedbackPage() {
   const navigate = useNavigate();
-  const [reviews, setReviews] = useState<TestimonialData[]>([]);
+  const [reviews, setReviews] = useState<TestimonialData[]>(fallbackReviews);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -91,22 +110,3 @@ export default function FeedbackPage() {
     </div>
   );
 }
-
-const fallbackReviews: TestimonialData[] = [
-  {
-    id: 1,
-    name: "Arjun Reddy",
-    role: "Route Suggestions",
-    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=arjun",
-    quote: "PulseBLR completely changed my commute to RMZ Ecospace. It suggested taking the metro and a short auto ride instead of sitting in traffic for 2 hours on ORR. Pure magic!",
-    accent: "#38bdf8"
-  },
-  {
-    id: 2,
-    name: "Priya Sharma",
-    role: "Feature Request",
-    avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=priya",
-    quote: "I love the 'Avoid Tolls & Traffic' feature. It found a backroad through Indiranagar that I didn't even know existed. Saves me 25 minutes every morning.",
-    accent: "#a855f7"
-  }
-];
