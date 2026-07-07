@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import FeedbackSlider from '@/components/ui/feedback-slider';
-import { Feedback } from '@/components/ui/feedback';
+import FeedbackSlider from '../components/ui/feedback-slider';
+import { Feedback } from '../components/ui/feedback';
 
 export default function FeedbackPage() {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Error } from "@/components/ui/error";
+import { Error } from "./error";
 import clsx from "clsx";
 
 interface TextareaProps {

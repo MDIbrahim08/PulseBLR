@@ -1,7 +1,8 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { TestimonialCarousel, TestimonialData } from '@/components/ui/testimonial';
+import { TestimonialCarousel } from '../components/ui/testimonial';
+import type { TestimonialData } from '../components/ui/testimonial';
 
 const fakeReviews: TestimonialData[] = [
   {

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button-1";
-import { Material } from "@/components/ui/material-1";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "./button-1";
+import { Material } from "./material-1";
+import { Textarea } from "./textarea";
 import clsx from "clsx";
-import { useClickOutside } from "@/components/ui/use-click-outside";
+import { useClickOutside } from "./use-click-outside";
 
 interface FeedbackProps {
   label: string;
@@ -175,7 +175,7 @@ const Default = ({ label }: { label: string }) => {
                   "group hover:!bg-blue-300 hover:fill-blue-900 !w-8 !h-8 p-0 duration-200",
                   selectedEmoji === 0 ? "!bg-blue-300 fill-blue-900" : "bg-transparent fill-gray-900"
                 )}
-                onClick={(event) => {
+                onClick={(event: any) => {
                   event.preventDefault();
                   setSelectedEmoji(selectedEmoji === 0 ? null : 0);
                 }}
@@ -193,7 +193,7 @@ const Default = ({ label }: { label: string }) => {
                   "hover:!bg-blue-300 hover:fill-blue-900 !w-8 !h-8 p-0 duration-200",
                   selectedEmoji === 1 ? "!bg-blue-300 fill-blue-900" : "bg-transparent fill-gray-900"
                 )}
-                onClick={(event) => {
+                onClick={(event: any) => {
                   event.preventDefault();
                   setSelectedEmoji(selectedEmoji === 1 ? null : 1);
                 }}
@@ -208,7 +208,7 @@ const Default = ({ label }: { label: string }) => {
                   "hover:!bg-blue-300 hover:fill-blue-900 !w-8 !h-8 p-0 duration-200",
                   selectedEmoji === 2 ? "!bg-blue-300 fill-blue-900" : "bg-transparent fill-gray-900"
                 )}
-                onClick={(event) => {
+                onClick={(event: any) => {
                   event.preventDefault();
                   setSelectedEmoji(selectedEmoji === 2 ? null : 2);
                 }}
@@ -223,7 +223,7 @@ const Default = ({ label }: { label: string }) => {
                   "hover:!bg-blue-300 hover:fill-blue-900 !w-8 !h-8 p-0 duration-200",
                   selectedEmoji === 3 ? "!bg-blue-300 fill-blue-900" : "bg-transparent fill-gray-900"
                 )}
-                onClick={(event) => {
+                onClick={(event: any) => {
                   event.preventDefault();
                   setSelectedEmoji(selectedEmoji === 3 ? null : 3);
                 }}
@@ -281,7 +281,7 @@ const Inline = ({ label }: { label: string }) => {
                 "group hover:!bg-blue-300 hover:fill-blue-900 !w-8 !h-8 p-0 duration-200",
                 selectedEmoji === 0 ? "!bg-blue-300 fill-blue-900" : "bg-transparent fill-gray-900"
               )}
-              onClick={(event) => {
+              onClick={(event: any) => {
                 event.preventDefault();
                 setSelectedEmoji(selectedEmoji === 0 ? null : 0);
                 setExpanded(selectedEmoji !== 0);
@@ -300,7 +300,7 @@ const Inline = ({ label }: { label: string }) => {
                 "hover:!bg-blue-300 hover:fill-blue-900 !w-8 !h-8 p-0 duration-200",
                 selectedEmoji === 1 ? "!bg-blue-300 fill-blue-900" : "bg-transparent fill-gray-900"
               )}
-              onClick={(event) => {
+              onClick={(event: any) => {
                 event.preventDefault();
                 setSelectedEmoji(selectedEmoji === 1 ? null : 1);
                 setExpanded(selectedEmoji !== 1);
@@ -316,7 +316,7 @@ const Inline = ({ label }: { label: string }) => {
                 "hover:!bg-blue-300 hover:fill-blue-900 !w-8 !h-8 p-0 duration-200",
                 selectedEmoji === 2 ? "!bg-blue-300 fill-blue-900" : "bg-transparent fill-gray-900"
               )}
-              onClick={(event) => {
+              onClick={(event: any) => {
                 event.preventDefault();
                 setSelectedEmoji(selectedEmoji === 2 ? null : 2);
                 setExpanded(selectedEmoji !== 2);
@@ -332,7 +332,7 @@ const Inline = ({ label }: { label: string }) => {
                 "hover:!bg-blue-300 hover:fill-blue-900 !w-8 !h-8 p-0 duration-200",
                 selectedEmoji === 3 ? "!bg-blue-300 fill-blue-900" : "bg-transparent fill-gray-900"
               )}
-              onClick={(event) => {
+              onClick={(event: any) => {
                 event.preventDefault();
                 setSelectedEmoji(selectedEmoji === 3 ? null : 3);
                 setExpanded(selectedEmoji !== 3);

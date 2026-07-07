@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 export type TestimonialData = {
   id?: React.Key;
