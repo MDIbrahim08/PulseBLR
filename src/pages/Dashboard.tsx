@@ -5,23 +5,44 @@ import { useNavigate } from 'react-router-dom';
 import Planner from '../components/Planner';
 import { supabase } from '../lib/supabase';
 import VideoBackground from '../components/ui/VideoBackground';
+import TextThree from '../components/ui/text-three';
 
 export default function Dashboard() {
   const [userName, setUserName] = useState<string | null>(null);
+  const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.user_metadata?.full_name) {
-        setUserName(session.user.user_metadata.full_name);
+        setUserName(session.user.user_metadata.full_name.split(' ')[0]);
       }
     };
     fetchUser();
+    
+    // Hide splash screen after 3.5 seconds
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3500);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="relative min-h-screen w-full bg-black overflow-hidden font-sans">
+      <AnimatePresence>
+        {showSplash && (
+          <motion.div 
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="absolute inset-0 z-[100] bg-black flex items-center justify-center"
+          >
+            <TextThree text={`Namaste ${userName || 'World'}!`} />
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Video Background Layer */}
       <VideoBackground />
