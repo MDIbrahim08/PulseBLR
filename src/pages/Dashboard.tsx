@@ -9,7 +9,11 @@ import TextThree from '../components/ui/text-three';
 
 export default function Dashboard() {
   const [userName, setUserName] = useState<string | null>(null);
-  const [showSplash, setShowSplash] = useState(true);
+  
+  // Only show splash if we haven't shown it this session
+  const shouldShowSplash = !sessionStorage.getItem('hasShownSplash');
+  const [showSplash, setShowSplash] = useState(shouldShowSplash);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,13 +25,15 @@ export default function Dashboard() {
     };
     fetchUser();
     
-    // Hide splash screen after 3.5 seconds
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 3500);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    if (shouldShowSplash) {
+      // Hide splash screen after 3.5 seconds
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+        sessionStorage.setItem('hasShownSplash', 'true');
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldShowSplash]);
 
   return (
     <div className="relative min-h-screen w-full bg-black overflow-hidden font-sans">
