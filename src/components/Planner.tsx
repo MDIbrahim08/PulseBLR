@@ -275,33 +275,33 @@ export default function Planner() {
             <div className="w-full max-w-[728px] h-auto min-h-[220px] rounded-[18px] bg-black/40 backdrop-blur-xl p-5 flex flex-col justify-between shadow-2xl border border-white/20">
               
               {/* Top Row: Commute Inputs */}
-              <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center px-2 mb-4 w-full">
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 text-white font-schibsted font-medium text-[14px] w-full md:w-auto">
-                  <div className="flex items-center gap-2 w-full md:w-auto">
+              <div className="flex flex-col xl:flex-row gap-4 justify-between items-start xl:items-center px-2 mb-4 w-full">
+                <div className="flex flex-wrap items-center gap-4 md:gap-6 text-white font-schibsted font-medium text-[14px] w-full xl:w-auto">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <MapPin size={16} className="text-white/80 shrink-0" />
                     <input 
                       type="text" 
                       value={currentAddress}
                       onChange={e => setCurrentAddress(e.target.value)}
-                      className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-[160px] md:w-[180px] text-white placeholder-white/60 pb-1"
+                      className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-full sm:w-[160px] md:w-[180px] text-white placeholder-white/60 pb-1"
                       placeholder="Origin"
                     />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Search size={16} className="text-white/80" />
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <Search size={16} className="text-white/80 shrink-0" />
                     <input 
                       type="text" 
                       value={destination}
                       onChange={e => setDestination(e.target.value)}
-                      className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-[160px] md:w-[180px] text-white placeholder-white/60 pb-1"
+                      className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-full sm:w-[160px] md:w-[180px] text-white placeholder-white/60 pb-1"
                       placeholder="Destination"
                     />
                   </div>
-                  <div className="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" onClick={() => setAvoidTollsOrTraffic(!avoidTollsOrTraffic)}>
-                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${avoidTollsOrTraffic ? 'bg-pulse-500 border-pulse-500' : 'border-white/50'}`}>
+                  <div className="flex items-center gap-2 w-auto bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors cursor-pointer" onClick={() => setAvoidTollsOrTraffic(!avoidTollsOrTraffic)}>
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors shrink-0 ${avoidTollsOrTraffic ? 'bg-pulse-500 border-pulse-500' : 'border-white/50'}`}>
                       {avoidTollsOrTraffic && <CheckCircle2 size={12} className="text-white" />}
                     </div>
-                    <span className="text-white/80 text-sm">Avoid Tolls & Traffic</span>
+                    <span className="text-white/80 text-sm whitespace-nowrap">Avoid Tolls & Traffic</span>
                   </div>
                 </div>
 

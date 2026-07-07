@@ -92,8 +92,8 @@ export default function VideoBackground() {
           style={{ opacity: 0 }} // Start hidden for manual fade logic
         />
       )}
-      <div className="md:hidden absolute inset-0 w-full h-full bg-[linear-gradient(120deg,#e0c3fc_0%,#8ec5fc_100%)] animate-pulse opacity-50" />
-      <div className="md:hidden absolute inset-0 w-full h-full bg-white/40 backdrop-blur-[100px]" />
+      <div className="md:hidden absolute inset-0 w-full h-full bg-[linear-gradient(120deg,#e0c3fc_0%,#8ec5fc_100%)] opacity-80" style={{ animation: "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite" }} />
+      <div className="md:hidden absolute inset-0 w-full h-full bg-white/30 backdrop-blur-sm" />
     </div>
   );
 }
