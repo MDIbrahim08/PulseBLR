@@ -63,7 +63,7 @@ export default function FeedbackPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex flex-col relative overflow-hidden font-inter">
+    <div className="min-h-screen bg-[#020617] text-white flex flex-col relative overflow-x-hidden font-inter">
       {/* Top Navigation */}
       <nav className="flex items-center p-6 md:px-12 relative z-10 w-full">
         <button 
@@ -79,7 +79,7 @@ export default function FeedbackPage() {
       <main className="flex-1 flex flex-col items-center justify-start relative z-10 w-full px-4 md:px-8 py-4 md:py-8 space-y-12 md:space-y-24 pb-32">
         
         {/* Step 1: Overall Experience Slider */}
-        <div className="w-full max-w-lg h-[450px] md:h-[600px] flex flex-col items-center space-y-4">
+        <div className="w-full max-w-lg h-[400px] md:h-[500px] max-h-[70vh] flex flex-col items-center space-y-4">
           <FeedbackSlider className="w-full h-full" />
         </div>
 
