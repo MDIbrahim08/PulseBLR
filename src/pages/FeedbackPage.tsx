@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, CheckCircle2, Heart, Send, Frown, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, CheckCircle2, Heart, Send, Frown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import FeedbackSlider from '../components/ui/feedback-slider';
@@ -95,7 +93,7 @@ export default function FeedbackPage() {
 
               <Textarea 
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(val) => setMessage(val || '')}
                 placeholder="I really loved how..."
                 className="min-h-[150px] bg-white/10 border-white/20 text-white placeholder:text-white/40 rounded-xl"
               />
@@ -103,8 +101,8 @@ export default function FeedbackPage() {
               <div className="flex gap-4 w-full">
                 <Button 
                   onClick={() => setStep(0)}
-                  variant="outline"
-                  className="flex-1 border-white/20 text-white hover:bg-white/10"
+                  variant="unstyled"
+                  className="flex-1 border border-white/20 text-white hover:bg-white/10 rounded-md"
                 >
                   Back
                 </Button>
