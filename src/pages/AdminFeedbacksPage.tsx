@@ -3,7 +3,8 @@ import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { BlurFade } from '../components/ui/blur-fade';
-import { CircularTestimonials, Testimonial } from '../components/ui/circular-testimonials';
+import { CircularTestimonials } from '../components/ui/circular-testimonials';
+import type { Testimonial } from '../components/ui/circular-testimonials';
 
 interface Feedback {
   id: string;
