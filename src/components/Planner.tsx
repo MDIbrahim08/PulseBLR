@@ -27,6 +27,9 @@ export default function Planner() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [cooldownMsg, setCooldownMsg] = useState('');
+  const lastRequestTime = useRef<number>(0);
+  const COOLDOWN_MS = 15000; // 15-second cooldown between AI requests
   
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -105,6 +108,15 @@ export default function Planner() {
 
   const handlePlanRoute = async () => {
     if (!currentAddress && !destination && !chatInput.trim()) return;
+    const now = Date.now();
+    if (now - lastRequestTime.current < COOLDOWN_MS) {
+      const remaining = Math.ceil((COOLDOWN_MS - (now - lastRequestTime.current)) / 1000);
+      setCooldownMsg(`Please wait ${remaining}s before your next request.`);
+      setTimeout(() => setCooldownMsg(''), 3000);
+      return;
+    }
+    lastRequestTime.current = now;
+    setCooldownMsg('');
     setIsAnalyzing(true);
     setChatHistory([]);
     
@@ -371,6 +383,9 @@ export default function Planner() {
                   )}
                 </button>
               </div>
+              {cooldownMsg && (
+                <p className="text-center text-xs text-orange-400 mt-2 animate-pulse">{cooldownMsg}</p>
+              )}
             </div>
           </motion.div>
         )}

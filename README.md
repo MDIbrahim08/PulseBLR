@@ -71,5 +71,7 @@ We successfully implemented the bonus objective. By toggling the "Avoid Tolls & 
 ---
 
 <div align="center">
-  <i>Built with ❤️ during the 2026 Hackathon.</i>
+  <i>Built with ❤️ for Bangalore commuters everywhere.</i>
+  <br />
+  <a href="https://pulseblr.netlify.app">🌐 Live App</a>
 </div>

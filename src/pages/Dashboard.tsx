@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, Map, ShieldAlert, Cpu } from 'lucide-react';
+import { LogOut, MessageSquareHeart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Planner from '../components/Planner';
 import { supabase } from '../lib/supabase';
@@ -56,13 +56,20 @@ export default function Dashboard() {
              >
                Smart Pivot
              </button>
+             <button 
+               onClick={() => navigate('/feedback')} 
+               className="flex items-center gap-1 transition-all duration-300 relative hover:text-black/80"
+             >
+               <MessageSquareHeart size={14} className="opacity-60" />
+               Feedback
+             </button>
           </nav>
 
           {/* Actions */}
           <div className="flex items-center gap-4 font-schibsted font-medium text-base tracking-[-0.2px]">
              <span className="text-black/70 font-semibold">{userName || 'Explorer'}</span>
              <button 
-               onClick={() => window.location.href = '/login'}
+               onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
                className="flex items-center gap-2 w-[101px] justify-center py-2 bg-black text-white rounded-lg hover:bg-black/80 transition-colors shadow-lg border border-black/10"
              >
                <LogOut size={16} /> Exit

@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import HomeHero from './pages/HomeHero';
 import SmartPivotPage from './pages/SmartPivotPage';
+import FeedbackPage from './pages/FeedbackPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/home" element={<HomeHero />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/smart-pivot" element={<SmartPivotPage />} />
+      <Route path="/feedback" element={<FeedbackPage />} />
       <Route path="/app/*" element={<Dashboard />} />
       </Routes>
     </>
