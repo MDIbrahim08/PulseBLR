@@ -424,8 +424,9 @@ The user asked a follow-up question: "${question}"
 RULES:
 1. Respond directly, concisely, and professionally. Limit your main response to 2-3 short sentences.
 2. ${greetingRule}
-3. At the very end of your response, ALWAYS provide exactly 2 short, actionable suggestions based on the user's problem (e.g., "Take a 2-wheeler", "Wait 15 mins", "Take the Metro"). 
-4. You MUST format these suggestions EXACTLY like this on their own lines at the very bottom:
+3. CRITICAL TEMPORAL RULE: The Current Clock Time is EXACTLY ${timeString}. YOU MUST NOT SUGGEST ANY TIMES IN THE PAST. If a suggested time has already passed today, you MUST instruct the user to leave "Now".
+4. At the very end of your response, ALWAYS provide exactly 2 short, actionable suggestions based on the user's problem (e.g., "Take a 2-wheeler", "Wait 15 mins", "Take the Metro"). 
+5. You MUST format these suggestions EXACTLY like this on their own lines at the very bottom:
 
 SUGGESTION: [short text here]
 SUGGESTION: [short text here]`;
