@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, Star, User } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowLeft, Trash2, Star, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BlurFade } from '../components/ui/blur-fade';
 import { Button } from '../components/ui/button-1';
 
@@ -18,6 +18,7 @@ interface Feedback {
 export default function AdminFeedbacksPage() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
   const fetchFeedbacks = async () => {
@@ -50,8 +51,23 @@ export default function AdminFeedbacksPage() {
     if (error) {
       alert(`Failed to delete: ${error.message}`);
     } else {
-      setFeedbacks((prev) => prev.filter((fb) => fb.id !== id));
+      setFeedbacks((prev) => {
+        const newFeedbacks = prev.filter((fb) => fb.id !== id);
+        // Adjust currentIndex if necessary
+        if (currentIndex >= newFeedbacks.length) {
+          setCurrentIndex(Math.max(0, newFeedbacks.length - 1));
+        }
+        return newFeedbacks;
+      });
     }
+  };
+
+  const nextFeedback = () => {
+    setCurrentIndex((prev) => (prev + 1) % feedbacks.length);
+  };
+
+  const prevFeedback = () => {
+    setCurrentIndex((prev) => (prev - 1 + feedbacks.length) % feedbacks.length);
   };
 
   return (
@@ -84,44 +100,77 @@ export default function AdminFeedbacksPage() {
             <p className="text-sm mt-2">Looks like it's quiet out there!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {feedbacks.map((fb, i) => (
-              <BlurFade key={fb.id} delay={0.1 + (i * 0.05)} inView>
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col h-full hover:bg-white/10 transition-colors group relative">
-                  
-                  {/* Delete Button (appears on hover) */}
+          <div className="relative w-full max-w-4xl mx-auto h-[500px] flex items-center justify-center mt-12">
+            
+            {feedbacks.length > 1 && (
+              <button 
+                onClick={prevFeedback} 
+                className="absolute left-0 md:-left-12 z-20 p-4 bg-white/5 hover:bg-white/20 border border-white/10 rounded-full transition-all hover:scale-110 active:scale-95"
+              >
+                <ChevronLeft size={28} />
+              </button>
+            )}
+
+            <AnimatePresence mode="wait">
+              {feedbacks[currentIndex] && (
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0, x: 100, scale: 0.9 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -100, scale: 0.9 }}
+                  transition={{ duration: 0.4, type: "spring", bounce: 0.2 }}
+                  className="w-full max-w-2xl bg-white/5 border border-white/10 p-12 rounded-[2.5rem] relative flex flex-col items-center text-center shadow-2xl backdrop-blur-xl group"
+                >
                   <button
-                    onClick={() => handleDelete(fb.id)}
-                    className="absolute top-4 right-4 p-2 bg-red-500/20 text-red-400 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500 hover:text-white"
+                    onClick={() => handleDelete(feedbacks[currentIndex].id)}
+                    className="absolute top-6 right-6 p-3 bg-red-500/10 text-red-400 rounded-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
                     title="Delete Feedback"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={20} />
                   </button>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1 text-pulse-400">
-                      <Star size={16} className="fill-pulse-400" />
-                      <span className="font-bold">{fb.rating}/5</span>
-                    </div>
-                    <span className="text-xs text-white/40 bg-white/10 px-2 py-1 rounded-full">
-                      {fb.category}
-                    </span>
+                  
+                  <div className="flex items-center gap-2 text-pulse-400 mb-8 bg-pulse-500/10 px-6 py-2 rounded-full border border-pulse-500/20">
+                    <Star size={24} className="fill-pulse-400" />
+                    <span className="font-bold text-2xl font-schibsted">{feedbacks[currentIndex].rating}/5</span>
                   </div>
-
-                  <p className="text-white/80 font-medium mb-6 flex-grow whitespace-pre-wrap">
-                    "{fb.message}"
+                  
+                  <p className="text-3xl md:text-4xl leading-tight font-schibsted font-semibold text-white mb-12">
+                    "{feedbacks[currentIndex].message}"
                   </p>
-
-                  <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/40">
-                    <div className="flex items-center gap-2">
-                      <User size={14} />
-                      <span>{fb.email || 'Anonymous'}</span>
+                  
+                  <div className="mt-auto flex flex-col items-center">
+                    <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-3 border border-white/20">
+                      <User size={24} className="text-white/60" />
                     </div>
-                    <span>{new Date(fb.created_at).toLocaleDateString()}</span>
+                    <p className="font-bold text-lg">{feedbacks[currentIndex].email || 'Anonymous User'}</p>
+                    <p className="text-white/40 text-sm mt-1 uppercase tracking-wider font-bold">
+                      {new Date(feedbacks[currentIndex].created_at).toLocaleDateString()} • {feedbacks[currentIndex].category}
+                    </p>
                   </div>
-                </div>
-              </BlurFade>
-            ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {feedbacks.length > 1 && (
+              <button 
+                onClick={nextFeedback} 
+                className="absolute right-0 md:-right-12 z-20 p-4 bg-white/5 hover:bg-white/20 border border-white/10 rounded-full transition-all hover:scale-110 active:scale-95"
+              >
+                <ChevronRight size={28} />
+              </button>
+            )}
+            
+            {/* Dots */}
+            <div className="absolute -bottom-16 flex items-center justify-center gap-2">
+              {feedbacks.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentIndex(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-8 bg-pulse-500' : 'w-2 bg-white/20 hover:bg-white/40'}`}
+                />
+              ))}
+            </div>
+
           </div>
         )}
       </div>
