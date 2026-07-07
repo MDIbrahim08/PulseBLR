@@ -5,14 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import Planner from '../components/Planner';
 import { supabase } from '../lib/supabase';
 import VideoBackground from '../components/ui/VideoBackground';
-import TextThree from '../components/ui/text-three';
 
 export default function Dashboard() {
   const [userName, setUserName] = useState<string | null>(null);
-  
-  // Only show splash if we haven't shown it ever (or we can use localStorage to persist across tabs)
-  const shouldShowSplash = !localStorage.getItem('hasShownSplash');
-  const [showSplash, setShowSplash] = useState(shouldShowSplash);
   
   const navigate = useNavigate();
 
@@ -24,34 +19,10 @@ export default function Dashboard() {
       }
     };
     fetchUser();
-    
-    if (shouldShowSplash) {
-      // Mark it immediately so if they navigate away quickly it doesn't trigger again later
-      localStorage.setItem('hasShownSplash', 'true');
-      
-      // Hide splash screen after 3.5 seconds
-      const timer = setTimeout(() => {
-        setShowSplash(false);
-      }, 3500);
-      return () => clearTimeout(timer);
-    }
-  }, [shouldShowSplash]);
+  }, []);
 
   return (
     <div className="relative min-h-screen w-full bg-black overflow-hidden font-sans">
-      <AnimatePresence>
-        {showSplash && (
-          <motion.div 
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="absolute inset-0 z-[100] bg-black flex items-center justify-center"
-          >
-            <TextThree text={`Namaste ${userName || 'World'}!`} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      
       {/* Video Background Layer */}
       <VideoBackground />
 
