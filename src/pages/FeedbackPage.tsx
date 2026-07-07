@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, CheckCircle2, Heart, Send, Frown, Sparkles } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Heart, Send, Frown, Sparkles, Star } from 'lucide-react';
 import { BlurFade } from '../components/ui/blur-fade';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
@@ -14,6 +14,7 @@ export default function FeedbackPage() {
   const [emotion, setEmotion] = useState(1); // 0: bad, 1: mid, 2: good
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [starRating, setStarRating] = useState(0);
   const [submitError, setSubmitError] = useState('');
 
   const handleSubmit = async () => {
@@ -21,9 +22,8 @@ export default function FeedbackPage() {
     setIsSubmitting(true);
     setSubmitError('');
     
-    // Map emotion to rating (1-5 scale)
-    const ratingMap = [1, 3, 5]; 
-    const rating = ratingMap[emotion];
+    // Fallback if they didn't touch stars
+    const rating = starRating > 0 ? starRating : [1, 3, 5][emotion];
 
     const { data: { session } } = await supabase.auth.getSession();
     const userName = session?.user?.user_metadata?.full_name || 'Anonymous User';
@@ -78,7 +78,10 @@ export default function FeedbackPage() {
                 <FeedbackSlider value={emotion} onChange={setEmotion} className="w-full h-full" />
               </div>
               <Button 
-                onClick={() => setStep(1)}
+                onClick={() => {
+                  setStarRating([1, 3, 5][emotion]);
+                  setStep(1);
+                }}
                 className="w-full max-w-[200px] text-lg py-6 bg-pulse-500 hover:bg-pulse-600 text-white rounded-full shadow-lg shadow-pulse-500/20"
               >
                 Continue
@@ -96,8 +99,21 @@ export default function FeedbackPage() {
               className="w-full max-w-lg flex flex-col items-center space-y-6 bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-md"
             >
               <div className="text-center space-y-2">
-                <h3 className="text-2xl font-semibold">Tell us more</h3>
-                <p className="text-white/60">What made your experience {emotion === 0 ? 'bad' : emotion === 1 ? 'just okay' : 'great'}?</p>
+                <h3 className="text-2xl font-semibold">Rate Your Experience</h3>
+                <div className="flex items-center justify-center gap-2 pt-2 pb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => setStarRating(star)}
+                      className="focus:outline-none hover:scale-110 active:scale-95 transition-transform"
+                    >
+                      <Star 
+                        size={32} 
+                        className={`transition-colors ${star <= starRating ? 'fill-pulse-500 text-pulse-500' : 'fill-white/10 text-white/20 hover:text-white/40'}`} 
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <Textarea 

@@ -99,7 +99,7 @@ export default function AdminFeedbacksPage() {
               <h1 className="text-3xl font-bold font-schibsted tracking-tight">Admin Feedback Portal</h1>
             </BlurFade>
           </div>
-          <div className="bg-white/10 px-4 py-2 rounded-lg font-mono text-sm text-pulse-400 border border-white/10">
+          <div className="bg-white/10 px-4 py-2 rounded-lg text-sm text-white/80 border border-white/10 font-medium font-sans">
             {feedbacks.length} Total Feedbacks
           </div>
         </header>
