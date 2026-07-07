@@ -63,13 +63,6 @@ export default function Dashboard() {
                <MessageSquareHeart size={14} className="opacity-60" />
                Feedback
              </button>
-             <button 
-               onClick={() => navigate('/reviews')} 
-               className="flex items-center gap-1 transition-all duration-300 relative hover:text-black/80"
-             >
-               <Star size={14} className="opacity-60" />
-               Reviews
-             </button>
           </nav>
 
           {/* Actions */}
