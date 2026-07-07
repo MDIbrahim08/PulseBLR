@@ -70,7 +70,7 @@ export default function FeedbackPage() {
               key="step-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+              exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
               className="w-full max-w-lg flex flex-col items-center space-y-8"
             >
@@ -92,8 +92,8 @@ export default function FeedbackPage() {
           {step === 1 && (
             <motion.div 
               key="step-1"
-              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.4 }}
               className="w-full max-w-lg flex flex-col items-center space-y-6 bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-md"

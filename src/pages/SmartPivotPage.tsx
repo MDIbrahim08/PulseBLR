@@ -9,7 +9,7 @@ export default function SmartPivotPage() {
   return (
     <div className="h-screen w-full bg-slate-950 font-sans text-white flex flex-col overflow-hidden">
       {/* Navigation Bar */}
-      <header className="w-full px-[120px] py-4 flex justify-between items-center bg-slate-950 border-b border-white/10 relative z-50">
+      <header className="w-full px-4 md:px-[120px] py-4 flex justify-between items-center bg-slate-950 border-b border-white/10 relative z-50">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard')}>
            <div className="w-16 h-16 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-lg">
               <img src="/logo.png" alt="PulseBLR Logo" className="w-full h-full object-cover scale-150" />
@@ -19,7 +19,7 @@ export default function SmartPivotPage() {
            </span>
         </div>
 
-        <nav className="flex items-center gap-8 font-schibsted font-medium text-[15px] tracking-[-0.2px] text-white/60">
+        <nav className="hidden md:flex items-center gap-8 font-schibsted font-medium text-[15px] tracking-[-0.2px] text-white/60">
            <button onClick={() => navigate('/dashboard')} className="hover:text-white/80 transition-colors">
              Commute Planner
            </button>
@@ -29,7 +29,7 @@ export default function SmartPivotPage() {
            </button>
         </nav>
 
-        <div className="flex items-center gap-4 font-schibsted font-medium text-base tracking-[-0.2px]">
+        <div className="hidden md:flex items-center gap-4 font-schibsted font-medium text-base tracking-[-0.2px]">
            <span className="text-white/70 font-semibold">Explorer</span>
            <button 
              onClick={() => navigate('/login')}
