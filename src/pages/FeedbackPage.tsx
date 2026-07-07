@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowLeft, CheckCircle2, Heart, Send, Frown } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Heart, Send, Frown, Sparkles } from 'lucide-react';
+import { BlurFade } from '../components/ui/blur-fade';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import FeedbackSlider from '../components/ui/feedback-slider';
@@ -177,18 +178,22 @@ export default function FeedbackPage() {
               )}
 
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold">
-                  {emotion === 2 ? goodMessages[messageIndex % goodMessages.length].title 
-                    : emotion === 1 ? midMessages[messageIndex % midMessages.length].title 
-                    : badMessages[messageIndex % badMessages.length].title}
-                </h2>
-                <p className="text-white/60 text-lg">
-                  {emotion === 2 
-                    ? goodMessages[messageIndex % goodMessages.length].desc
-                    : emotion === 1 
-                      ? midMessages[messageIndex % midMessages.length].desc
-                      : badMessages[messageIndex % badMessages.length].desc}
-                </p>
+                <BlurFade delay={0.25} inView>
+                  <h2 className="text-3xl font-bold">
+                    {emotion === 2 ? goodMessages[messageIndex % goodMessages.length].title 
+                      : emotion === 1 ? midMessages[messageIndex % midMessages.length].title 
+                      : badMessages[messageIndex % badMessages.length].title}
+                  </h2>
+                </BlurFade>
+                <BlurFade delay={0.5} inView>
+                  <p className="text-white/60 text-lg">
+                    {emotion === 2 
+                      ? goodMessages[messageIndex % goodMessages.length].desc
+                      : emotion === 1 
+                        ? midMessages[messageIndex % midMessages.length].desc
+                        : badMessages[messageIndex % badMessages.length].desc}
+                  </p>
+                </BlurFade>
               </div>
 
               <Button 
