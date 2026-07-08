@@ -401,12 +401,8 @@ export default function Planner() {
                       <span className="hidden sm:inline">Save</span>
                     </button>
                   )}
-
-                  <div className="hidden sm:flex items-center gap-1.5 text-white font-schibsted font-semibold text-[13px] bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
-                    <Sparkles size={14} className="text-[#5AE14C]" />
-                    PulseMind
-                  </div>
                 </div>
+
               </div>
 
               {/* Main Input Area */}
