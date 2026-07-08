@@ -426,9 +426,9 @@ export default function Planner() {
                                 <span className="text-pulse-400 text-xs font-bold uppercase tracking-wider mb-1">Transport</span>
                                 <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.recommendedTransport}</span>
                               </div>
-                              <div className="bg-yellow-500/10 p-4 rounded-xl border border-yellow-500/20 flex flex-col">
-                                <span className="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-1">Est. Cost</span>
-                                <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.estimatedCost || '₹--'}</span>
+                              <div className="bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/20 flex flex-col">
+                                <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">⏱ Time Saved</span>
+                                <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.timeSavedMinutes ? `~${msg.recommendation.timeSavedMinutes} min` : 'Optimal'}</span>
                               </div>
                               <div className="bg-[#5AE14C]/10 p-4 rounded-xl border border-[#5AE14C]/20 flex flex-col">
                                 <span className="text-[#5AE14C] text-xs font-bold uppercase tracking-wider mb-1">Confidence</span>
