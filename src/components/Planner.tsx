@@ -512,14 +512,13 @@ export default function Planner() {
                               {cleanLines.join('\n').trim()}
                             </div>
                             {suggestions.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-2 border-t border-white/10 pt-3">
+                              <div className="flex flex-wrap gap-2 mt-3 border-t border-white/10 pt-3">
                                 {suggestions.map((s, idx) => (
                                   <button 
                                     key={idx}
                                     onClick={() => handleChatSubmit(undefined, s)}
-                                    className="text-xs bg-pulse-500/10 hover:bg-pulse-500/30 text-pulse-300 border border-pulse-500/30 px-3 py-1.5 rounded-full transition-colors font-medium flex items-center gap-1"
+                                    className="text-xs bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 px-3 py-1.5 rounded-lg transition-all duration-200 font-medium"
                                   >
-                                    <Sparkles size={12} />
                                     {s}
                                   </button>
                                 ))}
