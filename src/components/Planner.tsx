@@ -216,6 +216,15 @@ export default function Planner() {
     recognition.continuous = true;
     recognition.interimResults = true;
     
+    // Set language for voice dictation based on selected dropdown language
+    if (language.toLowerCase() === 'kannada') {
+      recognition.lang = 'kn-IN';
+    } else if (language.toLowerCase() === 'hindi') {
+      recognition.lang = 'hi-IN';
+    } else {
+      recognition.lang = 'en-IN';
+    }
+    
     // Store recognition on window object so we can abort it in onStop if needed
     (window as any).currentRecognition = recognition;
 
