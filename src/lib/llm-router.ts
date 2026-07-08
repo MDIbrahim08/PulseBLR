@@ -301,7 +301,7 @@ export const chronosAdvisor = async (weather: string, traffic: string, transit: 
   }
 };
 
-export const pulseCoreAgent = async (weather: string, traffic: string, transit: string, origin: string, destination: string, timeString: string, timeMode: string = 'Arrive By', userPrompt: string = '', avoidTollsOrTraffic: boolean = false) => {
+export const pulseCoreAgent = async (weather: string, traffic: string, transit: string, origin: string, destination: string, timeString: string, timeMode: string = 'Arrive By', userPrompt: string = '', avoidTollsOrTraffic: boolean = false, language: string = 'English') => {
   const o = obs();
   o.setAgentStatus('pulsemind', 'fetching');
   o.addEvent('PulseMind — generating route recommendation', 'info', 'PulseMind');
@@ -323,6 +323,7 @@ Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
 ALL times must include AM or PM. Never output 24-hour time.
+CRITICAL LANGUAGE AND STYLE RULE: You MUST output all text fields (like explanation, reasoning, disclaimer, alternativeRoute.reason) in ${language}. Use emojis naturally throughout your explanation and reasoning to make the text interesting and engaging! The keys in the JSON must remain in English, but the values should be translated to ${language}.
 CRITICAL TEMPORAL RULE: The Current Clock Time is exactly ${currentActualTime}. YOU MUST NOT SUGGEST A DEPARTURE TIME IN THE PAST. If the user's requested time or calculated departure time is earlier than ${currentActualTime} today, you MUST set "recommendedDeparture" to "Now" and explicitly explain in the "explanation" that their target time has already passed.
 GEOGRAPHY & METRO REALITY CHECK: You MUST NOT hallucinate Namma Metro lines. If the origin or destination is in areas WITHOUT metro connectivity (e.g., RT Nagar, Koramangala, Devanahalli, Airport, Bellandur, Marathahalli, Sarjapur, HSR Layout), you MUST NOT suggest the Metro as the primary transport mode. Instead, use your vast live knowledge of Bangalore's real transit systems to dynamically recommend the EXACT correct bus services (e.g., specific AC routes, regular BMTC buses), Cabs, or Autos. DO NOT hardcode recommendations—analyze the real routes! ONLY suggest Metro for areas with known active stations.
 STRICT LOCATION REJECTION: If the origin or destination is COMPLETELY OUTSIDE of the Greater Bangalore Metropolitan Area (e.g., Delhi, Mumbai, Chennai, another state/country, or completely random invalid locations), you MUST completely REJECT the query. Do NOT provide fake routes or times. Instead, set "recommendedTransport" to "Out of Service Area" and set the "explanation" exactly to: "PulseBLR exclusively covers Bangalore and its Greater Metropolitan Area. We do not support routes for locations outside of this region."
@@ -410,7 +411,8 @@ export const pulseFollowUpAgent = async (
   origin: string,
   destination: string,
   arrivalTime: string,
-  isFirstMessage: boolean = true
+  isFirstMessage: boolean = true,
+  language: string = 'English'
 ) => {
   const now = new Date();
   const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
@@ -427,7 +429,7 @@ export const pulseFollowUpAgent = async (
 The user just said: "${question}"
 The current time is ${timeString} on ${dateString}.
 
-Respond in a warm, natural, conversational way — like a smart assistant would. Keep it to 1-2 sentences. Do NOT give commute advice unless they ask. Do NOT output SUGGESTION lines. Be friendly and invite them to ask about their commute.`
+Respond in a warm, natural, conversational way — like a smart assistant would. Keep it to 1-2 sentences. Do NOT give commute advice unless they ask. Do NOT output SUGGESTION lines. Be friendly and invite them to ask about their commute. CRITICAL: You MUST respond in ${language}. Use emojis naturally to make the chat interesting!`
     : `You are PulseMind, a premium AI commute advisor for Bangalore.
 The user is traveling from "${origin || 'their location'}" to "${destination || 'their destination'}" aiming to arrive by "${arrivalTime}".
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
@@ -444,7 +446,8 @@ RULES:
 6. STRICT LOCATION REJECTION: If any location is completely outside Greater Bangalore, REJECT it and say PulseBLR only supports Bangalore.
 7. GREATER BANGALORE COVERAGE RULE: Confidently support the entire Greater Bangalore Metropolitan Region including Hoskote, Devanahalli, Nelamangala, etc.
 8. LANDMARK RESOLUTION RULE: Intelligently resolve Tech Parks, Colleges, Offices and Hospitals to their real Bangalore locations.
-9. At the very end of your response, provide exactly 2 short, actionable suggestions:
+9. CRITICAL LANGUAGE AND STYLE RULE: You MUST respond in ${language}. Use emojis naturally throughout your response to make it interesting!
+10. At the very end of your response, provide exactly 2 short, actionable suggestions in ${language}:
 
 SUGGESTION: [short text here]
 SUGGESTION: [short text here]`;

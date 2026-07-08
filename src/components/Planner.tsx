@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell
+  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe
 } from 'lucide-react';
 import {
   pulseCoreAgent,
@@ -13,6 +13,7 @@ import { useRouteStore } from '../store/routeStore';
 import { usePulseObserver } from '../store/pulseObserver';
 import { MessageLoading } from './ui/message-loading';
 import { AIVoiceInput } from './ui/ai-voice-input';
+import { DropdownMenu } from './ui/dropdown-menu';
 
 type ChatMessage = {
   id: string;
@@ -33,6 +34,7 @@ export default function Planner() {
   
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [language, setLanguage] = useState('English');
 
   const { origin: currentAddress, setOrigin: setCurrentAddress, destination, setDestination, avoidTollsOrTraffic, setAvoidTollsOrTraffic } = useRouteStore();
   const { setAPIStatus, addEvent, setAuthStatus } = usePulseObserver();
@@ -142,7 +144,7 @@ export default function Planner() {
     const weatherSignal = weatherData?.summary ?? 'Partly Cloudy, 26°C';
     
     try {
-      const rec = await pulseCoreAgent(weatherSignal, dynamicTrafficSignal, transitData, currentAddress, destination, arrivalTime, timeMode, chatInput, avoidTollsOrTraffic);
+      const rec = await pulseCoreAgent(weatherSignal, dynamicTrafficSignal, transitData, currentAddress, destination, arrivalTime, timeMode, chatInput, avoidTollsOrTraffic, language);
       
       const newMsg: ChatMessage = {
         id: Date.now().toString(),
@@ -228,7 +230,7 @@ export default function Planner() {
     const isFirstMessage = chatHistory.length === 0;
     
     try {
-      const responseText = await pulseFollowUpAgent(question, weatherSignal, trafficSignal, transitData, currentAddress, destination, arrivalTime, isFirstMessage);
+      const responseText = await pulseFollowUpAgent(question, weatherSignal, trafficSignal, transitData, currentAddress, destination, arrivalTime, isFirstMessage, language);
       
       const aiMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -305,9 +307,24 @@ export default function Planner() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-white font-schibsted font-semibold text-[13px] bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
-                  <Sparkles size={14} className="text-[#5AE14C]" />
-                  Powered by PulseMind
+                <div className="flex items-center gap-2">
+                  <DropdownMenu
+                    options={[
+                      { label: "English", onClick: () => setLanguage("English") },
+                      { label: "Kannada", onClick: () => setLanguage("Kannada") },
+                      { label: "Hindi", onClick: () => setLanguage("Hindi") },
+                    ]}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Globe size={14} className="text-white/80" />
+                      <span className="text-sm">{language}</span>
+                    </div>
+                  </DropdownMenu>
+
+                  <div className="hidden sm:flex items-center gap-1.5 text-white font-schibsted font-semibold text-[13px] bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
+                    <Sparkles size={14} className="text-[#5AE14C]" />
+                    PulseMind
+                  </div>
                 </div>
               </div>
 
