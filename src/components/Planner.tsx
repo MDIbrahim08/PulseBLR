@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe
+  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck
 } from 'lucide-react';
 import {
   pulseCoreAgent,
@@ -35,6 +35,9 @@ export default function Planner() {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [language, setLanguage] = useState('English');
+  const [savedRoutes, setSavedRoutes] = useState<{label: string; origin: string; destination: string}[]>(() => {
+    try { return JSON.parse(localStorage.getItem('pulse_saved_routes') || '[]'); } catch { return []; }
+  });
 
   const { origin: currentAddress, setOrigin: setCurrentAddress, destination, setDestination, avoidTollsOrTraffic, setAvoidTollsOrTraffic } = useRouteStore();
   const { setAPIStatus, addEvent, setAuthStatus } = usePulseObserver();
@@ -167,6 +170,37 @@ export default function Planner() {
     addEvent(`Action Executed: ${type} processed successfully`, 'success', 'PulseCore');
   };
 
+  const saveCurrentRoute = () => {
+    if (!currentAddress || !destination) return;
+    const label = prompt('Name this route (e.g. "Home to Office")');
+    if (!label) return;
+    const updated = [...savedRoutes, { label, origin: currentAddress, destination }];
+    setSavedRoutes(updated);
+    localStorage.setItem('pulse_saved_routes', JSON.stringify(updated));
+  };
+
+  const deleteSavedRoute = (index: number) => {
+    const updated = savedRoutes.filter((_, i) => i !== index);
+    setSavedRoutes(updated);
+    localStorage.setItem('pulse_saved_routes', JSON.stringify(updated));
+  };
+
+  const openGoogleMaps = (origin: string, destination: string, mode: string = 'transit') => {
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
+    window.open(url, '_blank');
+  };
+
+  const getCabFares = (origin: string, destination: string) => {
+    // Rough Bangalore cab fare estimate (₹15/km base Ola/Uber, ₹12 auto)
+    const distanceKm = trafficData?.distanceKm ? parseFloat(trafficData.distanceKm) : 12;
+    const olaFare = Math.round(distanceKm * 15 + 30);
+    const uberFare = Math.round(distanceKm * 16 + 25);
+    const autoFare = Math.round(distanceKm * 12 + 20);
+    return { ola: olaFare, uber: uberFare, auto: autoFare };
+  };
+
+  const isRaining = weatherData?.condition?.toLowerCase().includes('rain') || weatherData?.precipitation?.replace('mm','') > '2';
+
   const [chatInput, setChatInput] = useState('');
 
   const startVoiceDictation = () => {
@@ -273,6 +307,36 @@ export default function Planner() {
               Set your origin and destination below to get powerful AI commute insights right away. Avoid traffic and achieve goals effortlessly.
             </p>
 
+            {/* Rain Alert Banner */}
+            {isRaining && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 text-blue-200 px-4 py-2.5 rounded-xl mb-4 text-sm font-schibsted backdrop-blur-sm"
+              >
+                <CloudRain size={16} className="text-blue-300 shrink-0" />
+                <span>🌧️ Rain detected — carry an umbrella & leave early to avoid waterlogging!</span>
+              </motion.div>
+            )}
+
+            {/* Saved Routes Chips */}
+            {savedRoutes.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                {savedRoutes.map((r, i) => (
+                  <div key={i} className="flex items-center gap-1 bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-white text-xs font-schibsted">
+                    <button
+                      onClick={() => { setCurrentAddress(r.origin); setDestination(r.destination); }}
+                      className="flex items-center gap-1.5 hover:text-white/80 transition-colors"
+                    >
+                      <BookmarkCheck size={12} className="text-[#5AE14C]" />
+                      {r.label}
+                    </button>
+                    <button onClick={() => deleteSavedRoute(i)} className="ml-1 text-white/40 hover:text-red-400 transition-colors">×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Premium Input Container */}
             <div className="w-full max-w-[728px] h-auto min-h-[220px] rounded-[18px] bg-black/40 backdrop-blur-xl p-5 flex flex-col justify-between shadow-2xl border border-white/20">
               
@@ -309,6 +373,17 @@ export default function Planner() {
 
                 <div className="flex items-center gap-2">
                   <FluidDropdown onLanguageChange={setLanguage} />
+
+                  {currentAddress && destination && (
+                    <button
+                      onClick={saveCurrentRoute}
+                      title="Save this route"
+                      className="flex items-center gap-1.5 text-white/70 hover:text-white font-schibsted text-[13px] bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 hover:bg-white/20 transition-colors"
+                    >
+                      <Bookmark size={14} />
+                      <span className="hidden sm:inline">Save</span>
+                    </button>
+                  )}
 
                   <div className="hidden sm:flex items-center gap-1.5 text-white font-schibsted font-semibold text-[13px] bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
                     <Sparkles size={14} className="text-[#5AE14C]" />
@@ -494,6 +569,55 @@ export default function Planner() {
                                 ))}
                               </div>
                             )}
+
+                            {/* Action Buttons */}
+                            <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-3">
+                              
+                              {/* Google Maps Row */}
+                              {currentAddress && destination && (
+                                <div className="flex gap-2 flex-wrap">
+                                  <button
+                                    onClick={() => openGoogleMaps(currentAddress, destination, 'transit')}
+                                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 px-4 py-2.5 rounded-xl text-white text-sm font-schibsted font-semibold transition-all active:scale-95"
+                                  >
+                                    <Navigation size={15} className="text-[#5AE14C]" />
+                                    Open in Google Maps
+                                  </button>
+                                  <button
+                                    onClick={() => openGoogleMaps(currentAddress, destination, 'driving')}
+                                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl text-white/70 text-sm font-schibsted transition-all active:scale-95"
+                                  >
+                                    <Car size={15} />
+                                    Driving Route
+                                  </button>
+                                </div>
+                              )}
+
+                              {/* Cab Fare Estimates */}
+                              {currentAddress && destination && (() => {
+                                const fares = getCabFares(currentAddress, destination);
+                                return (
+                                  <div className="bg-white/5 rounded-xl border border-white/10 p-3">
+                                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-2">🚕 Estimated Cab Fares</p>
+                                    <div className="grid grid-cols-3 gap-2">
+                                      <div className="text-center">
+                                        <p className="text-white/50 text-[10px] mb-1">Ola</p>
+                                        <p className="text-white font-schibsted font-bold text-sm">₹{fares.ola}–{fares.ola + 40}</p>
+                                      </div>
+                                      <div className="text-center border-x border-white/10">
+                                        <p className="text-white/50 text-[10px] mb-1">Uber</p>
+                                        <p className="text-white font-schibsted font-bold text-sm">₹{fares.uber}–{fares.uber + 45}</p>
+                                      </div>
+                                      <div className="text-center">
+                                        <p className="text-white/50 text-[10px] mb-1">Auto</p>
+                                        <p className="text-white font-schibsted font-bold text-sm">₹{fares.auto}–{fares.auto + 30}</p>
+                                      </div>
+                                    </div>
+                                    <p className="text-white/25 text-[9px] mt-2 text-center">Approximate fares based on distance. Surge pricing may apply.</p>
+                                  </div>
+                                );
+                              })()}
+                            </div>
 
 
                           </div>
