@@ -320,14 +320,20 @@ export default function Planner() {
                   onKeyDown={(e) => { 
                     if(e.key === 'Enter' && !e.shiftKey) { 
                       e.preventDefault(); 
-                      if (chatHistory.length === 0) handlePlanRoute();
-                      else handleChatSubmit();
+                      if (chatInput.trim()) {
+                        handleChatSubmit();
+                      } else {
+                        handlePlanRoute();
+                      }
                     } 
                   }}
                   className="w-full h-full bg-transparent outline-none font-inter text-[16px] text-black placeholder-black/60 pr-12 resize-none pt-4 pb-4"
                 />
                 <button 
-                  onClick={handlePlanRoute}
+                  onClick={() => {
+                    if (chatInput.trim()) handleChatSubmit();
+                    else handlePlanRoute();
+                  }}
                   disabled={isAnalyzing}
                   className="absolute right-3 bottom-3 w-[36px] h-[36px] bg-black rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 shadow-md"
                 >
