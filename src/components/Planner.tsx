@@ -13,7 +13,7 @@ import { useRouteStore } from '../store/routeStore';
 import { usePulseObserver } from '../store/pulseObserver';
 import { MessageLoading } from './ui/message-loading';
 import { AIVoiceInput } from './ui/ai-voice-input';
-import { DropdownMenu } from './ui/dropdown-menu';
+import { FluidDropdown } from './ui/fluid-dropdown';
 
 type ChatMessage = {
   id: string;
@@ -308,18 +308,7 @@ export default function Planner() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <DropdownMenu
-                    options={[
-                      { label: "English", onClick: () => setLanguage("English") },
-                      { label: "Kannada", onClick: () => setLanguage("Kannada") },
-                      { label: "Hindi", onClick: () => setLanguage("Hindi") },
-                    ]}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Globe size={14} className="text-white/80" />
-                      <span className="text-sm">{language}</span>
-                    </div>
-                  </DropdownMenu>
+                  <FluidDropdown onLanguageChange={setLanguage} />
 
                   <div className="hidden sm:flex items-center gap-1.5 text-white font-schibsted font-semibold text-[13px] bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
                     <Sparkles size={14} className="text-[#5AE14C]" />
