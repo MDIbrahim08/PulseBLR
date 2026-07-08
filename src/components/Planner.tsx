@@ -497,7 +497,7 @@ export default function Planner() {
                 </div>
                 
                 <button 
-                  onClick={handlePlanRoute}
+                  onClick={() => handlePlanRoute()}
                   disabled={isAnalyzing || (!chatInput.trim() && (!currentAddress || !destination))}
                   className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-schibsted font-bold text-[14px] px-6 py-2.5 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.1)] disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2 backdrop-blur-md"
                 >
