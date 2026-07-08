@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { AnimatedTabs } from '../components/ui/animated-tabs';
 
 const FadeIn = ({ children, delay = 0, duration = 1000, className = "" }: any) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -176,73 +177,95 @@ export default function HomeHero() {
           />
           
           {/* Premium Glassmorphic Modal Content */}
-          <div className="relative p-[1px] rounded-3xl max-w-3xl w-full shadow-[0_0_50px_rgba(90,225,76,0.15)] animate-in fade-in zoom-in-95 duration-300 bg-gradient-to-br from-white/30 via-white/5 to-transparent">
-            <div className="relative bg-[#0a0a0a]/90 backdrop-blur-2xl rounded-[23px] p-6 md:p-10 w-full h-full border border-white/10 overflow-hidden">
+          <div className="relative p-[1px] rounded-3xl max-w-3xl w-full shadow-[0_0_50px_rgba(90,225,76,0.15)] animate-in fade-in zoom-in-95 duration-300 bg-gradient-to-br from-white/30 via-white/5 to-transparent max-h-[95vh] flex flex-col">
+            <div className="relative bg-[#0a0a0a]/90 backdrop-blur-2xl rounded-[23px] p-6 md:p-8 w-full h-full border border-white/10 overflow-y-auto flex flex-col no-scrollbar">
               
               {/* Decorative Glow */}
               <div className="absolute -top-40 -right-40 w-80 h-80 bg-pulse-500/20 rounded-full blur-[100px] pointer-events-none" />
               
               <button 
                 onClick={() => setIsAboutOpen(false)} 
-                className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-white/70 hover:text-white transition-all border border-white/10 hover:scale-105 z-10"
+                className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-white/70 hover:text-white transition-all border border-white/10 hover:scale-105 z-20"
               >
                 ✕
               </button>
               
-              <div className="relative z-10">
+              <div className="relative z-10 flex-1 flex flex-col">
                 <h2 className="text-3xl md:text-4xl font-bold mb-2 font-schibsted bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
                   Welcome to PulseBLR 🚀
                 </h2>
-                <p className="text-white/60 text-sm md:text-base font-inter mb-8 max-w-lg">
+                <p className="text-white/60 text-sm md:text-base font-inter mb-6 max-w-lg">
                   The ultimate AI-powered commute operating system built exclusively to beat Bangalore's chaotic traffic.
                 </p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  {/* Feature Cards */}
-                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
-                    <span className="text-xl mb-2 block text-pulse-400">🧠</span>
-                    <h3 className="font-schibsted font-bold text-white mb-1">AI Route Planner</h3>
-                    <p className="text-white/50 text-xs leading-relaxed font-inter">Analyzes live traffic, weather, and transit data to suggest the absolute fastest path.</p>
-                  </div>
-                  
-                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
-                    <span className="text-xl mb-2 block text-blue-400">🌧️</span>
-                    <h3 className="font-schibsted font-bold text-white mb-1">Live Rain Alerts</h3>
-                    <p className="text-white/50 text-xs leading-relaxed font-inter">Proactive banners warn you of rain or waterlogging before you leave.</p>
-                  </div>
-
-                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
-                    <span className="text-xl mb-2 block text-amber-400">🚕</span>
-                    <h3 className="font-schibsted font-bold text-white mb-1">Instant Cab Fares</h3>
-                    <p className="text-white/50 text-xs leading-relaxed font-inter">Live Ola, Uber, &amp; Auto fare estimates based on actual RTO per-km rates.</p>
-                  </div>
-
-                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
-                    <span className="text-xl mb-2 block text-purple-400">🗺️</span>
-                    <h3 className="font-schibsted font-bold text-white mb-1">1-Tap Google Maps</h3>
-                    <p className="text-white/50 text-xs leading-relaxed font-inter">Zero clunky in-app maps. We generate a deep-link to open Google Maps instantly.</p>
-                  </div>
-
-                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
-                    <span className="text-xl mb-2 block text-emerald-400">💾</span>
-                    <h3 className="font-schibsted font-bold text-white mb-1">Saved Routes</h3>
-                    <p className="text-white/50 text-xs leading-relaxed font-inter">Save "Home to Office" and reload it every morning with a single tap.</p>
-                  </div>
-
-                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
-                    <span className="text-xl mb-2 block text-pink-400">🎙️</span>
-                    <h3 className="font-schibsted font-bold text-white mb-1">Voice &amp; Multi-lingual</h3>
-                    <p className="text-white/50 text-xs leading-relaxed font-inter">Ask questions using your voice in English, Kannada, or Hindi.</p>
-                  </div>
+                <div className="mb-6 flex-1">
+                  <AnimatedTabs 
+                    tabs={[
+                      {
+                        id: "tab1",
+                        label: "Core AI",
+                        content: (
+                          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 h-full">
+                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
+                              <span className="text-2xl mb-3 block text-pulse-400">🧠</span>
+                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">AI Route Planner</h3>
+                              <p className="text-white/60 text-sm leading-relaxed font-inter">Analyzes live traffic, weather, and transit data to suggest the absolute fastest path.</p>
+                            </div>
+                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
+                              <span className="text-2xl mb-3 block text-blue-400">🌧️</span>
+                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">Live Rain Alerts</h3>
+                              <p className="text-white/60 text-sm leading-relaxed font-inter">Proactive banners warn you of rain or waterlogging before you even leave.</p>
+                            </div>
+                          </div>
+                        )
+                      },
+                      {
+                        id: "tab2",
+                        label: "Actionable",
+                        content: (
+                          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 h-full">
+                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
+                              <span className="text-2xl mb-3 block text-amber-400">🚕</span>
+                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">Instant Cab Fares</h3>
+                              <p className="text-white/60 text-sm leading-relaxed font-inter">Live Ola, Uber, &amp; Auto fare estimates based on actual RTO per-km rates.</p>
+                            </div>
+                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
+                              <span className="text-2xl mb-3 block text-purple-400">🗺️</span>
+                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">1-Tap Google Maps</h3>
+                              <p className="text-white/60 text-sm leading-relaxed font-inter">Zero clunky in-app maps. We generate a deep-link to open Google Maps instantly.</p>
+                            </div>
+                          </div>
+                        )
+                      },
+                      {
+                        id: "tab3",
+                        label: "Smart Tools",
+                        content: (
+                          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 h-full">
+                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
+                              <span className="text-2xl mb-3 block text-emerald-400">💾</span>
+                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">Saved Routes</h3>
+                              <p className="text-white/60 text-sm leading-relaxed font-inter">Save "Home to Office" and reload it every morning with a single tap.</p>
+                            </div>
+                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
+                              <span className="text-2xl mb-3 block text-pink-400">🎙️</span>
+                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">Voice &amp; Languages</h3>
+                              <p className="text-white/60 text-sm leading-relaxed font-inter">Ask questions using your voice in English, Kannada, or Hindi.</p>
+                            </div>
+                          </div>
+                        )
+                      }
+                    ]} 
+                  />
                 </div>
                 
-                <div className="pt-6 mt-2 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="pt-4 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 mt-auto">
                   <p className="text-xs text-white/40 italic font-inter text-center md:text-left">
                     Built to save your time, your money, and your sanity.
                   </p>
                   <button 
                     onClick={() => { setIsAboutOpen(false); navigate('/dashboard'); }}
-                    className="w-full md:w-auto bg-pulse-600 hover:bg-pulse-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-pulse-500/25 hover:shadow-pulse-500/40 hover:scale-105 active:scale-95"
+                    className="w-full md:w-auto bg-pulse-600 hover:bg-pulse-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-pulse-500/25 hover:shadow-pulse-500/40 hover:scale-105 active:scale-95 shrink-0"
                   >
                     Launch Planner →
                   </button>
