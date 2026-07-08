@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { motion, AnimatePresence, MotionConfig, Variants } from "framer-motion"
+import { motion, AnimatePresence, MotionConfig } from "framer-motion"
+import type { Variants } from "framer-motion"
 import { ChevronDown, Globe, MessageCircle, Mic } from "lucide-react"
 
 // Utility function for className merging
