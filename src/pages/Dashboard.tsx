@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Planner from '../components/Planner';
 import { supabase } from '../lib/supabase';
 import VideoBackground from '../components/ui/VideoBackground';
+import { AnimatedHamburger } from '../components/ui/animated-hamburger';
 
 export default function Dashboard() {
   const [userName, setUserName] = useState<string | null>(null);
@@ -84,12 +85,10 @@ export default function Dashboard() {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button 
-            className="md:hidden z-50 p-2 text-black"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          <AnimatedHamburger 
+            isOpen={isMobileMenuOpen} 
+            toggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+          />
         </header>
 
         {/* Mobile Menu Overlay */}
