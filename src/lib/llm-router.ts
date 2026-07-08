@@ -544,7 +544,12 @@ export const pulseLocationExtractionAgent = async (input: string): Promise<{orig
     const raw = await callLLM(prompt);
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+      const parsed = JSON.parse(jsonMatch[0]);
+      const origin = parsed.origin || parsed.Origin || parsed.ORIGIN;
+      const destination = parsed.destination || parsed.Destination || parsed.DESTINATION;
+      if (origin && destination) {
+        return { origin, destination };
+      }
     }
     return null;
   } catch {
