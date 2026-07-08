@@ -436,13 +436,9 @@ export default function Planner() {
                               </div>
                             </div>
 
-                            {/* Explanation / Verdict */}
-                            <div className="bg-white/10 p-5 rounded-xl border border-white/10 mt-2">
-                              <p className="font-bold text-[#5AE14C] mb-2 flex items-center gap-2">
-                                <Sparkles size={16} />
-                                Final Verdict
-                              </p>
-                              <p className="text-white/90 leading-relaxed font-schibsted text-[15px] whitespace-pre-wrap">{msg.recommendation.explanation}</p>
+                            {/* Explanation */}
+                            <div className="mt-1">
+                              <p className="text-white/80 leading-relaxed font-schibsted text-[14px] whitespace-pre-wrap">{msg.recommendation.explanation}</p>
                             </div>
 
                             {/* Disclaimer (if provided) */}
