@@ -207,7 +207,7 @@ export default function HomeHero() {
                         content: (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full h-full items-center">
                             <img
-                              src="https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?q=80&w=3087&auto=format&fit=crop"
+                              src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2340&auto=format&fit=crop"
                               alt="AI Route Planner"
                               className="rounded-xl w-full h-48 object-cover shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-white/5"
                             />
@@ -232,7 +232,7 @@ export default function HomeHero() {
                         content: (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full h-full items-center">
                             <img
-                              src="https://images.unsplash.com/photo-1506543730435-e2c1d4553a84?q=80&w=2362&auto=format&fit=crop"
+                              src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2340&auto=format&fit=crop"
                               alt="Instant Cab Fares"
                               className="rounded-xl w-full h-48 object-cover shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-white/5"
                             />
@@ -257,7 +257,7 @@ export default function HomeHero() {
                         content: (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full h-full items-center">
                             <img
-                              src="https://images.unsplash.com/photo-1522428938647-2baa7c899f2f?q=80&w=2000&auto=format&fit=crop"
+                              src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2340&auto=format&fit=crop"
                               alt="Smart Tools"
                               className="rounded-xl w-full h-48 object-cover shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-white/5"
                             />
@@ -286,7 +286,7 @@ export default function HomeHero() {
                   </p>
                   <button 
                     onClick={() => { setIsAboutOpen(false); navigate('/dashboard'); }}
-                    className="w-full md:w-auto bg-pulse-600 hover:bg-pulse-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-pulse-500/25 hover:shadow-pulse-500/40 hover:scale-105 active:scale-95 shrink-0"
+                    className="w-full md:w-auto bg-white hover:bg-white/90 text-black px-8 py-3 rounded-xl font-semibold transition-all shadow-lg hover:scale-105 active:scale-95 shrink-0 font-schibsted"
                   >
                     Launch Planner →
                   </button>
