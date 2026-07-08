@@ -73,6 +73,7 @@ const AnimatedHeading = ({ text, initialDelay = 200 }: { text: string; initialDe
 export default function HomeHero() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -107,7 +108,7 @@ export default function HomeHero() {
             </div>
             
             <div className="hidden md:flex items-center gap-8">
-              <a href="#" className="text-sm text-gray-100 hover:text-gray-300 transition-colors">Commute</a>
+              <button onClick={() => setIsAboutOpen(true)} className="text-sm text-gray-100 hover:text-gray-300 transition-colors">About App</button>
             </div>
 
             <button 
@@ -140,8 +141,11 @@ export default function HomeHero() {
                 >
                   Launch Dashboard
                 </button>
-                <button className="liquid-glass border border-white/20 text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-black transition-colors duration-300">
-                  Explore Signals
+                <button 
+                  onClick={() => setIsAboutOpen(true)}
+                  className="liquid-glass border border-white/20 text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-black transition-colors duration-300"
+                >
+                  About PulseBLR
                 </button>
               </FadeIn>
             </div>
@@ -161,6 +165,69 @@ export default function HomeHero() {
         </div>
 
       </div>
+
+      {/* About Modal */}
+      {isAboutOpen && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity" 
+            onClick={() => setIsAboutOpen(false)} 
+          />
+          
+          {/* Modal Content */}
+          <div className="relative bg-black/80 backdrop-blur-xl border border-white/20 p-6 md:p-8 rounded-2xl max-w-lg w-full text-white shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsAboutOpen(false)} 
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-colors"
+            >
+              ✕
+            </button>
+            
+            <h2 className="text-2xl font-bold mb-4 font-schibsted flex items-center gap-2">
+              What is PulseBLR? <span className="text-xl">🚀</span>
+            </h2>
+            
+            <div className="space-y-4 text-white/80 font-sans text-sm md:text-base leading-relaxed">
+              <p>
+                PulseBLR is a smart commute operating system built exclusively for Bangalore. 
+                Instead of just staring at red traffic lines on a map, we use AI to give you actionable travel strategies.
+              </p>
+              
+              <ul className="space-y-3 mt-4">
+                <li className="flex gap-3">
+                  <span className="shrink-0 text-pulse-400">🧠</span>
+                  <span><strong>AI Route Planner:</strong> We analyze live traffic, weather, and transit data to suggest the exact transport mode and time to leave.</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="shrink-0 text-pulse-400">🚕</span>
+                  <span><strong>Instant Cab Fares:</strong> See Ola, Uber, and Auto fare estimates directly in the app before booking.</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="shrink-0 text-pulse-400">🌧️</span>
+                  <span><strong>Live Alerts:</strong> Proactive warnings for sudden rain or traffic bottlenecks.</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="shrink-0 text-pulse-400">🗺️</span>
+                  <span><strong>Smart Maps:</strong> Once you decide, open your route directly in Google Maps with one tap.</span>
+                </li>
+              </ul>
+              
+              <div className="pt-5 mt-5 border-t border-white/10 flex justify-between items-center">
+                <p className="text-xs text-white/40 italic">
+                  Built to save your time, money, and sanity.
+                </p>
+                <button 
+                  onClick={() => { setIsAboutOpen(false); navigate('/dashboard'); }}
+                  className="bg-pulse-600 hover:bg-pulse-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-pulse-500/20"
+                >
+                  Try it now →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
