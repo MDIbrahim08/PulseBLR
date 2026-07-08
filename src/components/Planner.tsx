@@ -14,6 +14,7 @@ import { usePulseObserver } from '../store/pulseObserver';
 import { MessageLoading } from './ui/message-loading';
 import { AIVoiceInput } from './ui/ai-voice-input';
 import { FluidDropdown } from './ui/fluid-dropdown';
+import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 
 type ChatMessage = {
   id: string;
@@ -35,6 +36,7 @@ export default function Planner() {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [language, setLanguage] = useState('English');
+  const [rainAlertDismissed, setRainAlertDismissed] = useState(false);
   const [savedRoutes, setSavedRoutes] = useState<{label: string; origin: string; destination: string}[]>(() => {
     try { return JSON.parse(localStorage.getItem('pulse_saved_routes') || '[]'); } catch { return []; }
   });
@@ -199,7 +201,7 @@ export default function Planner() {
     return { ola: olaFare, uber: uberFare, auto: autoFare };
   };
 
-  const isRaining = weatherData?.condition?.toLowerCase().includes('rain') || weatherData?.precipitation?.replace('mm','') > '2';
+  const isRaining = !rainAlertDismissed && (weatherData?.condition?.toLowerCase().includes('rain') || weatherData?.precipitation?.replace('mm','') > '2');
 
   const [chatInput, setChatInput] = useState('');
 
@@ -312,10 +314,25 @@ export default function Planner() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 text-blue-200 px-4 py-2.5 rounded-xl mb-4 text-sm font-schibsted backdrop-blur-sm"
+                className="w-full max-w-[728px] mb-4"
               >
-                <CloudRain size={16} className="text-blue-300 shrink-0" />
-                <span>🌧️ Rain detected — carry an umbrella & leave early to avoid waterlogging!</span>
+                <Alert
+                  variant="info"
+                  layout="row"
+                  isNotification
+                  icon={<CloudRain size={16} className="text-blue-400" />}
+                  action={
+                    <button
+                      onClick={() => setRainAlertDismissed(true)}
+                      className="p-1 rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                    >
+                      <span className="text-xs">✕</span>
+                    </button>
+                  }
+                >
+                  <AlertTitle className="text-blue-300 font-schibsted">Rain Detected</AlertTitle>
+                  <AlertDescription className="text-blue-200/70 font-schibsted">Carry an umbrella &amp; leave early to avoid waterlogging!</AlertDescription>
+                </Alert>
               </motion.div>
             )}
 
@@ -530,15 +547,12 @@ export default function Planner() {
 
                             {/* Disclaimer (if provided) */}
                             {msg.recommendation.disclaimer && (
-                              <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 border-l-4 border-l-orange-500 mt-2">
-                                <p className="font-semibold text-white mb-1 flex items-center gap-2">
-                                  <AlertCircle size={16} className="text-orange-500" />
-                                  Important Notice
-                                </p>
-                                <p className="text-slate-300 text-sm font-schibsted leading-relaxed">
-                                  {msg.recommendation.disclaimer}
-                                </p>
-                              </div>
+                              <Alert variant="warning" layout="complex" size="sm" className="mt-2 font-schibsted"
+                                icon={<AlertCircle size={16} className="text-amber-400" />}
+                              >
+                                <AlertTitle className="text-amber-300">Important Notice</AlertTitle>
+                                <AlertDescription className="text-amber-200/70">{msg.recommendation.disclaimer}</AlertDescription>
+                              </Alert>
                             )}
 
                             {/* Alternative Route (if provided) */}
