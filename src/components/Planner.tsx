@@ -5,7 +5,8 @@ import {
 } from 'lucide-react';
 import {
   pulseCoreAgent,
-  nimbusAdvisor, velocityAdvisor, transitIQAdvisor, urbanSenseAdvisor, chronosAdvisor, pulseFollowUpAgent
+  nimbusAdvisor, velocityAdvisor, transitIQAdvisor, urbanSenseAdvisor, chronosAdvisor, pulseFollowUpAgent,
+  pulseLocationExtractionAgent
 } from '../lib/llm-router';
 import { getCurrentLocation, getReverseGeocode, getForwardGeocode, getLiveWeather, getLiveRoute } from '../lib/signals';
 import AgentAnimation from './AgentAnimation';
@@ -274,8 +275,21 @@ export default function Planner() {
     const trafficSignal = trafficData?.summary ?? 'Moderate congestion on ORR.';
     const isFirstMessage = chatHistory.length === 0;
     
+    let activeOrigin = currentAddress;
+    let activeDest = destination;
+
     try {
-      const responseText = await pulseFollowUpAgent(question, weatherSignal, trafficSignal, transitData, currentAddress, destination, arrivalTime, isFirstMessage, language);
+      if (isFirstMessage && (!currentAddress || !destination)) {
+         const extracted = await pulseLocationExtractionAgent(question);
+         if (extracted && extracted.origin && extracted.destination) {
+            activeOrigin = extracted.origin;
+            activeDest = extracted.destination;
+            setCurrentAddress(extracted.origin);
+            setDestination(extracted.destination);
+         }
+      }
+
+      const responseText = await pulseFollowUpAgent(question, weatherSignal, trafficSignal, transitData, activeOrigin, activeDest, arrivalTime, isFirstMessage, language);
       
       const aiMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
