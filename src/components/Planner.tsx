@@ -420,19 +420,19 @@ export default function Planner() {
                               </div>
                             </div>
 
-                            {/* Transport, Cost, & Confidence Row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                              <div className="bg-pulse-500/10 p-4 rounded-xl border border-pulse-500/20 flex flex-col">
-                                <span className="text-pulse-400 text-xs font-bold uppercase tracking-wider mb-1">Transport</span>
-                                <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.recommendedTransport}</span>
+                            {/* Transport, Time Saved, & Confidence Row */}
+                            <div className="grid grid-cols-3 gap-2">
+                              <div className="bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col">
+                                <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1">Transport</span>
+                                <span className="text-white font-schibsted font-bold text-sm leading-tight">{msg.recommendation.recommendedTransport}</span>
                               </div>
-                              <div className="bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/20 flex flex-col">
-                                <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">⏱ Time Saved</span>
-                                <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.timeSavedMinutes ? `~${msg.recommendation.timeSavedMinutes} min` : 'Optimal'}</span>
+                              <div className="bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col">
+                                <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1">⏱ Time Saved</span>
+                                <span className="text-white font-schibsted font-bold text-sm leading-tight">{msg.recommendation.timeSavedMinutes ? `~${msg.recommendation.timeSavedMinutes} min` : 'Optimal'}</span>
                               </div>
-                              <div className="bg-[#5AE14C]/10 p-4 rounded-xl border border-[#5AE14C]/20 flex flex-col">
-                                <span className="text-[#5AE14C] text-xs font-bold uppercase tracking-wider mb-1">Confidence</span>
-                                <span className="text-white font-schibsted font-bold text-lg leading-tight">{msg.recommendation.confidenceScore}%</span>
+                              <div className="bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col">
+                                <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1">Confidence</span>
+                                <span className="text-white font-schibsted font-bold text-sm leading-tight">{msg.recommendation.confidenceScore}%</span>
                               </div>
                             </div>
 
