@@ -573,7 +573,9 @@ export default function Planner() {
                               </div>
                               <div className="bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col">
                                 <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1">⏱ Time Saved</span>
-                                <span className="text-white font-schibsted font-bold text-sm leading-tight">{msg.recommendation.timeSavedMinutes ? `~${msg.recommendation.timeSavedMinutes} min` : 'Optimal'}</span>
+                                <span className="text-white font-schibsted font-bold text-sm leading-tight">
+                                  {msg.recommendation.timeSavedMinutes && parseInt(msg.recommendation.timeSavedMinutes.toString()) > 0 ? `~${msg.recommendation.timeSavedMinutes} min` : 'Optimal'}
+                                </span>
                               </div>
                               <div className="bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col">
                                 <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1">Confidence</span>
