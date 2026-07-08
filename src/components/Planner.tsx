@@ -166,6 +166,16 @@ export default function Planner() {
       }
     }
 
+    if (!activeOrigin || !activeDest) {
+      // If we still don't have locations, it's a conversational message like "hi".
+      // Fallback to the chat agent instead of planning a broken route.
+      setIsAnalyzing(false);
+      if (inputToUse.trim()) {
+        handleChatSubmit(undefined, inputToUse);
+      }
+      return;
+    }
+
     try {
       const rec = await pulseCoreAgent(weatherSignal, dynamicTrafficSignal, transitData, activeOrigin, activeDest, arrivalTime, timeMode, inputToUse, avoidTollsOrTraffic, language);
       
