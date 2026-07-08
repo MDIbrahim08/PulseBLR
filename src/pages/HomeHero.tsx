@@ -171,58 +171,82 @@ export default function HomeHero() {
         <div className="absolute inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
           <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity" 
+            className="absolute inset-0 bg-black/60 backdrop-blur-lg transition-opacity" 
             onClick={() => setIsAboutOpen(false)} 
           />
           
-          {/* Modal Content */}
-          <div className="relative bg-black/80 backdrop-blur-xl border border-white/20 p-6 md:p-8 rounded-2xl max-w-lg w-full text-white shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <button 
-              onClick={() => setIsAboutOpen(false)} 
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-colors"
-            >
-              ✕
-            </button>
-            
-            <h2 className="text-2xl font-bold mb-4 font-schibsted flex items-center gap-2">
-              What is PulseBLR? <span className="text-xl">🚀</span>
-            </h2>
-            
-            <div className="space-y-4 text-white/80 font-sans text-sm md:text-base leading-relaxed">
-              <p>
-                PulseBLR is a smart commute operating system built exclusively for Bangalore. 
-                Instead of just staring at red traffic lines on a map, we use AI to give you actionable travel strategies.
-              </p>
+          {/* Premium Glassmorphic Modal Content */}
+          <div className="relative p-[1px] rounded-3xl max-w-3xl w-full shadow-[0_0_50px_rgba(90,225,76,0.15)] animate-in fade-in zoom-in-95 duration-300 bg-gradient-to-br from-white/30 via-white/5 to-transparent">
+            <div className="relative bg-[#0a0a0a]/90 backdrop-blur-2xl rounded-[23px] p-6 md:p-10 w-full h-full border border-white/10 overflow-hidden">
               
-              <ul className="space-y-3 mt-4">
-                <li className="flex gap-3">
-                  <span className="shrink-0 text-pulse-400">🧠</span>
-                  <span><strong>AI Route Planner:</strong> We analyze live traffic, weather, and transit data to suggest the exact transport mode and time to leave.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="shrink-0 text-pulse-400">🚕</span>
-                  <span><strong>Instant Cab Fares:</strong> See Ola, Uber, and Auto fare estimates directly in the app before booking.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="shrink-0 text-pulse-400">🌧️</span>
-                  <span><strong>Live Alerts:</strong> Proactive warnings for sudden rain or traffic bottlenecks.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="shrink-0 text-pulse-400">🗺️</span>
-                  <span><strong>Smart Maps:</strong> Once you decide, open your route directly in Google Maps with one tap.</span>
-                </li>
-              </ul>
+              {/* Decorative Glow */}
+              <div className="absolute -top-40 -right-40 w-80 h-80 bg-pulse-500/20 rounded-full blur-[100px] pointer-events-none" />
               
-              <div className="pt-5 mt-5 border-t border-white/10 flex justify-between items-center">
-                <p className="text-xs text-white/40 italic">
-                  Built to save your time, money, and sanity.
+              <button 
+                onClick={() => setIsAboutOpen(false)} 
+                className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-white/70 hover:text-white transition-all border border-white/10 hover:scale-105 z-10"
+              >
+                ✕
+              </button>
+              
+              <div className="relative z-10">
+                <h2 className="text-3xl md:text-4xl font-bold mb-2 font-schibsted bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+                  Welcome to PulseBLR 🚀
+                </h2>
+                <p className="text-white/60 text-sm md:text-base font-inter mb-8 max-w-lg">
+                  The ultimate AI-powered commute operating system built exclusively to beat Bangalore's chaotic traffic.
                 </p>
-                <button 
-                  onClick={() => { setIsAboutOpen(false); navigate('/dashboard'); }}
-                  className="bg-pulse-600 hover:bg-pulse-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-pulse-500/20"
-                >
-                  Try it now →
-                </button>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                  {/* Feature Cards */}
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
+                    <span className="text-xl mb-2 block text-pulse-400">🧠</span>
+                    <h3 className="font-schibsted font-bold text-white mb-1">AI Route Planner</h3>
+                    <p className="text-white/50 text-xs leading-relaxed font-inter">Analyzes live traffic, weather, and transit data to suggest the absolute fastest path.</p>
+                  </div>
+                  
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
+                    <span className="text-xl mb-2 block text-blue-400">🌧️</span>
+                    <h3 className="font-schibsted font-bold text-white mb-1">Live Rain Alerts</h3>
+                    <p className="text-white/50 text-xs leading-relaxed font-inter">Proactive banners warn you of rain or waterlogging before you leave.</p>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
+                    <span className="text-xl mb-2 block text-amber-400">🚕</span>
+                    <h3 className="font-schibsted font-bold text-white mb-1">Instant Cab Fares</h3>
+                    <p className="text-white/50 text-xs leading-relaxed font-inter">Live Ola, Uber, &amp; Auto fare estimates based on actual RTO per-km rates.</p>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
+                    <span className="text-xl mb-2 block text-purple-400">🗺️</span>
+                    <h3 className="font-schibsted font-bold text-white mb-1">1-Tap Google Maps</h3>
+                    <p className="text-white/50 text-xs leading-relaxed font-inter">Zero clunky in-app maps. We generate a deep-link to open Google Maps instantly.</p>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
+                    <span className="text-xl mb-2 block text-emerald-400">💾</span>
+                    <h3 className="font-schibsted font-bold text-white mb-1">Saved Routes</h3>
+                    <p className="text-white/50 text-xs leading-relaxed font-inter">Save "Home to Office" and reload it every morning with a single tap.</p>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition-colors">
+                    <span className="text-xl mb-2 block text-pink-400">🎙️</span>
+                    <h3 className="font-schibsted font-bold text-white mb-1">Voice &amp; Multi-lingual</h3>
+                    <p className="text-white/50 text-xs leading-relaxed font-inter">Ask questions using your voice in English, Kannada, or Hindi.</p>
+                  </div>
+                </div>
+                
+                <div className="pt-6 mt-2 flex flex-col md:flex-row justify-between items-center gap-4">
+                  <p className="text-xs text-white/40 italic font-inter text-center md:text-left">
+                    Built to save your time, your money, and your sanity.
+                  </p>
+                  <button 
+                    onClick={() => { setIsAboutOpen(false); navigate('/dashboard'); }}
+                    className="w-full md:w-auto bg-pulse-600 hover:bg-pulse-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-pulse-500/25 hover:shadow-pulse-500/40 hover:scale-105 active:scale-95"
+                  >
+                    Launch Planner →
+                  </button>
+                </div>
               </div>
             </div>
           </div>
