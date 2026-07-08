@@ -31,6 +31,7 @@ export default function Planner() {
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [cooldownMsg, setCooldownMsg] = useState('');
+  const [showRouteTools, setShowRouteTools] = useState(false);
   const lastRequestTime = useRef<number>(0);
   const COOLDOWN_MS = 15000; // 15-second cooldown between AI requests
   
@@ -662,52 +663,73 @@ export default function Planner() {
                 </div>
               )}
 
-              {/* Action Buttons (Global to Chat View) */}
+              {/* Action Buttons (Collapsible Route Tools) */}
               {currentAddress && destination && (
-                <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-3">
-                  
-                  {/* Google Maps Row */}
-                  <div className="flex gap-2 flex-wrap">
-                    <button
-                      onClick={() => openGoogleMaps(currentAddress, destination, 'transit')}
-                      className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 px-4 py-2.5 rounded-xl text-white text-sm font-schibsted font-semibold transition-all active:scale-95 shadow-md"
-                    >
-                      <Navigation size={15} className="text-[#5AE14C]" />
-                      Open in Google Maps
-                    </button>
-                    <button
-                      onClick={() => openGoogleMaps(currentAddress, destination, 'driving')}
-                      className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl text-white/70 text-sm font-schibsted transition-all active:scale-95"
-                    >
-                      <Car size={15} />
-                      Driving Route
-                    </button>
-                  </div>
+                <div className="mt-2 pt-4 border-t border-white/10 flex flex-col gap-3">
+                  <button 
+                    onClick={() => setShowRouteTools(!showRouteTools)}
+                    className="flex items-center justify-between w-full md:w-auto md:inline-flex bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-xl text-white/80 text-sm font-inter transition-all active:scale-95"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Car size={16} className="text-amber-400" /> 
+                      {showRouteTools ? "Hide Route Tools" : "Show Cabs & Navigation"}
+                    </span>
+                    <ChevronDown size={16} className={`transition-transform duration-300 ${showRouteTools ? "rotate-180" : ""}`} />
+                  </button>
 
-                  {/* Cab Fare Estimates */}
-                  {(() => {
-                    const fares = getCabFares(currentAddress, destination);
-                    return (
-                      <div className="bg-white/5 rounded-xl border border-white/10 p-3 max-w-[400px]">
-                        <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-2">🚕 Estimated Cab Fares</p>
-                        <div className="grid grid-cols-3 gap-2">
-                          <div className="text-center">
-                            <p className="text-white/50 text-[10px] mb-1">Ola</p>
-                            <p className="text-white font-schibsted font-bold text-sm">₹{fares.ola}–{fares.ola + 40}</p>
-                          </div>
-                          <div className="text-center border-x border-white/10">
-                            <p className="text-white/50 text-[10px] mb-1">Uber</p>
-                            <p className="text-white font-schibsted font-bold text-sm">₹{fares.uber}–{fares.uber + 45}</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-white/50 text-[10px] mb-1">Auto</p>
-                            <p className="text-white font-schibsted font-bold text-sm">₹{fares.auto}–{fares.auto + 30}</p>
-                          </div>
+                  <AnimatePresence>
+                    {showRouteTools && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden flex flex-col gap-3"
+                      >
+                        {/* Google Maps Row */}
+                        <div className="flex gap-2 flex-wrap pt-1">
+                          <button
+                            onClick={() => openGoogleMaps(currentAddress, destination, 'transit')}
+                            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 px-4 py-2.5 rounded-xl text-white text-sm font-schibsted font-semibold transition-all active:scale-95 shadow-md"
+                          >
+                            <Navigation size={15} className="text-[#5AE14C]" />
+                            Open in Google Maps
+                          </button>
+                          <button
+                            onClick={() => openGoogleMaps(currentAddress, destination, 'driving')}
+                            className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl text-white/70 text-sm font-schibsted transition-all active:scale-95"
+                          >
+                            <Car size={15} />
+                            Driving Route
+                          </button>
                         </div>
-                        <p className="text-white/25 text-[9px] mt-2 text-center">Approximate fares based on distance. Surge pricing may apply.</p>
-                      </div>
-                    );
-                  })()}
+
+                        {/* Cab Fare Estimates */}
+                        {(() => {
+                          const fares = getCabFares(currentAddress, destination);
+                          return (
+                            <div className="bg-white/5 rounded-xl border border-white/10 p-3 max-w-[400px]">
+                              <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-2">🚕 Estimated Cab Fares</p>
+                              <div className="grid grid-cols-3 gap-2">
+                                <div className="text-center">
+                                  <p className="text-white/50 text-[10px] mb-1">Ola</p>
+                                  <p className="text-white font-schibsted font-bold text-sm">₹{fares.ola}–{fares.ola + 40}</p>
+                                </div>
+                                <div className="text-center border-x border-white/10">
+                                  <p className="text-white/50 text-[10px] mb-1">Uber</p>
+                                  <p className="text-white font-schibsted font-bold text-sm">₹{fares.uber}–{fares.uber + 45}</p>
+                                </div>
+                                <div className="text-center">
+                                  <p className="text-white/50 text-[10px] mb-1">Auto</p>
+                                  <p className="text-white font-schibsted font-bold text-sm">₹{fares.auto}–{fares.auto + 30}</p>
+                                </div>
+                              </div>
+                              <p className="text-white/25 text-[9px] mt-2 text-center">Approximate fares based on distance. Surge pricing may apply.</p>
+                            </div>
+                          );
+                        })()}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
 

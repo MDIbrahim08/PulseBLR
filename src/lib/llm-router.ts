@@ -536,4 +536,19 @@ Output JSON ONLY. No markdown, no \`\`\`json. Just the raw array starting with [
       { name: "Nearby Cafe (Search on Google Maps)", distance: "Unknown", wifiSpeed: "Unknown", atmosphere: "Please check Google Maps for nearby cafes with WiFi", slackMessage: `Caught in heavy traffic near ${origin}. Working remotely until conditions clear.` }
     ];
   }
+  }
+};
+
+export const pulseLocationExtractionAgent = async (input: string): Promise<{origin: string, destination: string} | null> => {
+  const prompt = `Extract the origin and destination from this text: "${input}". Return ONLY a JSON object like {"origin": "Location A", "destination": "Location B"}. If you cannot find both, return null. No markdown.`;
+  try {
+    const raw = await callLLM(prompt);
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
+    return null;
+  } catch {
+    return null;
+  }
 };
