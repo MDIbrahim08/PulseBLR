@@ -37,6 +37,13 @@ export default function Planner() {
   
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatHistory, isThinking, showRouteTools]);
+  
   const [language, setLanguage] = useState('English');
   const [rainAlertDismissed, setRainAlertDismissed] = useState(false);
   const [savedRoutes, setSavedRoutes] = useState<{label: string; origin: string; destination: string}[]>(() => {
@@ -282,6 +289,7 @@ export default function Planner() {
 
   const handleUniversalSubmit = (overrideText?: string) => {
     const inputToUse = overrideText || chatInput;
+    setChatInput('');
     if (chatHistory.length === 0) {
       handlePlanRoute(inputToUse);
     } else if (inputToUse.trim()) {
