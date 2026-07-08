@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { motion, AnimatePresence, MotionConfig } from "framer-motion"
+import { motion, AnimatePresence, MotionConfig, Variants } from "framer-motion"
 import { ChevronDown, Globe, MessageCircle, Mic } from "lucide-react"
 
 // Utility function for className merging
@@ -97,7 +97,7 @@ const IconWrapper = ({
 )
 
 // Animation variants
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -108,14 +108,14 @@ const containerVariants = {
   },
 }
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: -10 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.3,
-      ease: "easeOut",
+      ease: [0.25, 0.1, 0.25, 1],
     },
   },
 }
