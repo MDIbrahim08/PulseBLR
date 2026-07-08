@@ -10,7 +10,7 @@ function cn(...classes: (string | boolean | undefined)[]) {
 }
 
 // Custom hook for click outside detection
-function useClickAway(ref: React.RefObject<HTMLElement>, handler: (event: MouseEvent | TouchEvent) => void) {
+function useClickAway(ref: React.RefObject<HTMLElement | null>, handler: (event: MouseEvent | TouchEvent) => void) {
   React.useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
       if (!ref.current || ref.current.contains(event.target as Node)) {
@@ -115,7 +115,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.3,
-      ease: [0.25, 0.1, 0.25, 1],
+      ease: "easeOut",
     },
   },
 }
@@ -129,7 +129,7 @@ export function FluidDropdown({ onLanguageChange }: FluidDropdownProps) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [selectedCategory, setSelectedCategory] = React.useState<LanguageCategory>(defaultLanguages[0])
   const [hoveredCategory, setHoveredCategory] = React.useState<string | null>(null)
-  const dropdownRef = React.useRef<HTMLDivElement>(null)
+  const dropdownRef = React.useRef<HTMLDivElement | null>(null)
 
   useClickAway(dropdownRef, () => setIsOpen(false))
 
