@@ -111,8 +111,9 @@ export default function Planner() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory, isAnalyzing, isThinking]);
 
-  const handlePlanRoute = async () => {
-    if (!currentAddress && !destination && !chatInput.trim()) return;
+  const handlePlanRoute = async (overrideText?: string) => {
+    const inputToUse = overrideText || chatInput;
+    if (!currentAddress && !destination && !inputToUse.trim()) return;
     const now = Date.now();
     if (now - lastRequestTime.current < COOLDOWN_MS) {
       const remaining = Math.ceil((COOLDOWN_MS - (now - lastRequestTime.current)) / 1000);
@@ -150,8 +151,23 @@ export default function Planner() {
     
     const weatherSignal = weatherData?.summary ?? 'Partly Cloudy, 26°C';
     
+    let activeOrigin = currentAddress;
+    let activeDest = destination;
+    
+    if (!activeOrigin || !activeDest) {
+      if (inputToUse.trim()) {
+        const extracted = await pulseLocationExtractionAgent(inputToUse);
+        if (extracted && extracted.origin && extracted.destination) {
+           activeOrigin = extracted.origin;
+           activeDest = extracted.destination;
+           setCurrentAddress(extracted.origin);
+           setDestination(extracted.destination);
+        }
+      }
+    }
+
     try {
-      const rec = await pulseCoreAgent(weatherSignal, dynamicTrafficSignal, transitData, currentAddress, destination, arrivalTime, timeMode, chatInput, avoidTollsOrTraffic, language);
+      const rec = await pulseCoreAgent(weatherSignal, dynamicTrafficSignal, transitData, activeOrigin, activeDest, arrivalTime, timeMode, inputToUse, avoidTollsOrTraffic, language);
       
       const newMsg: ChatMessage = {
         id: Date.now().toString(),
@@ -230,12 +246,13 @@ export default function Planner() {
     // Store recognition on window object so we can abort it in onStop if needed
     (window as any).currentRecognition = recognition;
 
+    let finalTranscript = '';
     recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
+      finalTranscript = Array.from(event.results)
         .map((result: any) => result[0])
         .map(result => result.transcript)
         .join('');
-      setChatInput(transcript);
+      setChatInput(finalTranscript);
     };
     
     recognition.onerror = (e: any) => {
@@ -245,10 +262,21 @@ export default function Planner() {
     
     recognition.onend = () => {
       setIsListening(false);
-      setTimeout(() => handleChatSubmit(), 500);
+      if (finalTranscript.trim()) {
+        handleUniversalSubmit(finalTranscript);
+      }
     };
     
     recognition.start();
+  };
+
+  const handleUniversalSubmit = (overrideText?: string) => {
+    const inputToUse = overrideText || chatInput;
+    if (chatHistory.length === 0) {
+      handlePlanRoute(inputToUse);
+    } else if (inputToUse.trim()) {
+      handleChatSubmit(undefined, inputToUse);
+    }
   };
 
   const handleVoiceStop = () => {
@@ -438,21 +466,14 @@ export default function Planner() {
                   onKeyDown={(e) => { 
                     if(e.key === 'Enter' && !e.shiftKey) { 
                       e.preventDefault(); 
-                      if (chatInput.trim()) {
-                        handleChatSubmit();
-                      } else {
-                        handlePlanRoute();
-                      }
+                      handleUniversalSubmit();
                     } 
                   }}
                   className="w-full h-full bg-transparent outline-none font-inter text-[16px] text-black placeholder-black/60 pr-12 resize-none pt-4 pb-4"
                 />
                 <button 
-                  onClick={() => {
-                    if (chatInput.trim()) handleChatSubmit();
-                    else handlePlanRoute();
-                  }}
-                  disabled={isAnalyzing}
+                  onClick={() => handleUniversalSubmit()}
+                  disabled={(!currentAddress && !destination && !chatInput.trim()) || isAnalyzing || isThinking}
                   className="absolute right-3 bottom-3 w-[36px] h-[36px] bg-black rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 shadow-md"
                 >
                   {isAnalyzing ? (
