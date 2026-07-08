@@ -205,16 +205,23 @@ export default function HomeHero() {
                         id: "tab1",
                         label: "Core AI",
                         content: (
-                          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 h-full">
-                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
-                              <span className="text-2xl mb-3 block text-pulse-400">🧠</span>
-                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">AI Route Planner</h3>
-                              <p className="text-white/60 text-sm leading-relaxed font-inter">Analyzes live traffic, weather, and transit data to suggest the absolute fastest path.</p>
-                            </div>
-                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
-                              <span className="text-2xl mb-3 block text-blue-400">🌧️</span>
-                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">Live Rain Alerts</h3>
-                              <p className="text-white/60 text-sm leading-relaxed font-inter">Proactive banners warn you of rain or waterlogging before you even leave.</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full h-full items-center">
+                            <img
+                              src="https://images.unsplash.com/photo-1548345680-f5475ea90f14?q=80&w=2344&auto=format&fit=crop"
+                              alt="AI Route Planner"
+                              className="rounded-xl w-full h-48 object-cover shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-white/5"
+                            />
+                            <div className="flex flex-col gap-y-4">
+                              <div>
+                                <span className="text-2xl mb-1 block text-pulse-400">🧠</span>
+                                <h3 className="text-xl font-bold mb-1 text-white font-schibsted">AI Route Planner</h3>
+                                <p className="text-sm text-white/60 font-inter">Analyzes live traffic, weather, and transit data to suggest the absolute fastest path.</p>
+                              </div>
+                              <div>
+                                <span className="text-2xl mb-1 block text-blue-400">🌧️</span>
+                                <h3 className="text-xl font-bold mb-1 text-white font-schibsted">Live Rain Alerts</h3>
+                                <p className="text-sm text-white/60 font-inter">Proactive banners warn you of rain or waterlogging before you even leave.</p>
+                              </div>
                             </div>
                           </div>
                         )
@@ -223,16 +230,23 @@ export default function HomeHero() {
                         id: "tab2",
                         label: "Actionable",
                         content: (
-                          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 h-full">
-                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
-                              <span className="text-2xl mb-3 block text-amber-400">🚕</span>
-                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">Instant Cab Fares</h3>
-                              <p className="text-white/60 text-sm leading-relaxed font-inter">Live Ola, Uber, &amp; Auto fare estimates based on actual RTO per-km rates.</p>
-                            </div>
-                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
-                              <span className="text-2xl mb-3 block text-purple-400">🗺️</span>
-                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">1-Tap Google Maps</h3>
-                              <p className="text-white/60 text-sm leading-relaxed font-inter">Zero clunky in-app maps. We generate a deep-link to open Google Maps instantly.</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full h-full items-center">
+                            <img
+                              src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2340&auto=format&fit=crop"
+                              alt="Instant Cab Fares"
+                              className="rounded-xl w-full h-48 object-cover shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-white/5"
+                            />
+                            <div className="flex flex-col gap-y-4">
+                              <div>
+                                <span className="text-2xl mb-1 block text-amber-400">🚕</span>
+                                <h3 className="text-xl font-bold mb-1 text-white font-schibsted">Instant Cab Fares</h3>
+                                <p className="text-sm text-white/60 font-inter">Live Ola, Uber, &amp; Auto fare estimates based on actual RTO per-km rates.</p>
+                              </div>
+                              <div>
+                                <span className="text-2xl mb-1 block text-purple-400">🗺️</span>
+                                <h3 className="text-xl font-bold mb-1 text-white font-schibsted">1-Tap Google Maps</h3>
+                                <p className="text-sm text-white/60 font-inter">Zero clunky in-app maps. We generate a deep-link to open Google Maps instantly.</p>
+                              </div>
                             </div>
                           </div>
                         )
@@ -241,16 +255,23 @@ export default function HomeHero() {
                         id: "tab3",
                         label: "Smart Tools",
                         content: (
-                          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 h-full">
-                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
-                              <span className="text-2xl mb-3 block text-emerald-400">💾</span>
-                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">Saved Routes</h3>
-                              <p className="text-white/60 text-sm leading-relaxed font-inter">Save "Home to Office" and reload it every morning with a single tap.</p>
-                            </div>
-                            <div className="bg-black/40 border border-white/5 p-4 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
-                              <span className="text-2xl mb-3 block text-pink-400">🎙️</span>
-                              <h3 className="font-schibsted font-bold text-white mb-2 text-lg">Voice &amp; Languages</h3>
-                              <p className="text-white/60 text-sm leading-relaxed font-inter">Ask questions using your voice in English, Kannada, or Hindi.</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full h-full items-center">
+                            <img
+                              src="https://images.unsplash.com/photo-1581404172459-6997b66ec060?q=80&w=2274&auto=format&fit=crop"
+                              alt="Smart Tools"
+                              className="rounded-xl w-full h-48 object-cover shadow-[0_0_20px_rgba(0,0,0,0.2)] border border-white/5"
+                            />
+                            <div className="flex flex-col gap-y-4">
+                              <div>
+                                <span className="text-2xl mb-1 block text-emerald-400">💾</span>
+                                <h3 className="text-xl font-bold mb-1 text-white font-schibsted">Saved Routes</h3>
+                                <p className="text-sm text-white/60 font-inter">Save "Home to Office" and reload it every morning with a single tap.</p>
+                              </div>
+                              <div>
+                                <span className="text-2xl mb-1 block text-pink-400">🎙️</span>
+                                <h3 className="text-xl font-bold mb-1 text-white font-schibsted">Voice &amp; Languages</h3>
+                                <p className="text-sm text-white/60 font-inter">Ask questions using your voice in English, Kannada, or Hindi.</p>
+                              </div>
                             </div>
                           </div>
                         )
