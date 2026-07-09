@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
-  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck
+  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck, AlertTriangle
 } from 'lucide-react';
 import {
   pulseCoreAgent,
@@ -27,10 +28,25 @@ type ChatMessage = {
 };
 
 export default function Planner() {
+  const navigate = useNavigate();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [cooldownMsg, setCooldownMsg] = useState('');
+
+  const isPeakHour = () => {
+    const now = new Date();
+    const hour = now.getHours();
+    const mins = now.getMinutes();
+    const totalMins = hour * 60 + mins;
+    
+    // Morning peak: 8:30 AM (510 mins) to 11:30 AM (690 mins)
+    const isMorningPeak = totalMins >= 510 && totalMins <= 690;
+    // Evening peak: 5:30 PM (1050 mins) to 8:30 PM (1230 mins)
+    const isEveningPeak = totalMins >= 1050 && totalMins <= 1230;
+    
+    return isMorningPeak || isEveningPeak;
+  };
   const [showRouteTools, setShowRouteTools] = useState(false);
   const lastRequestTime = useRef<number>(0);
   const COOLDOWN_MS = 15000; // 15-second cooldown between AI requests
@@ -306,6 +322,12 @@ export default function Planner() {
     if (e) e.preventDefault();
     const question = overrideText || chatInput;
     if (!question.trim() || isThinking) {
+      return;
+    }
+
+    if (question.toLowerCase().includes('pivot') || question.toLowerCase().includes('smart pivot') || question.toLowerCase().includes('find a cafe')) {
+      setChatInput('');
+      navigate('/smart-pivot');
       return;
     }
     
@@ -642,6 +664,34 @@ export default function Planner() {
                                 ))}
                               </div>
                             )}
+
+                             {/* Congestion Nudge (Concept 1) */}
+                             {(() => {
+                               const isPeak = isPeakHour();
+                               const hasHighCongestion = trafficData?.durationMins && trafficData.durationMins > 30;
+                               if (isPeak || hasHighCongestion) {
+                                 return (
+                                   <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                     <div className="flex-1">
+                                       <p className="text-sm font-semibold text-amber-300 flex items-center gap-1.5 mb-1">
+                                         <AlertTriangle size={15} />
+                                         Congestion Hedging Active
+                                       </p>
+                                       <p className="text-xs text-amber-200/70 leading-relaxed font-schibsted">
+                                         Peak traffic detected on this route. You can avoid the gridlock by staying off the road. Pivot to a nearby workspace or cafe until traffic drops off.
+                                       </p>
+                                     </div>
+                                     <button
+                                       onClick={() => navigate('/smart-pivot')}
+                                       className="shrink-0 flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all text-black font-bold text-xs py-2 px-4 rounded-lg shadow-md"
+                                     >
+                                       Find a Cafe <ArrowRight size={14} />
+                                     </button>
+                                   </div>
+                                 );
+                               }
+                               return null;
+                             })()}
 
                             {/* Action Buttons removed from here to be placed globally */}
 

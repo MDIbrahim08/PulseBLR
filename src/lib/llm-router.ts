@@ -448,7 +448,7 @@ RULES:
 7. GREATER BANGALORE COVERAGE RULE: Confidently support the entire Greater Bangalore Metropolitan Region including Hoskote, Devanahalli, Nelamangala, etc.
 8. LANDMARK RESOLUTION RULE: Intelligently resolve Tech Parks, Colleges, Offices and Hospitals to their real Bangalore locations.
 9. CRITICAL LANGUAGE AND STYLE RULE: You MUST respond in ${language}. Use emojis naturally throughout your response to make it interesting!
-10. At the very end of your response, provide exactly 2 short, actionable suggestions in ${language}:
+10. At the very end of your response, provide exactly 2 short, actionable suggestions in ${language}. If there is heavy traffic or it is peak hour, one suggestion MUST be exactly "SUGGESTION: Pivot to a nearby Cafe" to allow the user to escape the traffic:
 
 SUGGESTION: [short text here]
 SUGGESTION: [short text here]`;
