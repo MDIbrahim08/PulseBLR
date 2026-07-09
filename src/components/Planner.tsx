@@ -133,31 +133,7 @@ export default function Planner() {
     setIsAnalyzing(true);
     setChatHistory([]);
     
-    let dynamicTrafficSignal = trafficData?.summary ?? 'Moderate congestion.';
-    
-    // Dynamically fetch live traffic for specific route
-    try {
-      if (currentAddress && destination) {
-        addEvent(`Geocoding ${currentAddress} and ${destination}...`, 'info', 'PulseCore');
-        const startCoords = await getForwardGeocode(currentAddress);
-        const endCoords = await getForwardGeocode(destination);
-        if (startCoords && endCoords) {
-           const t0 = performance.now();
-           const liveTraffic = await getLiveRoute(startCoords.lat, startCoords.lon, endCoords.lat, endCoords.lon);
-           if (liveTraffic) {
-             setTrafficData(liveTraffic);
-             dynamicTrafficSignal = liveTraffic.summary;
-             setAPIStatus('traffic', 'online', Math.round(performance.now() - t0));
-             addEvent(`Traffic API — dynamic route data fetched`, 'success', 'Velocity');
-           }
-        }
-      }
-    } catch (e) {
-       console.error("Dynamic routing failed", e);
-    }
-    
-    const weatherSignal = weatherData?.summary ?? 'Partly Cloudy, 26°C';
-    
+    // 1. Resolve active origin and destination first (from inputs or text extraction)
     let activeOrigin = currentAddress;
     let activeDest = destination;
     
@@ -173,9 +149,8 @@ export default function Planner() {
       }
     }
 
+    // 2. Reject if no locations are found (fallback to chat)
     if (!activeOrigin || !activeDest) {
-      // If we still don't have locations, it's a conversational message like "hi".
-      // Fallback to the chat agent instead of planning a broken route.
       setIsAnalyzing(false);
       if (inputToUse.trim()) {
         handleChatSubmit(undefined, inputToUse);
@@ -183,6 +158,29 @@ export default function Planner() {
       return;
     }
 
+    // 3. Dynamically fetch live traffic and route info for resolved locations
+    let dynamicTrafficSignal = trafficData?.summary ?? 'Moderate congestion.';
+    try {
+      addEvent(`Geocoding ${activeOrigin} and ${activeDest}...`, 'info', 'PulseCore');
+      const startCoords = await getForwardGeocode(activeOrigin);
+      const endCoords = await getForwardGeocode(activeDest);
+      if (startCoords && endCoords) {
+         const t0 = performance.now();
+         const liveTraffic = await getLiveRoute(startCoords.lat, startCoords.lon, endCoords.lat, endCoords.lon);
+         if (liveTraffic) {
+           setTrafficData(liveTraffic);
+           dynamicTrafficSignal = liveTraffic.summary;
+           setAPIStatus('traffic', 'online', Math.round(performance.now() - t0));
+           addEvent(`Traffic API — dynamic route data fetched`, 'success', 'Velocity');
+         }
+      }
+    } catch (e) {
+       console.error("Dynamic routing failed", e);
+    }
+    
+    const weatherSignal = weatherData?.summary ?? 'Partly Cloudy, 26°C';
+
+    // 4. Generate AI commute recommendation
     try {
       const rec = await pulseCoreAgent(weatherSignal, dynamicTrafficSignal, transitData, activeOrigin, activeDest, arrivalTime, timeMode, inputToUse, avoidTollsOrTraffic, language);
       
