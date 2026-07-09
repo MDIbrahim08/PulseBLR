@@ -128,9 +128,10 @@ const isTimeInPast = (timeStr: string): boolean => {
 const safeParseJSON = (text: string, timeString: string, destination: string, origin: string, weather: string, traffic: string, timeMode: string = 'Arrive By') => {
   // Parse timeString like "09:00 AM" 
   const match = timeString.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  let h = 9;
-  let m = 0;
-  let ampm = 'AM';
+  const now = new Date();
+  let h = now.getHours();
+  let m = now.getMinutes();
+  let ampm = h >= 12 ? 'PM' : 'AM';
   let formattedInputTime = timeString;
   
   if (match) {
@@ -150,7 +151,7 @@ const safeParseJSON = (text: string, timeString: string, destination: string, or
   let arrH = h;
   let arrMins = m;
   
-  if (timeMode === 'Depart At') {
+  if (timeMode === 'Depart At' || timeMode === 'Dynamic') {
     // Default arrival is 50 mins later
     arrMins += 50;
     if (arrMins >= 60) {
