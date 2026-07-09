@@ -666,32 +666,25 @@ export default function Planner() {
                             )}
 
                              {/* Congestion Nudge (Concept 1) */}
-                             {(() => {
-                               const isPeak = isPeakHour();
-                               const hasHighCongestion = trafficData?.durationMins && trafficData.durationMins > 30;
-                               if (isPeak || hasHighCongestion) {
-                                 return (
-                                   <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                     <div className="flex-1">
-                                       <p className="text-sm font-semibold text-amber-300 flex items-center gap-1.5 mb-1">
-                                         <AlertTriangle size={15} />
-                                         Congestion Hedging Active
-                                       </p>
-                                       <p className="text-xs text-amber-200/70 leading-relaxed font-schibsted">
-                                         Peak traffic detected on this route. You can avoid the gridlock by staying off the road. Pivot to a nearby workspace or cafe until traffic drops off.
-                                       </p>
-                                     </div>
-                                     <button
-                                       onClick={() => navigate('/smart-pivot')}
-                                       className="shrink-0 flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all text-black font-bold text-xs py-2 px-4 rounded-lg shadow-md"
-                                     >
-                                       Find a Cafe <ArrowRight size={14} />
-                                     </button>
-                                   </div>
-                                 );
-                               }
-                               return null;
-                             })()}
+                             {msg.recommendation.congestionHedgingActive && (
+                               <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                 <div className="flex-1">
+                                   <p className="text-sm font-semibold text-amber-300 flex items-center gap-1.5 mb-1">
+                                     <AlertTriangle size={15} />
+                                     Congestion Hedging Active
+                                   </p>
+                                   <p className="text-xs text-amber-200/70 leading-relaxed font-schibsted">
+                                     Peak traffic detected on this route. You can avoid the gridlock by staying off the road. Pivot to a nearby workspace or cafe until traffic drops off.
+                                   </p>
+                                 </div>
+                                 <button
+                                   onClick={() => navigate('/smart-pivot')}
+                                   className="shrink-0 flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all text-black font-bold text-xs py-2 px-4 rounded-lg shadow-md"
+                                 >
+                                   Find a Cafe <ArrowRight size={14} />
+                                 </button>
+                               </div>
+                             )}
 
                             {/* Action Buttons removed from here to be placed globally */}
 

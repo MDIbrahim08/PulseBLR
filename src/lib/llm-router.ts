@@ -184,7 +184,8 @@ const safeParseJSON = (text: string, timeString: string, destination: string, or
     estimatedCost: "Calculating...",
     explanation: `PulseMind is analyzing live signals for your commute from ${origin} to ${destination}.\n\nLive Weather: ${weather}\nLive Traffic: ${traffic}\n\nPlease retry in a moment for a fully dynamic AI-generated recommendation.`,
     disclaimer: "",
-    alternativeRoute: null
+    alternativeRoute: null,
+    congestionHedgingActive: false
   };
 
   try {
@@ -330,6 +331,7 @@ GEOGRAPHY & METRO REALITY CHECK: You MUST NOT hallucinate Namma Metro lines. If 
 STRICT LOCATION REJECTION: If the origin or destination is COMPLETELY OUTSIDE of the Greater Bangalore Metropolitan Area (e.g., Delhi, Mumbai, Chennai, another state/country, or completely random invalid locations), you MUST completely REJECT the query. Do NOT provide fake routes or times. Instead, set "recommendedTransport" to "Out of Service Area" and set the "explanation" exactly to: "PulseBLR exclusively covers Bangalore and its Greater Metropolitan Area. We do not support routes for locations outside of this region."
 GREATER BANGALORE COVERAGE RULE: You MUST confidently support locations across the entire Greater Bangalore Metropolitan Region (including outskirts like Hoskote, Devanahalli, Nelamangala, Bidadi, Kengeri, Electronic City, Sarjapur). DO NOT claim these are out of bounds or unsupported. Dynamically determine the best real transit or driving routes to reach them.
 LANDMARK RESOLUTION RULE: Users will frequently input specific Landmarks, Tech Parks (e.g. Manyata, Bagmane, Ecospace), Colleges (e.g. Christ University, RVCE, PESU), Offices, or Hospitals instead of standard neighborhood names. You MUST intelligently resolve these points of interest to their correct geographical location in Bangalore and provide accurate routing.
+CONGESTION HEDGING RULE: If the recommended departure time falls during Bangalore's active peak hours (Morning: 8:30-11:30 AM, Evening: 5:30-8:30 PM) or there is heavy traffic congestion, set the JSON field "congestionHedgingActive" to true. Otherwise, set it to false.
 IMPORTANT CRITICAL RULE: DO NOT copy ANY text, times, or transport modes from the JSON example below. You MUST mathematically calculate times, dynamically determine the "recommendedTransport", and generate fresh, context-aware "reasoning", "alternativeRoute", and "disclaimer".
 
 Output JSON EXACTLY like this (NO markdown, raw JSON only):
@@ -340,6 +342,7 @@ Output JSON EXACTLY like this (NO markdown, raw JSON only):
   "timeSavedMinutes": 15,
   "confidenceScore": 85,
   "estimatedCost": "[DYNAMIC_COST_ESTIMATE]",
+  "congestionHedgingActive": false,
   "explanation": "[DYNAMIC_EXPLANATION_IN_TARGET_LANGUAGE]",
   "disclaimer": "[DISCLAIMER_OR_EMPTY_STRING]",
   "alternativeRoute": {
