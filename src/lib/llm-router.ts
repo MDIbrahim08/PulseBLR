@@ -371,7 +371,7 @@ ${goalInstruction}
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
-ALL times in output JSON values MUST include AM or PM. Never output 24-hour time in the final JSON values (except for internally comparing).
+ALL times in output JSON values and text fields MUST be formatted strictly in 12-hour format with AM/PM (e.g. 1:30 PM, 2:45 PM). Hours MUST be between 1 and 12. Under NO circumstances should you output hours greater than 12 with AM/PM (e.g. "13:30 PM" or "14:22 PM" are strictly forbidden. You must convert these to "1:30 PM" and "2:22 PM").
 CRITICAL LANGUAGE AND STYLE RULE: You MUST output all text fields (like explanation, reasoning, disclaimer, alternativeRoute.reason) in ${language}. Use emojis naturally throughout your explanation and reasoning to make the text interesting and engaging! The keys in the JSON must remain in English, but the values should be translated to ${language}.
 
 CRITICAL TEMPORAL COMPARISON RULE: 
@@ -379,7 +379,7 @@ CRITICAL TEMPORAL COMPARISON RULE:
 - User's Target Time is ${targetTimeDouble}.
 - YOU MUST compare these two times strictly using the 24-hour values (e.g. 13:15 vs 18:30).
 - If the target time is in the past, you MUST recommend leaving "Now" and explain that their requested time has already passed.
-- If the target time is in the future, you MUST recommend a future departure time (e.g., 5:30 PM or 5:45 PM) so they arrive around their target time. DO NOT recommend leaving "Now" if the target time is in the future.
+- If the target time is in the future, you MUST recommend a future departure time (e.g., 5:30 PM or 5:45 PM) so they arrive around their target time. DO NOT recommend leaving "Now" if the target time is in the future. Ensure all departure and arrival times in your explanation are in clean 12-hour format (e.g., 1:30 PM, not 13:30 PM).
 
 GEOGRAPHY & METRO REALITY CHECK: You MUST NOT hallucinate Namma Metro lines. If the origin or destination is in areas WITHOUT metro connectivity (e.g., RT Nagar, Koramangala, Devanahalli, Airport, Bellandur, Marathahalli, Sarjapur, HSR Layout), you MUST NOT suggest the Metro as the primary transport mode. Instead, use your vast live knowledge of Bangalore's real transit systems to dynamically recommend the EXACT correct bus services (e.g., specific AC routes, regular BMTC buses), Cabs, or Autos. DO NOT hardcode recommendations—analyze the real routes! ONLY suggest Metro for areas with known active stations.
 STRICT LOCATION REJECTION: If the origin or destination is COMPLETELY OUTSIDE of the Greater Bangalore Metropolitan Area (e.g., Delhi, Mumbai, Chennai, another state/country, or completely random invalid locations), you MUST completely REJECT the query. Do NOT provide fake routes or times. Instead, set "recommendedTransport" to "Out of Service Area" and set the "explanation" exactly to: "PulseBLR exclusively covers Bangalore and its Greater Metropolitan Area. We do not support routes for locations outside of this region."
