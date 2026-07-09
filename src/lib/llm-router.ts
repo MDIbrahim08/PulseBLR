@@ -182,7 +182,7 @@ const safeParseJSON = (text: string, timeString: string, destination: string, or
     timeSavedMinutes: null,
     confidenceScore: null,
     estimatedCost: "Calculating...",
-    explanation: `PulseMind is analyzing live signals for your commute from ${origin} to ${destination}.\n\nLive Weather: ${weather}\nLive Traffic: ${traffic}\n\nPlease retry in a moment for a fully dynamic AI-generated recommendation.`,
+    explanation: `We encountered a temporary connection issue while analyzing live signals for your commute from ${origin} to ${destination}.\n\nLive Weather: ${weather}\nLive Traffic: ${traffic}\n\nPlease tap "Analyze Route" again in a moment for a fully dynamic AI-generated recommendation.`,
     disclaimer: "",
     alternativeRoute: null,
     congestionHedgingActive: false
