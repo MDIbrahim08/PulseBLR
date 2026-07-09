@@ -309,24 +309,78 @@ export const pulseCoreAgent = async (weather: string, traffic: string, transit: 
   o.addEvent('PulseMind — generating route recommendation', 'info', 'PulseMind');
   const t0 = performance.now();
   
-  const currentActualTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  // Format currentActualTime as "HH:MM (hh:mm AM/PM)"
+  const now = new Date();
+  const nowH = now.getHours().toString().padStart(2, '0');
+  const nowM = now.getMinutes().toString().padStart(2, '0');
+  const nowH12 = now.getHours() % 12 || 12;
+  const nowAmpm = now.getHours() >= 12 ? 'PM' : 'AM';
+  const currentActualTimeDouble = `${nowH}:${nowM} (${nowH12}:${nowM} ${nowAmpm})`;
 
-    const goalInstruction = `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}".
+  // Try to parse the target time from userPrompt or default
+  let targetTimeDouble = "";
+  const match = userPrompt.match(/(\d+)(?::(\d+))?\s*(AM|PM)/i);
+  if (match) {
+    let h = parseInt(match[1]);
+    const m = match[2] ? parseInt(match[2]) : 0;
+    const ampm = match[3].toUpperCase();
+    if (ampm === 'PM' && h < 12) h += 12;
+    if (ampm === 'AM' && h === 12) h = 0;
+    const padH = h.toString().padStart(2, '0');
+    const padM = m.toString().padStart(2, '0');
+    targetTimeDouble = `${padH}:${padM} (${match[1]}:${padM} ${ampm})`;
+  } else {
+    const future = new Date(Date.now() + 45 * 60000);
+    const futH = future.getHours().toString().padStart(2, '0');
+    const futM = future.getMinutes().toString().padStart(2, '0');
+    const futH12 = future.getHours() % 12 || 12;
+    const futAmpm = future.getHours() >= 12 ? 'PM' : 'AM';
+    targetTimeDouble = `${futH}:${futM} (${futH12}:${futM} ${futAmpm})`;
+  }
+
+  // Determine if target time is in the past
+  const parsedTarget = new Date();
+  if (match) {
+    let h = parseInt(match[1]);
+    const m = match[2] ? parseInt(match[2]) : 0;
+    const ampm = match[3].toUpperCase();
+    if (ampm === 'PM' && h < 12) h += 12;
+    if (ampm === 'AM' && h === 12) h = 0;
+    parsedTarget.setHours(h, m, 0, 0);
+  } else {
+    parsedTarget.setTime(Date.now() + 45 * 60000);
+  }
+  const isPast = parsedTarget.getTime() < now.getTime();
+  const pastText = isPast 
+    ? `The target time ${targetTimeDouble} is in the PAST (earlier than current time ${currentActualTimeDouble}).`
+    : `The target time ${targetTimeDouble} is in the FUTURE (later than current time ${currentActualTimeDouble}).`;
+
+  const goalInstruction = `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}".
 The user provided this request/timing: "${userPrompt || 'No specific time provided. Assume they want to leave now.'}". 
-The current time right now is ${currentActualTime}.
-Extract their desired timing from the request. If they say "now" or don't specify a time, use the current time (${currentActualTime}) as their departure time. Calculate the expected departure and arrival times based on an estimated travel time of roughly 45-60 minutes.
+The current time right now is ${currentActualTimeDouble}.
+
+${pastText}
+
+Extract their desired timing from the request. Calculate the expected departure and arrival times based on an estimated travel time of roughly 45-60 minutes.
 
 PREDICTIVE TRAFFIC RULE: If the user asks for the "best time to leave" or wants to avoid traffic, analyze the current time against Bangalore's known peak hours (Morning: 8:30-11:30 AM, Evening: 5:30-8:30 PM). If they are currently in a peak hour or approaching one, mathematically calculate and suggest the exact time the peak hour ends (e.g., 8:40 PM) or begins (e.g., 5:10 PM) as the best time to leave for a much faster commute. Explain this traffic drop-off logic clearly in your explanation!`;
 
   const prompt = `You are an AI commute assistant named PulseMind. 
-The Current Clock Time right now is: ${currentActualTime}.
+The Current Clock Time right now is: ${currentActualTimeDouble}.
 ${goalInstruction}
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
-ALL times must include AM or PM. Never output 24-hour time.
+ALL times in output JSON values MUST include AM or PM. Never output 24-hour time in the final JSON values (except for internally comparing).
 CRITICAL LANGUAGE AND STYLE RULE: You MUST output all text fields (like explanation, reasoning, disclaimer, alternativeRoute.reason) in ${language}. Use emojis naturally throughout your explanation and reasoning to make the text interesting and engaging! The keys in the JSON must remain in English, but the values should be translated to ${language}.
-CRITICAL TEMPORAL RULE: The Current Clock Time is exactly ${currentActualTime}. YOU MUST NOT SUGGEST A DEPARTURE TIME IN THE PAST. If the user's requested time or calculated departure time is earlier than ${currentActualTime} today, you MUST set "recommendedDeparture" to "Now" and explicitly explain in the "explanation" that their target time has already passed.
+
+CRITICAL TEMPORAL COMPARISON RULE: 
+- Current Time is ${currentActualTimeDouble}.
+- User's Target Time is ${targetTimeDouble}.
+- YOU MUST compare these two times strictly using the 24-hour values (e.g. 13:15 vs 18:30).
+- If the target time is in the past, you MUST recommend leaving "Now" and explain that their requested time has already passed.
+- If the target time is in the future, you MUST recommend a future departure time (e.g., 5:30 PM or 5:45 PM) so they arrive around their target time. DO NOT recommend leaving "Now" if the target time is in the future.
+
 GEOGRAPHY & METRO REALITY CHECK: You MUST NOT hallucinate Namma Metro lines. If the origin or destination is in areas WITHOUT metro connectivity (e.g., RT Nagar, Koramangala, Devanahalli, Airport, Bellandur, Marathahalli, Sarjapur, HSR Layout), you MUST NOT suggest the Metro as the primary transport mode. Instead, use your vast live knowledge of Bangalore's real transit systems to dynamically recommend the EXACT correct bus services (e.g., specific AC routes, regular BMTC buses), Cabs, or Autos. DO NOT hardcode recommendations—analyze the real routes! ONLY suggest Metro for areas with known active stations.
 STRICT LOCATION REJECTION: If the origin or destination is COMPLETELY OUTSIDE of the Greater Bangalore Metropolitan Area (e.g., Delhi, Mumbai, Chennai, another state/country, or completely random invalid locations), you MUST completely REJECT the query. Do NOT provide fake routes or times. Instead, set "recommendedTransport" to "Out of Service Area" and set the "explanation" exactly to: "PulseBLR exclusively covers Bangalore and its Greater Metropolitan Area. We do not support routes for locations outside of this region."
 GREATER BANGALORE COVERAGE RULE: You MUST confidently support locations across the entire Greater Bangalore Metropolitan Region (including outskirts like Hoskote, Devanahalli, Nelamangala, Bidadi, Kengeri, Electronic City, Sarjapur). DO NOT claim these are out of bounds or unsupported. Dynamically determine the best real transit or driving routes to reach them.
