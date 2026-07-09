@@ -15,7 +15,9 @@ export const getCurrentLocation = (): Promise<GeolocationPosition> => {
 export const getReverseGeocode = async (lat: number, lon: number) => {
   try {
     // Using OpenStreetMap Nominatim (Free, no API key required)
-    const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+    const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, {
+      headers: { 'User-Agent': 'PulseBLRApp/1.0' }
+    });
     return response.data.display_name;
   } catch (error) {
     console.error("Reverse Geocoding Error:", error);
@@ -26,7 +28,14 @@ export const getReverseGeocode = async (lat: number, lon: number) => {
 // 2b. Forward Geocode (Get coordinates from readable location)
 export const getForwardGeocode = async (address: string) => {
   try {
-    const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`);
+    let query = address;
+    const lower = address.toLowerCase();
+    if (!lower.includes('bengaluru') && !lower.includes('bangalore')) {
+      query = `${address}, Bengaluru, Karnataka, India`;
+    }
+    const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`, {
+      headers: { 'User-Agent': 'PulseBLRApp/1.0' }
+    });
     if (response.data && response.data.length > 0) {
       return {
         lat: parseFloat(response.data[0].lat),
