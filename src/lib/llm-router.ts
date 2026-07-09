@@ -309,7 +309,7 @@ export const pulseCoreAgent = async (weather: string, traffic: string, transit: 
   o.addEvent('PulseMind — generating route recommendation', 'info', 'PulseMind');
   const t0 = performance.now();
   
-  const currentActualTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const currentActualTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
     const goalInstruction = `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}".
 The user provided this request/timing: "${userPrompt || 'No specific time provided. Assume they want to leave now.'}". 
