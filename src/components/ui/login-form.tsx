@@ -402,6 +402,11 @@ export function LoginForm() {
         </button>
 
       </form>
+      <div className="pt-2 border-t border-slate-800/80 text-center">
+        <p className="text-[10px] text-slate-500 leading-normal select-none">
+          PulseBLR is an informational commute planning tool. AI predictions and cost estimates are dynamically computed; verify pathways independently. We do not store or track coordinates or search history on our servers.
+        </p>
+      </div>
     </div>
     </>
   );
