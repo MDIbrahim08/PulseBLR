@@ -333,22 +333,22 @@ IMPORTANT CRITICAL RULE: DO NOT copy ANY text, times, or transport modes from th
 
 Output JSON EXACTLY like this (NO markdown, raw JSON only):
 {
-  "recommendedDeparture": "[COMPUTED_DEPARTURE_TIME e.g. 8:30 AM]",
-  "recommendedTransport": "[DYNAMIC_TRANSPORT_MODE e.g. BMTC Bus 500C, Ola Cab, Namma Metro]",
-  "expectedArrival": "[COMPUTED_ARRIVAL_TIME e.g. 9:10 AM]",
-  "timeSavedMinutes": "[COMPUTE THIS: compare recommended route vs peak-hour baseline — output a number only, e.g. 12]",
-  "confidenceScore": "[COMPUTE THIS: 60-95 based on weather/traffic certainty — output a number only, e.g. 82]",
-  "estimatedCost": "[DYNAMIC_COST_ESTIMATE e.g. ₹40-60]",
-  "explanation": "I've analyzed today's traffic, weather, and road conditions.\\n\\nBased on your requested timing, I recommend using [TRANSPORT].\\n\\n[INSERT DYNAMIC REASONING ABOUT TRAFFIC/WEATHER HERE].\\n\\nTravelling this way should save approximately [MINUTES] minutes.",
-  "disclaimer": "⚠️ [INSERT RELEVANT DISCLAIMER OR LEAVE EMPTY STRING]",
+  "recommendedDeparture": "[COMPUTED_DEPARTURE_TIME]",
+  "recommendedTransport": "[DYNAMIC_TRANSPORT_MODE]",
+  "expectedArrival": "[COMPUTED_ARRIVAL_TIME]",
+  "timeSavedMinutes": 15,
+  "confidenceScore": 85,
+  "estimatedCost": "[DYNAMIC_COST_ESTIMATE]",
+  "explanation": "[DYNAMIC_EXPLANATION_IN_TARGET_LANGUAGE]",
+  "disclaimer": "[DISCLAIMER_OR_EMPTY_STRING]",
   "alternativeRoute": {
     "transport": "[ALTERNATIVE_TRANSPORT_MODE]",
     "time": "[ESTIMATED_TIME]",
     "reason": "[WHY_CONSIDER_THIS_ALTERNATIVE]"
   },
   "reasoning": [
-    "[DYNAMIC_REASON_1 (e.g. Traffic is light)]",
-    "[DYNAMIC_REASON_2 (e.g. Rain expected in 10 mins)]",
+    "[DYNAMIC_REASON_1]",
+    "[DYNAMIC_REASON_2]",
     "[DYNAMIC_REASON_3]",
     "[DYNAMIC_REASON_4]"
   ]
