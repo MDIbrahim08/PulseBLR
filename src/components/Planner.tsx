@@ -697,6 +697,30 @@ export default function Planner() {
       return;
     }
 
+    // Intercept if follow-up is actually a new routing query
+    const activeSession = useRouteStore.getState().commuteSession;
+    if (activeSession && activeSession.origin && activeSession.destination) {
+      const hasRouteIntent = /from\s+.+to\s+/i.test(question) || /go\s+to\s+/i.test(question) || /reach\s+/i.test(question);
+      if (hasRouteIntent) {
+        setIsThinking(true);
+        const extracted = await pulseLocationExtractionAgent(question);
+        setIsThinking(false);
+        if (extracted && extracted.origin && extracted.destination) {
+          const isDifferent = extracted.origin.toLowerCase().trim() !== activeSession.origin.toLowerCase().trim() ||
+                              extracted.destination.toLowerCase().trim() !== activeSession.destination.toLowerCase().trim();
+          if (isDifferent) {
+            setCommuteSession(null);
+            setChatHistory([]);
+            setCurrentAddress(extracted.origin);
+            setDestination(extracted.destination);
+            setChatInput('');
+            handlePlanRoute(question);
+            return;
+          }
+        }
+      }
+    }
+
     if (question.toLowerCase().includes('pivot') || question.toLowerCase().includes('smart pivot') || question.toLowerCase().includes('find a cafe')) {
       setChatInput('');
       navigate('/smart-pivot');
