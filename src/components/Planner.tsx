@@ -430,6 +430,39 @@ export default function Planner() {
         );
       }
 
+      // Programmatic Temporal Validation: prevent recommending departure times in the past
+      let baseTimeForValidation = currentTimestamp || "";
+      if (!baseTimeForValidation) {
+        const now = new Date();
+        baseTimeForValidation = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      }
+
+      const depMins = parseTimeToMins(rec.recommendedDeparture);
+      const nowMins = parseTimeToMins(baseTimeForValidation);
+      if (depMins !== null && nowMins !== null && depMins < nowMins) {
+        addEvent(`Programmatic temporal correction: ${rec.recommendedDeparture} is in the past. Correcting to ${baseTimeForValidation}.`, "warning", "PulseCore");
+        rec.recommendedDeparture = baseTimeForValidation;
+        const arrMins = parseTimeToMins(rec.expectedArrival);
+        if (arrMins !== null) {
+          const duration = arrMins > depMins ? (arrMins - depMins) : 45;
+          const newArrMins = nowMins + duration;
+          const arrHrs24 = Math.floor(newArrMins / 60) % 24;
+          const arrMinsPart = newArrMins % 60;
+          const arrHrs12 = arrHrs24 % 12 === 0 ? 12 : arrHrs24 % 12;
+          const arrAmpm = arrHrs24 >= 12 ? 'PM' : 'AM';
+          rec.expectedArrival = `${arrHrs12}:${arrMinsPart.toString().padStart(2, '0')} ${arrAmpm}`;
+        }
+        
+        // Correct past times in the explanation string too
+        rec.explanation = rec.explanation.replace(/\b(?:5|6|7|8|9|10|11|12|1|2|3|4):[0-5]\d\s*(?:AM|PM|am|pm)\b/gi, (match: string) => {
+          const matchMins = parseTimeToMins(match);
+          if (matchMins !== null && matchMins < nowMins) {
+            return baseTimeForValidation;
+          }
+          return match;
+        });
+      }
+
       // Update commute session in store
       updateCommuteSession({ lastRecommendation: rec });
 
