@@ -260,6 +260,29 @@ export default function Planner() {
     return { hasConflict: false };
   };
 
+  const handleLocateMe = async () => {
+    setGeoError(null);
+    setGeolocationLoading(true);
+    try {
+      const position = await getCurrentLocation();
+      setAndRefPosition(position);
+      const { latitude: lat, longitude: lon } = position.coords;
+      const addr = await getReverseGeocode(lat, lon);
+      const address = addr.split(',').slice(0, 3).join(',');
+      setCurrentAddress(address);
+      addEvent(`Live location updated: ${address}`, 'success', 'PulseCore');
+    } catch (err: any) {
+      console.warn("Manual geolocation request failed:", err);
+      if (err.code === 1) { // PERMISSION_DENIED
+        setGeoError("Location permission denied. Please click the lock icon in the URL bar to allow location access and try again.");
+      } else {
+        setGeoError("Could not retrieve your location. Please enter your address manually.");
+      }
+    } finally {
+      setGeolocationLoading(false);
+    }
+  };
+
   const handlePlanRoute = async (overrideText?: string) => {
     setGeoError(null);
     const inputToUse = overrideText || chatInput;
@@ -954,9 +977,17 @@ export default function Planner() {
                       type="text" 
                       value={currentAddress}
                       onChange={e => setCurrentAddress(e.target.value)}
-                      className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-full sm:w-[160px] md:w-[180px] text-white placeholder-white/60 pb-1"
+                      className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-full sm:w-[130px] md:w-[150px] text-white placeholder-white/60 pb-1"
                       placeholder="Origin"
                     />
+                    <button
+                      onClick={handleLocateMe}
+                      type="button"
+                      title="Use live GPS location"
+                      className="p-1.5 rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                    >
+                      <Navigation size={14} className={isGeolocationLoading ? "animate-spin" : ""} />
+                    </button>
                   </div>
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <Search size={16} className="text-white/80 shrink-0" />
