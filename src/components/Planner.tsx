@@ -534,42 +534,9 @@ export default function Planner() {
   const [chatInput, setChatInput] = useState('');
 
   const speakAnswer = (text: string, onEndCallback?: () => void) => {
-    // Bug A: Stop the mic before we start speaking
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch (e) {
-        console.warn("Error stopping recognition before speaking:", e);
-      }
+    if (onEndCallback) {
+      onEndCallback();
     }
-
-    if (!window.speechSynthesis) {
-      if (onEndCallback) onEndCallback();
-      return;
-    }
-
-    isSpeakingRef.current = true;
-    window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDC00-\uDFFF]/g, "");
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    const voices = window.speechSynthesis.getVoices();
-    let selectedVoice = voices.find(v => v.lang.includes('en-IN') || v.lang.includes('en_IN'));
-    if (!selectedVoice) {
-      selectedVoice = voices.find(v => v.lang.startsWith('en'));
-    }
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    }
-    utterance.onend = () => {
-      isSpeakingRef.current = false;
-      if (onEndCallback) onEndCallback();
-    };
-    utterance.onerror = (e) => {
-      console.error("SpeechSynthesis error:", e);
-      isSpeakingRef.current = false;
-      if (onEndCallback) onEndCallback();
-    };
-    window.speechSynthesis.speak(utterance);
   };
 
   const startVoiceRecognition = () => {
