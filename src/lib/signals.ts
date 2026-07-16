@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { supabase } from './supabase';
 
 // 1. Get User Coordinates
 export const getCurrentLocation = (): Promise<GeolocationPosition> => {
@@ -107,7 +108,8 @@ export const getLiveWeather = async (lat: number, lon: number) => {
 };
 
 // 4. Get Real Route Data (OSRM - Free Routing)
-export const getLiveRoute = async (startLat: number, startLon: number, endLat: number, endLon: number) => {
+// 4. Get Static Route Data (OSRM - Free Routing Fallback)
+export const getStaticRoute = async (startLat: number, startLon: number, endLat: number, endLon: number) => {
   try {
     // OSRM expects longitude,latitude
     const response = await axios.get(`https://router.project-osrm.org/route/v1/driving/${startLon},${startLat};${endLon},${endLat}?overview=false`);
@@ -118,14 +120,41 @@ export const getLiveRoute = async (startLat: number, startLon: number, endLat: n
       const distanceKm = (route.distance / 1000).toFixed(1);
       
       return {
-        durationMins,
-        distanceKm,
-        summary: `${distanceKm} km, estimated base driving time: ${durationMins} minutes.`
+        durationMinutes: durationMins,
+        staticDurationMinutes: durationMins,
+        distanceKm: parseFloat(distanceKm),
+        summary: `${distanceKm} km, estimated base driving time: ${durationMins} minutes.`,
+        source: 'osrm-fallback' as const
       };
     }
     return null;
   } catch (error) {
     console.error("Routing API Error:", error);
     return null;
+  }
+};
+
+// 4b. Get Traffic-Aware Route Data (TomTom / HERE via Supabase Edge Function)
+export const getTrafficAwareRoute = async (startLat: number, startLon: number, endLat: number, endLon: number) => {
+  try {
+    const { data, error } = await supabase.functions.invoke('get-route', {
+      body: { startLat, startLon, endLat, endLon }
+    });
+    
+    if (error) throw error;
+    
+    if (data) {
+      return {
+        durationMinutes: data.durationMinutes,
+        staticDurationMinutes: data.staticDurationMinutes,
+        distanceKm: data.distanceKm,
+        summary: `${data.distanceKm} km, estimated traffic-adjusted duration: ${data.durationMinutes} minutes (source: ${data.source}).`,
+        source: data.source
+      };
+    }
+    return getStaticRoute(startLat, startLon, endLat, endLon);
+  } catch (error) {
+    console.warn("Traffic-aware routing edge function failed, falling back to static OSRM:", error);
+    return getStaticRoute(startLat, startLon, endLat, endLon);
   }
 };

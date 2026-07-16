@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { User, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { User, Lock, ArrowRight, Loader2, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
@@ -199,12 +199,32 @@ export function LoginForm() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [splashName, setSplashName] = useState<string | null>(null);
+  const [showLocationRequest, setShowLocationRequest] = useState(false);
+  const [pendingName, setPendingName] = useState('');
 
   const triggerSplashAndNavigate = (nameToShow: string) => {
+    setShowLocationRequest(false);
     setSplashName(nameToShow);
     setTimeout(() => {
       navigate('/home');
     }, 2500);
+  };
+
+  const handleLocationPermissionRequest = async () => {
+    if (!navigator.geolocation) {
+      triggerSplashAndNavigate(pendingName);
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        triggerSplashAndNavigate(pendingName);
+      },
+      (error) => {
+        console.warn("Location permission denied during onboarding:", error);
+        triggerSplashAndNavigate(pendingName);
+      }
+    );
   };
 
   useEffect(() => {
@@ -225,7 +245,8 @@ export function LoginForm() {
 
     // Guest Mode bypass (no credentials)
     if (!email && !password) {
-      triggerSplashAndNavigate('Explorer');
+      setPendingName('Explorer');
+      setShowLocationRequest(true);
       return;
     }
 
@@ -254,12 +275,14 @@ export function LoginForm() {
         // Auto sign-in immediately after signup (no email confirmation needed)
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;
-        triggerSplashAndNavigate(name.split(' ')[0]);
+        setPendingName(name.split(' ')[0]);
+        setShowLocationRequest(true);
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         const n = data.user?.user_metadata?.full_name?.split(' ')[0] || data.user?.email?.split('@')[0] || 'Explorer';
-        triggerSplashAndNavigate(n);
+        setPendingName(n);
+        setShowLocationRequest(true);
       }
     } catch (err: any) {
       setError(err.message || 'Something went wrong.');
@@ -276,6 +299,34 @@ export function LoginForm() {
             Namaste {splashName},<br />
             <span className="text-pulse-400 text-2xl md:text-3xl mt-4 block font-normal">Welcome to PulseBLR</span>
           </h1>
+        </div>
+      )}
+
+      {showLocationRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl animate-in fade-in duration-500">
+          <div className="bg-slate-900/80 p-8 rounded-2xl border border-slate-700/50 shadow-2xl max-w-sm text-center space-y-6 mx-4">
+            <div className="w-12 h-12 rounded-full bg-pulse-500/20 flex items-center justify-center mx-auto border border-pulse-500/30 animate-pulse">
+              <MapPin className="text-pulse-400" size={24} />
+            </div>
+            <h2 className="text-xl font-bold text-white">Enable Location Services</h2>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              PulseBLR needs your location to calculate accurate routes. Enable location access to continue.
+            </p>
+            <div className="flex flex-col gap-3 pt-2">
+              <button
+                onClick={handleLocationPermissionRequest}
+                className="w-full py-3 bg-pulse-600 hover:bg-pulse-500 rounded-xl text-white font-semibold transition-all shadow-[0_0_15px_rgba(14,165,233,0.3)]"
+              >
+                Grant Location Access
+              </button>
+              <button
+                onClick={() => triggerSplashAndNavigate(pendingName)}
+                className="w-full py-3 bg-slate-850 hover:bg-slate-800 rounded-xl text-slate-300 font-semibold transition-all border border-slate-700"
+              >
+                Enter Location Manually
+              </button>
+            </div>
+          </div>
         </div>
       )}
       

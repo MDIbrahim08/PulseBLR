@@ -206,11 +206,18 @@ const safeParseJSON = (text: string, timeString: string, destination: string, or
   }
 };
 
-export const nimbusAdvisor = async (temp: string, condition: string, precipitation: string, time: string): Promise<string> => {
+export const nimbusAdvisor = async (
+  temp: string,
+  condition: string,
+  precipitation: string,
+  time: string,
+  currentTimestamp: string,
+  userCoordinates: { lat: number; lon: number }
+): Promise<string> => {
   const o = obs();
   o.setAgentStatus('nimbus', 'fetching');
   o.addEvent('Nimbus Agent — fetching weather signal', 'info', 'Nimbus');
-  const prompt = `You are an AI weather advisor. Current: ${temp}, ${condition}, ${precipitation}. Time: ${time}. Write a short 1-sentence recommendation for a commuter.`;
+  const prompt = `You are an AI weather advisor. Current: ${temp}, ${condition}, ${precipitation}. Current Time: ${currentTimestamp}. Location: ${userCoordinates.lat}, ${userCoordinates.lon}. Write a short 1-sentence recommendation for a commuter.`;
   const t0 = performance.now();
   try {
     const res = await callLLM(prompt);
@@ -225,11 +232,19 @@ export const nimbusAdvisor = async (temp: string, condition: string, precipitati
   }
 };
 
-export const velocityAdvisor = async (durationMins: number, distanceKm: string, origin: string, destination: string, time: string): Promise<string> => {
+export const velocityAdvisor = async (
+  durationMins: number,
+  distanceKm: string,
+  origin: string,
+  destination: string,
+  time: string,
+  currentTimestamp: string,
+  userCoordinates: { lat: number; lon: number }
+): Promise<string> => {
   const o = obs();
   o.setAgentStatus('velocity', 'fetching');
   o.addEvent('Velocity Agent — recalculating congestion index', 'info', 'Velocity');
-  const prompt = `You are a traffic AI. Route: ${origin} to ${destination}. Time: ${durationMins} mins. Current: ${time}. Write a short 1-sentence recommendation.`;
+  const prompt = `You are a traffic AI. Route: ${origin} to ${destination}. Time: ${durationMins} mins. Current Time: ${currentTimestamp}. Start coordinates: ${userCoordinates.lat}, ${userCoordinates.lon}. Write a short 1-sentence recommendation.`;
   const t0 = performance.now();
   try {
     const res = await callLLM(prompt);
@@ -245,11 +260,17 @@ export const velocityAdvisor = async (durationMins: number, distanceKm: string, 
   }
 };
 
-export const transitIQAdvisor = async (transitStatus: string, destination: string, time: string): Promise<string> => {
+export const transitIQAdvisor = async (
+  transitStatus: string,
+  destination: string,
+  time: string,
+  currentTimestamp: string,
+  userCoordinates: { lat: number; lon: number }
+): Promise<string> => {
   const o = obs();
   o.setAgentStatus('transitiq', 'fetching');
   o.addEvent('TransitIQ Agent — pinging metro feed', 'info', 'TransitIQ');
-  const prompt = `You are a metro AI. Status: ${transitStatus}. Dest: ${destination}. Time: ${time}. Write a short 1-sentence recommendation.`;
+  const prompt = `You are a metro AI. Status: ${transitStatus}. Dest: ${destination}. Current Time: ${currentTimestamp}. Start coordinates: ${userCoordinates.lat}, ${userCoordinates.lon}. Write a short 1-sentence recommendation.`;
   const t0 = performance.now();
   try {
     const res = await callLLM(prompt);
@@ -265,11 +286,17 @@ export const transitIQAdvisor = async (transitStatus: string, destination: strin
   }
 };
 
-export const urbanSenseAdvisor = async (origin: string, destination: string, time: string): Promise<string> => {
+export const urbanSenseAdvisor = async (
+  origin: string,
+  destination: string,
+  time: string,
+  currentTimestamp: string,
+  userCoordinates: { lat: number; lon: number }
+): Promise<string> => {
   const o = obs();
   o.setAgentStatus('urbansense', 'fetching');
   o.addEvent('UrbanSense Agent — scanning urban event feed', 'info', 'UrbanSense');
-  const prompt = `You are a city events AI. Route: ${origin} to ${destination}. Time: ${time}. Write a short 1-sentence recommendation.`;
+  const prompt = `You are a city events AI. Route: ${origin} to ${destination}. Current Time: ${currentTimestamp}. Start coordinates: ${userCoordinates.lat}, ${userCoordinates.lon}. Write a short 1-sentence recommendation.`;
   const t0 = performance.now();
   try {
     const res = await callLLM(prompt);
@@ -284,11 +311,18 @@ export const urbanSenseAdvisor = async (origin: string, destination: string, tim
   }
 };
 
-export const chronosAdvisor = async (weather: string, traffic: string, transit: string, arrivalTime: string): Promise<string> => {
+export const chronosAdvisor = async (
+  weather: string,
+  traffic: string,
+  transit: string,
+  arrivalTime: string,
+  currentTimestamp: string,
+  userCoordinates: { lat: number; lon: number }
+): Promise<string> => {
   const o = obs();
   o.setAgentStatus('chronos', 'fetching');
   o.addEvent('Chronos Agent — recalculating time-risk prediction', 'info', 'Chronos');
-  const prompt = `You are a risk AI. Target arrival: ${arrivalTime}. Write a short 1-sentence risk prediction.`;
+  const prompt = `You are a risk AI. Target arrival: ${arrivalTime}. Current Time: ${currentTimestamp}. Start coordinates: ${userCoordinates.lat}, ${userCoordinates.lon}. Write a short 1-sentence risk prediction.`;
   const t0 = performance.now();
   try {
     const res = await callLLM(prompt);
@@ -303,19 +337,44 @@ export const chronosAdvisor = async (weather: string, traffic: string, transit: 
   }
 };
 
-export const pulseCoreAgent = async (weather: string, traffic: string, transit: string, origin: string, destination: string, timeString: string, timeMode: string = 'Arrive By', userPrompt: string = '', avoidTollsOrTraffic: boolean = false, language: string = 'English') => {
+export const pulseCoreAgent = async (
+  weather: string,
+  traffic: string,
+  transit: string,
+  origin: string,
+  destination: string,
+  timeString: string,
+  timeMode: string = 'Arrive By',
+  userPrompt: string = '',
+  avoidTollsOrTraffic: boolean = false,
+  language: string = 'English',
+  currentTimestamp: string = '',
+  userCoordinates: { lat: number; lon: number } = { lat: 12.9716, lon: 77.5946 }
+) => {
   const o = obs();
   o.setAgentStatus('pulsemind', 'fetching');
   o.addEvent('PulseMind — generating route recommendation', 'info', 'PulseMind');
   const t0 = performance.now();
   
-  // Format currentActualTime as "HH:MM (hh:mm AM/PM)"
-  const now = new Date();
-  const nowH = now.getHours().toString().padStart(2, '0');
-  const nowM = now.getMinutes().toString().padStart(2, '0');
-  const nowH12 = now.getHours() % 12 || 12;
-  const nowAmpm = now.getHours() >= 12 ? 'PM' : 'AM';
-  const currentActualTimeDouble = `${nowH}:${nowM} (${nowH12}:${nowM} ${nowAmpm})`;
+  let baseTime = currentTimestamp || "";
+  if (!baseTime) {
+    const now = new Date();
+    baseTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  }
+
+  let currentActualTimeDouble = baseTime;
+  const timeMatch = baseTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (timeMatch) {
+    let h = parseInt(timeMatch[1]);
+    const m = parseInt(timeMatch[2]);
+    const ampm = timeMatch[3].toUpperCase();
+    let h24 = h;
+    if (ampm === 'PM' && h < 12) h24 += 12;
+    if (ampm === 'AM' && h === 12) h24 = 0;
+    const padH = h24.toString().padStart(2, '0');
+    const padM = m.toString().padStart(2, '0');
+    currentActualTimeDouble = `${padH}:${padM} (${h}:${padM} ${ampm})`;
+  }
 
   // Try to parse the target time from userPrompt or default
   let targetTimeDouble = "";
@@ -350,7 +409,19 @@ export const pulseCoreAgent = async (weather: string, traffic: string, transit: 
   } else {
     parsedTarget.setTime(Date.now() + 45 * 60000);
   }
-  const isPast = parsedTarget.getTime() < now.getTime();
+  
+  // Parse baseTime for relative comparison
+  const parsedBase = new Date();
+  if (timeMatch) {
+    let bh = parseInt(timeMatch[1]);
+    const bm = parseInt(timeMatch[2]);
+    const bampm = timeMatch[3].toUpperCase();
+    if (bampm === 'PM' && bh < 12) bh += 12;
+    if (bampm === 'AM' && bh === 12) bh = 0;
+    parsedBase.setHours(bh, bm, 0, 0);
+  }
+  
+  const isPast = parsedTarget.getTime() < parsedBase.getTime();
   const pastText = isPast 
     ? `The target time ${targetTimeDouble} is in the PAST (earlier than current time ${currentActualTimeDouble}).`
     : `The target time ${targetTimeDouble} is in the FUTURE (later than current time ${currentActualTimeDouble}).`;
@@ -358,6 +429,7 @@ export const pulseCoreAgent = async (weather: string, traffic: string, transit: 
   const goalInstruction = `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}".
 The user provided this request/timing: "${userPrompt || 'No specific time provided. Assume they want to leave now.'}". 
 The current time right now is ${currentActualTimeDouble}.
+The user starting coordinates are: Latitude ${userCoordinates.lat}, Longitude ${userCoordinates.lon}.
 
 ${pastText}
 
@@ -367,6 +439,7 @@ PREDICTIVE TRAFFIC RULE: If the user asks for the "best time to leave" or wants 
 
   const prompt = `You are an AI commute assistant named PulseMind. 
 The Current Clock Time right now is: ${currentActualTimeDouble}.
+The user starting coordinates are: Latitude ${userCoordinates.lat}, Longitude ${userCoordinates.lon}.
 ${goalInstruction}
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
@@ -470,7 +543,8 @@ export const pulseFollowUpAgent = async (
   destination: string,
   arrivalTime: string,
   isFirstMessage: boolean = true,
-  language: string = 'English'
+  language: string = 'English',
+  commuteSession: any = null
 ) => {
   const now = new Date();
   const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
@@ -482,16 +556,29 @@ export const pulseFollowUpAgent = async (
 
   const isCasualMessage = /^(hi|hello|hey|yo|sup|what's up|whats up|howdy|namaste|hola|greetings|good morning|good evening|good afternoon|okay|ok|thanks|thank you|cool|great|nice|awesome|got it|sure|yes|no|bye|goodbye|see you|ciao)$/i.test(question.trim());
 
+  let sessionContext = "";
+  if (commuteSession) {
+    sessionContext = `\nActive Commute Session details:\n- Origin: ${commuteSession.origin}\n- Destination: ${commuteSession.destination}`;
+    if (commuteSession.hardDeadline) {
+      sessionContext += `\n- Hard Deadline: ${commuteSession.hardDeadline}. IMPORTANT: The user has a hard deadline of ${commuteSession.hardDeadline}. Do not override or ignore this deadline in favor of generic peak-hour avoidance advice unless the user explicitly changes it.`;
+    }
+    if (commuteSession.confirmedDeparture) {
+      sessionContext += `\n- Confirmed Departure: User has confirmed they will leave at ${commuteSession.confirmedDeparture}. Treat this as acknowledgment/confirmation, not a new routing request. Confirm and refine their plan (e.g. "Good — leaving at ${commuteSession.confirmedDeparture}, you'll reach by ~${commuteSession.hardDeadline || 'arrival time'}").`;
+    }
+  }
+
   const prompt = isCasualMessage
     ? `You are PulseMind, a friendly AI commute advisor for Bangalore built into the PulseBLR app.
 The user just said: "${question}"
 The current time is ${timeString} on ${dateString}.
+${sessionContext}
 
 Respond in a warm, natural, conversational way — like a smart assistant would. Keep it to 1-2 sentences. Do NOT give commute advice unless they ask. Do NOT output SUGGESTION lines. Be friendly and invite them to ask about their commute. CRITICAL: You MUST respond in ${language}. Use emojis naturally to make the chat interesting!`
     : `You are PulseMind, a premium AI commute advisor for Bangalore.
 The user is traveling from "${origin || 'their location'}" to "${destination || 'their destination'}" aiming to arrive by "${arrivalTime}".
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
 Live Context -> Time: ${timeString}, Date: ${dateString}.
+${sessionContext}
 
 The user asked: "${question}"
 
@@ -506,6 +593,8 @@ RULES:
 8. LANDMARK RESOLUTION RULE: Intelligently resolve Tech Parks, Colleges, Offices and Hospitals to their real Bangalore locations.
 9. CRITICAL LANGUAGE AND STYLE RULE: You MUST respond in ${language}. Use emojis naturally throughout your response to make it interesting!
 10. At the very end of your response, provide exactly 2 short, actionable suggestions in ${language}. If there is heavy traffic or it is peak hour, one suggestion MUST be exactly "SUGGESTION: Pivot to a nearby Cafe" to allow the user to escape the traffic:
+11. AM/PM RESOLUTION RULE: If the user states a bare time (e.g. '8:50' or '6:30') without specifying AM or PM, you MUST resolve it using the context of the active commuteSession or target arrivalTime. For example, if the trip is an evening trip (aiming to arrive by 6:30 PM), '8:50' must refer to 8:50 PM. If the trip is a morning trip (aiming to arrive by 10:00 AM), '8:50' must refer to 8:50 AM.
+12. DEADLINE CONFLICT RULE: If the user proposes or confirms a departure time that, when combined with typical travel duration, would result in arrival after their stated hardDeadline (e.g. leaving at 9:40 AM for a 10:00 AM deadline when travel takes 50 minutes), you MUST explicitly warn them of this conflict (e.g. 'Warning: leaving at 9:40 AM means you will reach after your 10:00 AM deadline at approximately 10:30 AM') and suggest a better time.
 
 SUGGESTION: [short text here]
 SUGGESTION: [short text here]`;
@@ -596,8 +685,15 @@ Output JSON ONLY. No markdown, no \`\`\`json. Just the raw array starting with [
   }
 };
 
-export const pulseLocationExtractionAgent = async (input: string): Promise<{origin: string, destination: string} | null> => {
-  const prompt = `Extract the origin and destination from this text: "${input}". Return ONLY a JSON object like {"origin": "Location A", "destination": "Location B"}. If you cannot find both, return null. No markdown.`;
+export const pulseLocationExtractionAgent = async (input: string): Promise<{origin: string, destination: string, hardDeadline?: string | null} | null> => {
+  const prompt = `Extract the origin, destination, and any target arrival time / hard deadline (e.g. "10:00 AM" or "6:30 PM") from this text: "${input}". 
+Return ONLY a JSON object like:
+{
+  "origin": "Location A",
+  "destination": "Location B",
+  "hardDeadline": "10:00 AM"
+}
+If a field is not found or not explicitly specified, set it to null. No markdown, return raw JSON.`;
   try {
     const raw = await callLLM(prompt);
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
@@ -605,8 +701,9 @@ export const pulseLocationExtractionAgent = async (input: string): Promise<{orig
       const parsed = JSON.parse(jsonMatch[0]);
       const origin = parsed.origin || parsed.Origin || parsed.ORIGIN;
       const destination = parsed.destination || parsed.Destination || parsed.DESTINATION;
+      const hardDeadline = parsed.hardDeadline || parsed.HardDeadline || parsed.HARD_DEADLINE || null;
       if (origin && destination) {
-        return { origin, destination };
+        return { origin, destination, hardDeadline };
       }
     }
     return null;

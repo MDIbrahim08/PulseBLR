@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck, AlertTriangle
+  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck, AlertTriangle, Volume2, MicOff
 } from 'lucide-react';
 import {
   pulseCoreAgent,
   nimbusAdvisor, velocityAdvisor, transitIQAdvisor, urbanSenseAdvisor, chronosAdvisor, pulseFollowUpAgent,
   pulseLocationExtractionAgent
 } from '../lib/llm-router';
-import { getCurrentLocation, getReverseGeocode, getForwardGeocode, getLiveWeather, getLiveRoute } from '../lib/signals';
+import { getCurrentLocation, getReverseGeocode, getForwardGeocode, getLiveWeather, getTrafficAwareRoute } from '../lib/signals';
 import AgentAnimation from './AgentAnimation';
-import { useRouteStore } from '../store/routeStore';
+import { useRouteStore, type CommuteSession } from '../store/routeStore';
 import { usePulseObserver } from '../store/pulseObserver';
 import { MessageLoading } from './ui/message-loading';
 import { AIVoiceInput } from './ui/ai-voice-input';
@@ -33,6 +33,49 @@ export default function Planner() {
   const [isThinking, setIsThinking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [cooldownMsg, setCooldownMsg] = useState('');
+
+  // Version watermark
+  const APP_VERSION = import.meta.env.VITE_APP_VERSION || '1.0.0-live';
+
+  // Geolocation & Timestamp Refs & State
+  const [isGeolocationLoading, setIsGeolocationLoading] = useState(true);
+  const [currentPosition, setCurrentPosition] = useState<GeolocationPosition | null>(null);
+  const [currentTimestamp, setCurrentTimestamp] = useState<string>('');
+  
+  const geolocationLoadingRef = useRef(true);
+  const currentPositionRef = useRef<GeolocationPosition | null>(null);
+
+  const setGeolocationLoading = (val: boolean) => {
+    geolocationLoadingRef.current = val;
+    setIsGeolocationLoading(val);
+  };
+  const setAndRefPosition = (pos: GeolocationPosition | null) => {
+    currentPositionRef.current = pos;
+    setCurrentPosition(pos);
+  };
+
+  // Clock Update Effect
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTimestamp(now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Hands-free Voice Mode States
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
+  const [voiceState, setVoiceState] = useState<'idle' | 'listening' | 'thinking' | 'speaking'>('idle');
+  const voiceStateRef = useRef<'idle' | 'listening' | 'thinking' | 'speaking'>('idle');
+  const recognitionRef = useRef<any>(null);
+  const isSpeakingRef = useRef(false);
+
+  const updateVoiceState = (state: typeof voiceState) => {
+    voiceStateRef.current = state;
+    setVoiceState(state);
+  };
 
   const isPeakHour = () => {
     const now = new Date();
@@ -66,10 +109,25 @@ export default function Planner() {
     try { return JSON.parse(localStorage.getItem('pulse_saved_routes') || '[]'); } catch { return []; }
   });
 
-  const { origin: currentAddress, setOrigin: setCurrentAddress, destination, setDestination, avoidTollsOrTraffic, setAvoidTollsOrTraffic } = useRouteStore();
+  const { 
+    origin: currentAddress, 
+    setOrigin: setCurrentAddress, 
+    destination, 
+    setDestination, 
+    avoidTollsOrTraffic, 
+    setAvoidTollsOrTraffic,
+    commuteSession,
+    setCommuteSession,
+    updateCommuteSession
+  } = useRouteStore();
+
   const { setAPIStatus, addEvent, setAuthStatus } = usePulseObserver();
-  // Set auth status on mount (user is in the dashboard = authenticated)
-  useEffect(() => { setAuthStatus('authenticated'); addEvent('Authentication verified — session active', 'success', 'Auth'); }, []);
+  // Set auth status and log version on mount
+  useEffect(() => { 
+    setAuthStatus('authenticated'); 
+    addEvent('Authentication verified — session active', 'success', 'Auth');
+    console.log(`PulseBLR v${APP_VERSION} loaded.`);
+  }, []);
   
   const [weatherData, setWeatherData] = useState<any>(null);
   const [trafficData, setTrafficData] = useState<any>(null);
@@ -86,6 +144,7 @@ export default function Planner() {
 
   useEffect(() => {
     const gatherSignals = async () => {
+      setGeolocationLoading(true);
       let wData: any = null;
       let tData: any = null;
       let address = currentAddress || '';
@@ -93,6 +152,7 @@ export default function Planner() {
 
       try {
         const position = await getCurrentLocation();
+        setAndRefPosition(position);
         const { latitude: lat, longitude: lon } = position.coords;
         const addr = await getReverseGeocode(lat, lon);
         address = addr.split(',').slice(0, 3).join(',');
@@ -115,16 +175,19 @@ export default function Planner() {
         setTransitData(transit);
         setAPIStatus('metro', 'online');
         addEvent('Metro API — transit status verified', 'success', 'TransitIQ');
-      } catch {
+      } catch (err) {
+        console.warn("Could not gather location/weather signals automatically:", err);
         setCurrentAddress(address);
         wData = { temperature: '26°C', condition: 'Partly Cloudy', precipitation: '0mm', summary: 'Pleasant weather, 26°C, Partly Cloudy' };
-        tData = { distanceKm: '12.5', durationMins: 45, summary: 'Moderate congestion' };
+        tData = { distanceKm: 12.5, durationMinutes: 45, staticDurationMinutes: 45, summary: 'Moderate congestion' };
         setWeatherData(wData);
         setTrafficData(tData);
         setTransitData(transit);
         setAPIStatus('weather', 'cached');
         setAPIStatus('traffic', 'cached');
         addEvent('Live signals unavailable — using cached fallback data', 'warning', 'PulseCore');
+      } finally {
+        setGeolocationLoading(false);
       }
     };
     gatherSignals();
@@ -133,6 +196,68 @@ export default function Planner() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory, isAnalyzing, isThinking]);
+
+  const parseTimeToMins = (timeStr: string): number | null => {
+    if (!timeStr) return null;
+    const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!match) return null;
+    let h = parseInt(match[1]);
+    const m = parseInt(match[2]);
+    const ampm = match[3].toUpperCase();
+    if (ampm === 'PM' && h < 12) h += 12;
+    if (ampm === 'AM' && h === 12) h = 0;
+    return h * 60 + m;
+  };
+
+  const validateTimePair = (departure: string, arrival: string): boolean => {
+    const depMins = parseTimeToMins(departure);
+    const arrMins = parseTimeToMins(arrival);
+    if (depMins === null || arrMins === null) return true;
+    if (arrMins < depMins) {
+      if (depMins > 1200 && arrMins < 200) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  };
+
+  const checkDeadlineConflict = (confirmedDeparture: string, hardDeadline: string, lastRecommendation: any): { hasConflict: boolean, msg?: string } => {
+    const depMins = parseTimeToMins(confirmedDeparture);
+    const deadlineMins = parseTimeToMins(hardDeadline);
+    
+    if (depMins === null || deadlineMins === null) return { hasConflict: false };
+
+    let durationMins = 45; // default fallback
+    if (lastRecommendation && lastRecommendation.recommendedDeparture && lastRecommendation.expectedArrival) {
+      const recDep = parseTimeToMins(lastRecommendation.recommendedDeparture);
+      const recArr = parseTimeToMins(lastRecommendation.expectedArrival);
+      if (recDep !== null && recArr !== null) {
+        if (recArr > recDep) {
+          durationMins = recArr - recDep;
+        } else if (recArr < recDep) {
+          durationMins = (1440 - recDep) + recArr;
+        }
+      }
+    }
+
+    const projectedArrivalMins = depMins + durationMins;
+    
+    if (projectedArrivalMins > deadlineMins) {
+      const arrHrs24 = Math.floor(projectedArrivalMins / 60) % 24;
+      const arrMins = projectedArrivalMins % 60;
+      const arrHrs12 = arrHrs24 % 12 === 0 ? 12 : arrHrs24 % 12;
+      const arrAmpm = arrHrs24 >= 12 ? 'PM' : 'AM';
+      const projectedArrivalStr = `${arrHrs12}:${arrMins.toString().padStart(2, '0')} ${arrAmpm}`;
+      
+      return {
+        hasConflict: true,
+        msg: `Warning: Leaving at ${confirmedDeparture} means you will arrive at approximately ${projectedArrivalStr}, which is after your stated deadline of ${hardDeadline}.`
+      };
+    }
+
+    return { hasConflict: false };
+  };
 
   const handlePlanRoute = async (overrideText?: string) => {
     const inputToUse = overrideText || chatInput;
@@ -148,20 +273,55 @@ export default function Planner() {
     setCooldownMsg('');
     setIsAnalyzing(true);
     setChatHistory([]);
+
+    // P0-1: Geolocation Gate / Readiness Check
+    if (geolocationLoadingRef.current) {
+      addEvent("Waiting for geolocation to resolve...", "info", "PulseCore");
+      let waitTime = 0;
+      while (geolocationLoadingRef.current && waitTime < 5000) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+        waitTime += 200;
+      }
+    }
+
+    // Geolocation Fallback on Timeout
+    if (geolocationLoadingRef.current || (!currentPositionRef.current && !currentAddress)) {
+      setIsAnalyzing(false);
+      const cachedAddress = localStorage.getItem('pulse_last_known_address');
+      if (cachedAddress) {
+        setCurrentAddress(cachedAddress);
+        addEvent(`Geolocation timeout. Using last-known address: ${cachedAddress}`, 'warning', 'PulseCore');
+      } else {
+        const errorMsg: ChatMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          text: "Location services are taking longer than expected. Please enter your origin manually in the address bar above to continue."
+        };
+        setChatHistory([errorMsg]);
+        addEvent('Geolocation timeout. Prompting for manual origin.', 'error', 'PulseCore');
+        return;
+      }
+    }
     
     // 1. Resolve active origin and destination first (from inputs or text extraction)
     let activeOrigin = currentAddress;
     let activeDest = destination;
+    let activeHardDeadline = commuteSession?.hardDeadline || null;
     
-    if (!activeOrigin || !activeDest) {
-      if (inputToUse.trim()) {
-        const extracted = await pulseLocationExtractionAgent(inputToUse);
-        if (extracted && extracted.origin && extracted.destination) {
+    if (inputToUse.trim()) {
+      const extracted = await pulseLocationExtractionAgent(inputToUse);
+      if (extracted) {
+         if (extracted.origin && !activeOrigin) {
            activeOrigin = extracted.origin;
-           activeDest = extracted.destination;
            setCurrentAddress(extracted.origin);
+         }
+         if (extracted.destination && !activeDest) {
+           activeDest = extracted.destination;
            setDestination(extracted.destination);
-        }
+         }
+         if (extracted.hardDeadline) {
+           activeHardDeadline = extracted.hardDeadline;
+         }
       }
     }
 
@@ -174,20 +334,38 @@ export default function Planner() {
       return;
     }
 
+    // Store last known address for future fallback
+    localStorage.setItem('pulse_last_known_address', activeOrigin);
+
+    // Initialize commute session in store
+    const session: CommuteSession = {
+      origin: activeOrigin,
+      destination: activeDest,
+      hardDeadline: activeHardDeadline,
+      confirmedDeparture: null,
+      lastRecommendation: null
+    };
+    setCommuteSession(session);
+
     // 3. Dynamically fetch live traffic and route info for resolved locations
     let dynamicTrafficSignal = trafficData?.summary ?? 'Moderate congestion.';
+    let resolvedStartCoords = currentPositionRef.current 
+      ? { lat: currentPositionRef.current.coords.latitude, lon: currentPositionRef.current.coords.longitude } 
+      : { lat: 12.9716, lon: 77.5946 };
+
     try {
       addEvent(`Geocoding ${activeOrigin} and ${activeDest}...`, 'info', 'PulseCore');
       const startCoords = await getForwardGeocode(activeOrigin);
       const endCoords = await getForwardGeocode(activeDest);
+      if (startCoords) resolvedStartCoords = startCoords;
       if (startCoords && endCoords) {
          const t0 = performance.now();
-         const liveTraffic = await getLiveRoute(startCoords.lat, startCoords.lon, endCoords.lat, endCoords.lon);
+         const liveTraffic = await getTrafficAwareRoute(startCoords.lat, startCoords.lon, endCoords.lat, endCoords.lon);
          if (liveTraffic) {
            setTrafficData(liveTraffic);
            dynamicTrafficSignal = liveTraffic.summary;
            setAPIStatus('traffic', 'online', Math.round(performance.now() - t0));
-           addEvent(`Traffic API — dynamic route data fetched`, 'success', 'Velocity');
+           addEvent(`Traffic API — dynamic route data fetched (source: ${liveTraffic.source})`, 'success', 'Velocity');
          }
       }
     } catch (e) {
@@ -198,19 +376,67 @@ export default function Planner() {
 
     // 4. Generate AI commute recommendation
     try {
-      const rec = await pulseCoreAgent(weatherSignal, dynamicTrafficSignal, transitData, activeOrigin, activeDest, arrivalTime, timeMode, inputToUse, avoidTollsOrTraffic, language);
+      let rec = await pulseCoreAgent(
+        weatherSignal, 
+        dynamicTrafficSignal, 
+        transitData, 
+        activeOrigin, 
+        activeDest, 
+        activeHardDeadline || arrivalTime, 
+        timeMode, 
+        inputToUse, 
+        avoidTollsOrTraffic, 
+        language,
+        currentTimestamp,
+        resolvedStartCoords
+      );
       
+      // Time pair validator with one-time automatic correction retry
+      if (!validateTimePair(rec.recommendedDeparture, rec.expectedArrival)) {
+        addEvent("Time validation failed (arrival before departure). Re-firing LLM with corrective feedback.", "warning", "PulseCore");
+        rec = await pulseCoreAgent(
+          weatherSignal, 
+          dynamicTrafficSignal, 
+          transitData, 
+          activeOrigin, 
+          activeDest, 
+          activeHardDeadline || arrivalTime, 
+          timeMode, 
+          `${inputToUse} (Correction: Your previous output had arrival before departure — recompute using the provided currentTimestamp)`, 
+          avoidTollsOrTraffic, 
+          language,
+          currentTimestamp,
+          resolvedStartCoords
+        );
+      }
+
+      // Update commute session in store
+      updateCommuteSession({ lastRecommendation: rec });
+
       const newMsg: ChatMessage = {
         id: Date.now().toString(),
         role: 'assistant',
         isStructuredRec: true,
         recommendation: rec,
-        isStreaming: true
+        isStreaming: false
       };
       
       setChatHistory([newMsg]);
+
+      // Speak response if Voice Mode is active
+      if (isVoiceMode) {
+        updateVoiceState('speaking');
+        speakAnswer(rec.explanation, () => {
+          if (isVoiceMode) {
+            startVoiceRecognition();
+          } else {
+            updateVoiceState('idle');
+          }
+        });
+      }
     } catch (e) {
       console.error(e);
+      addEvent("Failed to generate AI commute recommendation", "error", "PulseCore");
     } finally {
       setIsAnalyzing(false);
     }
@@ -254,6 +480,152 @@ export default function Planner() {
 
   const [chatInput, setChatInput] = useState('');
 
+  const speakAnswer = (text: string, onEndCallback?: () => void) => {
+    // Bug A: Stop the mic before we start speaking
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        console.warn("Error stopping recognition before speaking:", e);
+      }
+    }
+
+    if (!window.speechSynthesis) {
+      if (onEndCallback) onEndCallback();
+      return;
+    }
+
+    isSpeakingRef.current = true;
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDC00-\uDFFF]/g, "");
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    const voices = window.speechSynthesis.getVoices();
+    let selectedVoice = voices.find(v => v.lang.includes('en-IN') || v.lang.includes('en_IN'));
+    if (!selectedVoice) {
+      selectedVoice = voices.find(v => v.lang.startsWith('en'));
+    }
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+    utterance.onend = () => {
+      isSpeakingRef.current = false;
+      if (onEndCallback) onEndCallback();
+    };
+    utterance.onerror = (e) => {
+      console.error("SpeechSynthesis error:", e);
+      isSpeakingRef.current = false;
+      if (onEndCallback) onEndCallback();
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const startVoiceRecognition = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch {}
+    }
+
+    const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
+    // P2-2: Configure continuous and interim results for hands-free loop
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    
+    if (language.toLowerCase() === 'kannada') {
+      recognition.lang = 'kn-IN';
+    } else if (language.toLowerCase() === 'hindi') {
+      recognition.lang = 'hi-IN';
+    } else {
+      recognition.lang = 'en-IN';
+    }
+
+    let finalTranscript = '';
+    let silenceTimeout: number | null = null;
+    
+    recognition.onstart = () => {
+      updateVoiceState('listening');
+    };
+
+    recognition.onresult = (event: any) => {
+      // Bug A: Block handling if AI is speaking
+      if (isSpeakingRef.current) return;
+
+      finalTranscript = Array.from(event.results)
+        .map((result: any) => result[0])
+        .map(result => result.transcript)
+        .join('');
+      setChatInput(finalTranscript);
+
+      // Simple silence detection to auto-submit when user stops talking
+      if (silenceTimeout) clearTimeout(silenceTimeout);
+      silenceTimeout = setTimeout(() => {
+        if (finalTranscript.trim() && voiceStateRef.current === 'listening') {
+          recognition.stop();
+        }
+      }, 2000);
+    };
+
+    recognition.onerror = (e: any) => {
+      console.error("Speech Recognition Error:", e);
+      if (isVoiceMode) {
+        setTimeout(() => {
+          if (voiceStateRef.current === 'listening') {
+            startVoiceRecognition();
+          }
+        }, 1000);
+      }
+    };
+
+    recognition.onend = () => {
+      if (silenceTimeout) clearTimeout(silenceTimeout);
+      if (voiceStateRef.current === 'listening') {
+        if (finalTranscript.trim()) {
+          updateVoiceState('thinking');
+          handleVoiceSubmit(finalTranscript);
+        } else if (isVoiceMode) {
+          startVoiceRecognition();
+        } else {
+          updateVoiceState('idle');
+        }
+      }
+    };
+
+    recognition.start();
+  };
+
+  // Bug B: explicitly check active commuteSession state to route follow-ups correctly
+  const handleVoiceSubmit = (text: string) => {
+    const activeSession = useRouteStore.getState().commuteSession;
+    if (activeSession && activeSession.origin && activeSession.destination) {
+      handleChatSubmit(undefined, text);
+    } else {
+      handlePlanRoute(text);
+    }
+  };
+
+  const toggleVoiceMode = () => {
+    if (isVoiceMode) {
+      setIsVoiceMode(false);
+      updateVoiceState('idle');
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch {}
+      }
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    } else {
+      setIsVoiceMode(true);
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      setTimeout(() => {
+        startVoiceRecognition();
+      }, 300);
+    }
+  };
+
   const startVoiceDictation = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -265,7 +637,6 @@ export default function Planner() {
     recognition.continuous = true;
     recognition.interimResults = true;
     
-    // Set language for voice dictation based on selected dropdown language
     if (language.toLowerCase() === 'kannada') {
       recognition.lang = 'kn-IN';
     } else if (language.toLowerCase() === 'hindi') {
@@ -274,7 +645,6 @@ export default function Planner() {
       recognition.lang = 'en-IN';
     }
     
-    // Store recognition on window object so we can abort it in onStop if needed
     (window as any).currentRecognition = recognition;
 
     let finalTranscript = '';
@@ -301,13 +671,15 @@ export default function Planner() {
     recognition.start();
   };
 
+  // Bug B: explicitly check active commuteSession state to route follow-ups correctly
   const handleUniversalSubmit = (overrideText?: string) => {
     const inputToUse = overrideText || chatInput;
     setChatInput('');
-    if (chatHistory.length === 0) {
-      handlePlanRoute(inputToUse);
-    } else if (inputToUse.trim()) {
+    const activeSession = useRouteStore.getState().commuteSession;
+    if (activeSession && activeSession.origin && activeSession.destination) {
       handleChatSubmit(undefined, inputToUse);
+    } else {
+      handlePlanRoute(inputToUse);
     }
   };
 
@@ -337,6 +709,9 @@ export default function Planner() {
     setChatHistory(prev => [...prev, userMsg]);
     
     setIsThinking(true);
+    if (isVoiceMode) {
+      updateVoiceState('thinking');
+    }
     
     const weatherSignal = weatherData?.summary ?? 'Partly Cloudy, 26°C';
     const trafficSignal = trafficData?.summary ?? 'Moderate congestion on ORR.';
@@ -356,20 +731,95 @@ export default function Planner() {
          }
       }
 
-      const responseText = await pulseFollowUpAgent(question, weatherSignal, trafficSignal, transitData, activeOrigin, activeDest, arrivalTime, isFirstMessage, language);
+      // P0-2: Extract user confirmed departure time (e.g. "8:50 I will leave")
+      const timeMatch = question.match(/(\d+)(?::(\d+))?\s*(AM|PM)/i) || question.match(/(\d+)(?::(\d+))?/i);
+      const confirmsDeparture = /will leave|depart|leave at|go at/i.test(question) || (timeMatch && /ok|sure|good|confirm|i will/i.test(question));
+      let conflictWarning = "";
+
+      if (timeMatch && confirmsDeparture) {
+         const hh = timeMatch[1];
+         const mm = timeMatch[2] || "00";
+         
+         let ampm = timeMatch[3];
+         if (!ampm) {
+            // Context-aware AM/PM resolution
+            const currentSessionObj = useRouteStore.getState().commuteSession;
+            const sessionDeadline = currentSessionObj?.hardDeadline || arrivalTime;
+            if (sessionDeadline && sessionDeadline.toUpperCase().includes('PM')) {
+              ampm = 'PM';
+            } else if (sessionDeadline && sessionDeadline.toUpperCase().includes('AM')) {
+              ampm = 'AM';
+            } else {
+              ampm = (parseInt(hh) >= 12 || parseInt(hh) < 6 ? "PM" : "AM");
+            }
+         }
+         
+         const formattedTime = `${hh}:${mm} ${ampm.toUpperCase()}`;
+         updateCommuteSession({ confirmedDeparture: formattedTime });
+
+         const currentSessionObj = useRouteStore.getState().commuteSession;
+         if (currentSessionObj?.hardDeadline) {
+           const conflictCheck = checkDeadlineConflict(formattedTime, currentSessionObj.hardDeadline, currentSessionObj.lastRecommendation);
+           if (conflictCheck.hasConflict && conflictCheck.msg) {
+             conflictWarning = `\nCRITICAL CONFLICT WARNING: The user wants to leave at ${formattedTime}, but with the estimated travel duration, they will arrive after their hard deadline of ${currentSessionObj.hardDeadline}. You MUST warn the user explicitly about this conflict (e.g. "Warning: leaving at ${formattedTime} means you will arrive late at approximately ... which is after your deadline of ${currentSessionObj.hardDeadline}") and strongly recommend leaving earlier.`;
+           }
+         }
+      }
+
+      const currentSessionObj = useRouteStore.getState().commuteSession;
+
+      const responseText = await pulseFollowUpAgent(
+        question, 
+        weatherSignal, 
+        trafficSignal, 
+        transitData, 
+        activeOrigin, 
+        activeDest, 
+        arrivalTime, 
+        isFirstMessage, 
+        language,
+        { ...currentSessionObj, conflictWarning }
+      );
       
+      let finalResponseText = responseText;
+      if (conflictWarning) {
+         const currentSessionObj = useRouteStore.getState().commuteSession;
+         if (currentSessionObj?.hardDeadline) {
+           const conflictCheck = checkDeadlineConflict(currentSessionObj.confirmedDeparture || "", currentSessionObj.hardDeadline, currentSessionObj.lastRecommendation);
+           if (conflictCheck.hasConflict && conflictCheck.msg) {
+             // Overwrite with a clear conflict warning to prevent LLM contradictions
+             finalResponseText = `⚠️ ${conflictCheck.msg}\n\nLeaving at ${currentSessionObj.confirmedDeparture} is too late to reach by your deadline of ${currentSessionObj.hardDeadline}. Please choose an earlier departure time (e.g., leaving before 5:40 PM) to ensure you arrive on time.`;
+           }
+         }
+      }
+
       const aiMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        text: responseText,
-        isStreaming: true
+        text: finalResponseText,
+        isStreaming: false
       };
       
       setChatHistory(prev => [...prev, aiMsg]);
+
+      // Speak response if Voice Mode is active
+      if (isVoiceMode) {
+        updateVoiceState('speaking');
+        speakAnswer(finalResponseText, () => {
+          if (isVoiceMode) {
+            startVoiceRecognition();
+          } else {
+            updateVoiceState('idle');
+          }
+        });
+      }
     } catch (e) {
       console.error(e);
     } finally {
       setIsThinking(false);
+      if (!isVoiceMode) {
+        updateVoiceState('idle');
+      }
     }
   };
 
@@ -478,8 +928,22 @@ export default function Planner() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <FluidDropdown onLanguageChange={setLanguage} />
+
+                  <button
+                    onClick={toggleVoiceMode}
+                    type="button"
+                    title="Toggle Hands-Free Voice Conversation Loop"
+                    className={`flex items-center gap-1.5 font-schibsted text-[13px] px-3 py-1.5 rounded-xl border transition-colors ${
+                      isVoiceMode 
+                        ? 'bg-pulse-600/30 text-pulse-400 border-pulse-500/50 shadow-[0_0_10px_rgba(14,165,233,0.2)]' 
+                        : 'bg-white/10 text-white/70 border-white/10 hover:bg-white/20'
+                    }`}
+                  >
+                    {isVoiceMode ? <Volume2 size={14} className="animate-pulse" /> : <MicOff size={14} />}
+                    <span>Voice Loop</span>
+                  </button>
 
                   {currentAddress && destination && (
                     <button
@@ -561,9 +1025,21 @@ export default function Planner() {
             className="w-full h-full max-h-[85vh] max-w-4xl mx-auto flex flex-col bg-black/40 backdrop-blur-xl rounded-[18px] shadow-2xl border border-white/20 overflow-hidden relative"
           >
             {/* Header for Chat Mode */}
-            <div className="p-4 border-b border-white/10 flex justify-end items-center bg-black/20 shrink-0">
+            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-black/20 shrink-0">
+              <button
+                onClick={toggleVoiceMode}
+                type="button"
+                className={`text-xs font-bold px-4 py-2 rounded-full transition-all border flex items-center gap-2 ${
+                  isVoiceMode 
+                    ? 'bg-pulse-600/30 text-pulse-400 border-pulse-500/50 shadow-[0_0_10px_rgba(14,165,233,0.2)]' 
+                    : 'bg-white/10 text-white/70 border-white/20 hover:bg-white/20'
+                }`}
+              >
+                {isVoiceMode ? <Volume2 size={12} className="animate-pulse" /> : <MicOff size={12} />}
+                Voice Loop: {isVoiceMode ? 'ON' : 'OFF'}
+              </button>
               <button 
-                onClick={() => setChatHistory([])} 
+                onClick={() => { setChatHistory([]); setCommuteSession(null); }} 
                 className="text-xs font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-all border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] backdrop-blur-xl hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] flex items-center gap-2"
               >
                 <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
@@ -840,6 +1316,25 @@ export default function Planner() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Voice Mode pulsing overlay */}
+      {isVoiceMode && (
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-black/80 backdrop-blur-md border border-white/20 px-6 py-3 rounded-full flex items-center gap-3 shadow-2xl animate-pulse">
+          <div className={`w-3.5 h-3.5 rounded-full ${
+            voiceState === 'listening' ? 'bg-green-500 animate-ping' :
+            voiceState === 'speaking' ? 'bg-blue-500 animate-bounce' :
+            voiceState === 'thinking' ? 'bg-amber-500 animate-spin border-2 border-t-transparent border-white' : 'bg-slate-400'
+          }`} />
+          <span className="text-white text-sm font-schibsted font-bold tracking-wide capitalize">
+            Voice Mode: {voiceState}
+          </span>
+        </div>
+      )}
+
+      {/* Version Watermark */}
+      <div className="absolute bottom-2 right-4 text-[10px] text-white/30 font-mono tracking-widest select-none pointer-events-none">
+        PULSEBLR v{APP_VERSION}
+      </div>
     </motion.div>
   );
 }
