@@ -71,6 +71,7 @@ export default function Planner() {
   const voiceStateRef = useRef<'idle' | 'listening' | 'thinking' | 'speaking'>('idle');
   const recognitionRef = useRef<any>(null);
   const isSpeakingRef = useRef(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
 
   const updateVoiceState = (state: typeof voiceState) => {
     voiceStateRef.current = state;
@@ -260,6 +261,7 @@ export default function Planner() {
   };
 
   const handlePlanRoute = async (overrideText?: string) => {
+    setGeoError(null);
     const inputToUse = overrideText || chatInput;
     if (!currentAddress && !destination && !inputToUse.trim()) return;
     const now = Date.now();
@@ -292,12 +294,7 @@ export default function Planner() {
         setCurrentAddress(cachedAddress);
         addEvent(`Geolocation timeout. Using last-known address: ${cachedAddress}`, 'warning', 'PulseCore');
       } else {
-        const errorMsg: ChatMessage = {
-          id: Date.now().toString(),
-          role: 'assistant',
-          text: "Location services are taking longer than expected. Please enter your origin manually in the address bar above to continue."
-        };
-        setChatHistory([errorMsg]);
+        setGeoError("Location services took longer than expected. Please enter your origin manually below to continue.");
         addEvent('Geolocation timeout. Prompting for manual origin.', 'error', 'PulseCore');
         return;
       }
@@ -916,6 +913,33 @@ export default function Planner() {
                   </div>
                 ))}
               </div>
+            )}
+
+            {/* Geolocation Timeout/Error Banner */}
+            {geoError && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-[728px] mb-4"
+              >
+                <Alert
+                  variant="warning"
+                  layout="row"
+                  isNotification
+                  icon={<AlertCircle size={16} className="text-yellow-400" />}
+                  action={
+                    <button
+                      onClick={() => setGeoError(null)}
+                      className="p-1 rounded-lg hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                    >
+                      <span className="text-xs">✕</span>
+                    </button>
+                  }
+                >
+                  <AlertTitle className="text-yellow-300 font-schibsted">Location services timed out</AlertTitle>
+                  <AlertDescription className="text-yellow-200/70 font-schibsted">{geoError}</AlertDescription>
+                </Alert>
+              </motion.div>
             )}
 
             {/* Premium Input Container */}
