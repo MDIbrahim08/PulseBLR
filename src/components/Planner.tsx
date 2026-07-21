@@ -17,6 +17,7 @@ import { MessageLoading } from './ui/message-loading';
 import { AIVoiceInput } from './ui/ai-voice-input';
 import { FluidDropdown } from './ui/fluid-dropdown';
 import { Alert, AlertTitle, AlertDescription } from './ui/alert';
+import { LocationAutocomplete } from './ui/LocationAutocomplete';
 
 type ChatMessage = {
   id: string;
@@ -972,12 +973,12 @@ export default function Planner() {
               <div className="flex flex-col xl:flex-row gap-4 justify-between items-start xl:items-center px-2 mb-4 w-full">
                 <div className="flex flex-wrap items-center gap-4 md:gap-6 text-white font-schibsted font-medium text-[14px] w-full xl:w-auto">
                   <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <MapPin size={16} className="text-white/80 shrink-0" />
-                    <input 
-                      type="text" 
+                    <MapPin size={16} className="text-white/80 shrink-0 mt-1" />
+                    <LocationAutocomplete 
+                      type="origin"
                       value={currentAddress}
-                      onChange={e => setCurrentAddress(e.target.value)}
-                      className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-full sm:w-[130px] md:w-[150px] text-white placeholder-white/60 pb-1"
+                      onChange={setCurrentAddress}
+                      className="w-full sm:w-[130px] md:w-[180px]"
                       placeholder="Origin"
                     />
                     <button
@@ -989,13 +990,13 @@ export default function Planner() {
                       <Navigation size={14} className={isGeolocationLoading ? "animate-spin" : ""} />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <Search size={16} className="text-white/80 shrink-0" />
-                    <input 
-                      type="text" 
+                  <div className="flex items-center gap-2 w-full sm:w-auto relative z-40">
+                    <Search size={16} className="text-white/80 shrink-0 mt-1" />
+                    <LocationAutocomplete 
+                      type="destination"
                       value={destination}
-                      onChange={e => setDestination(e.target.value)}
-                      className="bg-transparent border-b-2 border-white/30 focus:border-white outline-none w-full sm:w-[160px] md:w-[180px] text-white placeholder-white/60 pb-1"
+                      onChange={setDestination}
+                      className="w-full sm:w-[160px] md:w-[200px]"
                       placeholder="Destination"
                     />
                   </div>
