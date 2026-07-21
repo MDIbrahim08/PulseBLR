@@ -118,29 +118,29 @@ export function LocationAutocomplete({
       </div>
 
       {isOpen && (value.length >= 3 || type === 'origin') && (
-        <div className="absolute top-full left-0 mt-2 w-[300px] sm:w-[350px] bg-[#111118] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+        <div className="absolute top-full left-0 mt-3 w-full min-w-[280px] sm:min-w-[350px] max-w-[90vw] bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden ring-1 ring-white/5">
           
           {/* Always show "Use Current Location" for Origin input at the top */}
           {type === 'origin' && (
             <button
               type="button"
               onClick={handleUseCurrentLocation}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 text-left"
+              className="w-full flex items-center gap-3.5 px-4 py-3.5 hover:bg-white/10 transition-colors border-b border-white/10 text-left bg-pulse-500/5 hover:bg-pulse-500/10 group"
             >
-              <div className="bg-blue-500/20 p-1.5 rounded-lg text-blue-400">
-                <Navigation size={16} />
+              <div className="bg-pulse-500/20 p-2 rounded-xl text-pulse-400 group-hover:scale-110 transition-transform">
+                <Navigation size={18} className="animate-pulse" />
               </div>
               <div>
-                <p className="text-white text-sm font-medium">Use Current Location</p>
-                <p className="text-white/40 text-xs">Detect automatically</p>
+                <p className="text-white text-sm font-semibold tracking-wide">Use Current Location</p>
+                <p className="text-white/50 text-[11px] font-medium mt-0.5 uppercase tracking-wider">Detect automatically via GPS</p>
               </div>
             </button>
           )}
 
-          <div className="max-h-[280px] overflow-y-auto">
+          <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
             {isLoading && value.length >= 3 ? (
-              <div className="p-4 flex items-center justify-center gap-2 text-white/50 text-sm">
-                <Loader2 size={14} className="animate-spin" /> Fetching locations...
+              <div className="p-6 flex items-center justify-center gap-3 text-white/50 text-sm font-medium">
+                <Loader2 size={16} className="animate-spin text-pulse-400" /> Fetching locations...
               </div>
             ) : options.length > 0 ? (
               options.map((item, idx) => (
@@ -148,22 +148,26 @@ export function LocationAutocomplete({
                   key={idx}
                   type="button"
                   onClick={() => handleSelect(item)}
-                  className="w-full flex items-start gap-3 px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 text-left"
+                  className="w-full flex items-start gap-3.5 px-4 py-3.5 hover:bg-white/10 transition-colors border-b border-white/5 last:border-0 text-left group"
                 >
-                  <MapPin size={16} className="text-white/40 mt-0.5 shrink-0" />
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-white text-sm font-medium truncate w-full">
+                  <div className="bg-white/5 p-2 rounded-xl text-white/40 group-hover:text-pulse-400 group-hover:bg-pulse-500/10 transition-colors shrink-0">
+                    <MapPin size={16} />
+                  </div>
+                  <div className="flex flex-col min-w-0 pt-0.5">
+                    <span className="text-white text-[13px] font-semibold truncate w-full tracking-wide">
                       {item.display_name.split(',')[0]}
                     </span>
-                    <span className="text-white/50 text-xs truncate w-full">
-                      {item.display_name.split(',').slice(1).join(',')}
+                    <span className="text-white/40 text-[11px] font-medium truncate w-full mt-1 leading-relaxed">
+                      {item.display_name.split(',').slice(1).join(',').trim()}
                     </span>
                   </div>
                 </button>
               ))
             ) : value.length >= 3 ? (
-              <div className="p-4 text-center text-white/50 text-sm">
-                No locations found. Try being more specific.
+              <div className="p-6 text-center flex flex-col items-center justify-center gap-2">
+                <MapPin size={24} className="text-white/20 mb-1" />
+                <p className="text-white/70 text-sm font-medium">No locations found</p>
+                <p className="text-white/40 text-xs">Try being more specific with your search.</p>
               </div>
             ) : null}
           </div>
