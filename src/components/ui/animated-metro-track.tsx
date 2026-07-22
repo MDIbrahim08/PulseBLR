@@ -13,7 +13,11 @@ export function AnimatedMetroTrack({
   className = ""
 }: AnimatedMetroTrackProps) {
   return (
-    <div className={`inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-[#161622]/90 to-[#101018]/90 backdrop-blur-2xl border border-white/10 rounded-full shadow-xl overflow-hidden ${className}`}>
+    <motion.div 
+      whileHover={{ scale: 1.04, y: -1 }}
+      whileTap={{ scale: 0.96 }}
+      className={`inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-black/40 backdrop-blur-2xl border border-white/15 rounded-full shadow-lg overflow-hidden cursor-pointer hover:bg-black/60 hover:border-white/30 transition-all duration-300 ${className}`}
+    >
       
       {/* Animated Train on Track */}
       <div className="relative w-12 h-5 bg-white/5 rounded-md flex items-center overflow-hidden border border-white/10 px-1">
@@ -41,6 +45,6 @@ export function AnimatedMetroTrack({
           METRO EXPRESS
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 }

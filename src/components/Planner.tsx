@@ -886,10 +886,29 @@ export default function Planner() {
             transition={{ duration: 0.4 }}
             className="flex flex-col items-center text-center w-full max-w-[1000px] px-4"
           >
-            {/* Top Interactive Animated Widgets Bar */}
-            <div className="w-full max-w-[728px] mb-6 flex flex-wrap items-center justify-center sm:justify-between gap-3 px-2">
-              <WeatherCloudMascot condition="Clear" temperature="28°C" />
-              <AnimatedMetroTrack lineName="Purple Line" statusText="3-min Frequency" />
+            {/* Single Unified Fluid Glass Live Status Bar */}
+            <div className="w-full max-w-[728px] mb-8">
+              <div className="bg-black/50 backdrop-blur-2xl border border-white/20 rounded-full px-4 py-2.5 flex flex-wrap items-center justify-between shadow-[0_10px_30px_rgba(0,0,0,0.5)] gap-2">
+                <div className="flex items-center gap-2">
+                  <WeatherCloudMascot condition="Clear" temperature="28°C" className="!bg-transparent !border-0 !p-0 !shadow-none" />
+                  <span className="text-white/20 hidden sm:inline">•</span>
+                  <AnimatedMetroTrack lineName="Purple Line" statusText="3-min" className="!bg-transparent !border-0 !p-0 !shadow-none hidden sm:inline-flex" />
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-xs text-white/80 border border-white/10">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="font-semibold">
+                      {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 17 ? 'Good Afternoon' : 'Good Evening'}
+                    </span>
+                  </div>
+
+                  <div className="hidden md:flex items-center gap-1.5 text-xs text-white/70 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+                    <Activity size={13} className="text-sky-400 animate-pulse" />
+                    <span>Gridlock: <strong className="text-white font-bold">78%</strong></span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Headline */}
@@ -898,36 +917,9 @@ export default function Planner() {
             </h1>
 
             {/* Subtitle */}
-            <p className="font-fustat font-medium text-[18px] md:text-[20px] text-black/80 drop-shadow-sm tracking-[-0.4px] max-w-[736px] w-[90%] md:w-[542px] mb-[32px] leading-relaxed">
+            <p className="font-fustat font-medium text-[18px] md:text-[20px] text-black/80 drop-shadow-sm tracking-[-0.4px] max-w-[736px] w-[90%] md:w-[542px] mb-[40px] leading-relaxed">
               Set your origin and destination below to get powerful AI commute insights right away. Avoid traffic and achieve goals effortlessly.
             </p>
-
-            {/* Executive Animated Greeting & Live Gridlock Bar */}
-            <div className="w-full max-w-[728px] flex items-center justify-between mb-3 px-2">
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-2.5 bg-[#121218]/90 border border-white/10 backdrop-blur-xl px-4 py-2 rounded-full shadow-lg"
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span className="font-bold text-white text-xs tracking-wide">
-                  {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 17 ? 'Good Afternoon' : 'Good Evening'}
-                </span>
-                <span className="text-white/30">•</span>
-                <span className="text-white/70 text-[11px] font-medium">
-                  {new Date().getHours() >= 8 && new Date().getHours() <= 11 ? 'Morning Peak Active' : new Date().getHours() >= 17 && new Date().getHours() <= 20 ? 'Evening Rush Active' : 'Optimal Commute Window'}
-                </span>
-              </motion.div>
-
-              <motion.div 
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="hidden sm:flex items-center gap-2 bg-[#121218]/90 border border-white/10 backdrop-blur-xl px-4 py-2 rounded-full shadow-lg"
-              >
-                <Activity size={14} className="text-sky-400 animate-pulse" />
-                <span className="text-[11px] text-white/70">Gridlock Index: <strong className="text-white font-bold">78%</strong></span>
-              </motion.div>
-            </div>
 
             {/* Rain Alert Banner */}
             {isRaining && (

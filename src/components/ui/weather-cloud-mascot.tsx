@@ -25,9 +25,9 @@ export function WeatherCloudMascot({
 
   return (
     <motion.div
-      whileHover={{ scale: 1.05, y: -2 }}
-      whileTap={{ scale: 0.95 }}
-      className={`relative inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-[#161622]/90 to-[#101018]/90 backdrop-blur-2xl border border-white/10 rounded-full shadow-xl cursor-pointer select-none ${className}`}
+      whileHover={{ scale: 1.04, y: -1 }}
+      whileTap={{ scale: 0.96 }}
+      className={`relative inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-black/40 backdrop-blur-2xl border border-white/15 rounded-full shadow-lg cursor-pointer select-none hover:bg-black/60 hover:border-white/30 transition-all duration-300 ${className}`}
     >
       {/* 3D Soft Cloud Mascot with SVG Animated Face */}
       <div className="relative w-9 h-8 flex items-center justify-center shrink-0">
