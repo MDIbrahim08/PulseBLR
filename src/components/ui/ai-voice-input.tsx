@@ -5,22 +5,26 @@ import { Mic, Square } from 'lucide-react';
 interface AIVoiceInputProps {
   onStart?: () => void;
   onStop?: (duration: number) => void;
+  isListening?: boolean;
 }
 
-export function AIVoiceInput({ onStart, onStop }: AIVoiceInputProps) {
-  const [isListening, setIsListening] = useState(false);
+export function AIVoiceInput({ onStart, onStop, isListening: externalIsListening }: AIVoiceInputProps) {
+  const [internalIsListening, setInternalIsListening] = useState(false);
   const [duration, setDuration] = useState(0);
   const timerRef = useRef<number | null>(null);
 
+  const isListening = externalIsListening !== undefined ? externalIsListening : internalIsListening;
+
   const toggleListening = () => {
     if (isListening) {
-      setIsListening(false);
+      setInternalIsListening(false);
       if (timerRef.current) clearInterval(timerRef.current);
       if (onStop) onStop(duration);
       setDuration(0);
     } else {
-      setIsListening(true);
+      setInternalIsListening(true);
       if (onStart) onStart();
+      if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         setDuration(prev => prev + 1);
       }, 1000);
@@ -42,13 +46,13 @@ export function AIVoiceInput({ onStart, onStop }: AIVoiceInputProps) {
               initial={{ scale: 1, opacity: 0.5 }}
               animate={{ scale: 2, opacity: 0 }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
-              className="absolute inset-0 rounded-full bg-pulse-500/30"
+              className="absolute inset-0 rounded-full bg-pulse-500/30 pointer-events-none"
             />
             <motion.div
               initial={{ scale: 1, opacity: 0.5 }}
               animate={{ scale: 2.5, opacity: 0 }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
-              className="absolute inset-0 rounded-full bg-pulse-500/20"
+              className="absolute inset-0 rounded-full bg-pulse-500/20 pointer-events-none"
             />
           </>
         )}
@@ -56,6 +60,7 @@ export function AIVoiceInput({ onStart, onStop }: AIVoiceInputProps) {
 
       <motion.button
         onClick={toggleListening}
+        type="button"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full transition-colors backdrop-blur-md shadow-lg border ${

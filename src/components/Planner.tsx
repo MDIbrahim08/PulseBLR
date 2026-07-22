@@ -654,8 +654,13 @@ export default function Planner() {
   const startVoiceDictation = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      console.error('Speech recognition not supported in this browser.');
+      alert('Speech recognition is not supported on this browser. Please try Chrome or Edge.');
       return;
+    }
+
+    // Safely abort any existing recognition instance to prevent lockup
+    if ((window as any).currentRecognition) {
+      try { (window as any).currentRecognition.abort(); } catch {}
     }
 
     const recognition = new SpeechRecognition();
@@ -673,6 +678,11 @@ export default function Planner() {
     (window as any).currentRecognition = recognition;
 
     let finalTranscript = '';
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
     recognition.onresult = (event: any) => {
       finalTranscript = Array.from(event.results)
         .map((result: any) => result[0])
@@ -682,7 +692,7 @@ export default function Planner() {
     };
     
     recognition.onerror = (e: any) => {
-      console.error(e);
+      console.error("Dictation Error:", e);
       setIsListening(false);
     };
     
@@ -693,7 +703,12 @@ export default function Planner() {
       }
     };
     
-    recognition.start();
+    try {
+      recognition.start();
+    } catch (err) {
+      console.error("Start Error:", err);
+      setIsListening(false);
+    }
   };
 
   // Bug B: explicitly check active commuteSession state to route follow-ups correctly
@@ -711,7 +726,9 @@ export default function Planner() {
   const handleVoiceStop = () => {
     setIsListening(false);
     if ((window as any).currentRecognition) {
-      (window as any).currentRecognition.stop();
+      try {
+        (window as any).currentRecognition.stop();
+      } catch {}
     }
   };
 
@@ -1107,6 +1124,7 @@ export default function Planner() {
               <div className="flex justify-between items-center px-2">
                 <div className="flex items-center gap-4">
                   <AIVoiceInput 
+                    isListening={isListening}
                     onStart={startVoiceDictation} 
                     onStop={handleVoiceStop} 
                   />
