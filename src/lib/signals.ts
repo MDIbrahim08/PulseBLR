@@ -93,11 +93,18 @@ export const getLiveWeather = async (lat: number, lon: number) => {
     
     const current = response.data.current;
     
-    // Basic WMO Weather code mapping
+    // Precise WMO Weather Code Mapping
     let condition = "Clear";
-    if (current.weather_code >= 51 && current.weather_code <= 67) condition = "Rainy";
-    if (current.weather_code >= 71 && current.weather_code <= 77) condition = "Snow";
-    if (current.weather_code >= 95) condition = "Thunderstorm";
+    const code = current.weather_code;
+    if (code === 0) condition = "Clear";
+    else if (code >= 1 && code <= 3) condition = "Cloudy";
+    else if (code >= 45 && code <= 48) condition = "Foggy";
+    else if (code >= 51 && code <= 55) condition = "Drizzling";
+    else if (code >= 56 && code <= 57) condition = "Freezing Drizzle";
+    else if (code >= 61 && code <= 65) condition = "Rainy";
+    else if (code >= 80 && code <= 82) condition = "Heavy Rain";
+    else if (code >= 71 && code <= 77) condition = "Snow";
+    else if (code >= 95) condition = "Thunderstorm";
 
     return {
       temperature: `${current.temperature_2m}°C`,
