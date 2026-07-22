@@ -36,7 +36,7 @@ export default function Planner() {
   const [cooldownMsg, setCooldownMsg] = useState('');
 
   // Version watermark
-  const APP_VERSION = import.meta.env.VITE_APP_VERSION || '1.0.0-live';
+  const APP_VERSION = import.meta.env.VITE_APP_VERSION || '1.1.0-live';
 
   // Geolocation & Timestamp Refs & State
   const [isGeolocationLoading, setIsGeolocationLoading] = useState(true);
