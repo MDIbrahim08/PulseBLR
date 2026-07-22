@@ -246,27 +246,18 @@ export function WeatherCloudMascot({
         </motion.svg>
       </div>
 
-      {/* Weather Info & Helper Text */}
-      <div className="flex flex-col text-center sm:text-left">
+      {/* Weather Info Card in Apple Glass Pill */}
+      <div className="flex flex-col text-center sm:text-left bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl px-5 py-2.5 shadow-xl">
         <div className="flex items-center gap-2 justify-center sm:justify-start">
-          <span className="text-xl sm:text-2xl font-extrabold text-white tracking-wide drop-shadow-md">
+          <span className="text-lg sm:text-xl font-extrabold text-white tracking-wide drop-shadow-md">
             {condition}
           </span>
-          <span className="text-lg font-bold text-sky-300 bg-sky-500/10 border border-sky-500/20 px-2.5 py-0.5 rounded-full">
+          <span className="text-base font-bold text-sky-300 bg-sky-500/20 border border-sky-400/30 px-3 py-0.5 rounded-full">
             {temperature}
           </span>
         </div>
-        
-        <span className="text-xs font-bold text-sky-300/90 mt-1 tracking-wider uppercase flex items-center justify-center sm:justify-start gap-1">
-          {isHoldingWater ? (
-            <span className="text-amber-300 animate-pulse">😯 HOLDING WATER... RELEASE TO SPIT!</span>
-          ) : isRainy ? (
-            <span>💧 Rainy — Tap & Hold Cloud to Puff & Spit Rain!</span>
-          ) : isCloudy ? (
-            <span>☁️ Live Weather: Overcast & Cozy</span>
-          ) : (
-            <span>☀️ Live Weather: Clear & Sunny</span>
-          )}
+        <span className="text-[11px] font-semibold text-white/70 mt-0.5 tracking-wider uppercase">
+          Live Weather Signal
         </span>
       </div>
     </motion.div>

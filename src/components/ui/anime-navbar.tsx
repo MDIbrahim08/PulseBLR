@@ -128,7 +128,7 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
                 >
                   <div className="relative w-11 h-11">
                     <motion.div 
-                      className="absolute w-10 h-10 bg-white rounded-full left-1/2 -translate-x-1/2 shadow-[0_4px_16px_rgba(255,255,255,0.4)] flex items-center justify-center border-2 border-sky-400"
+                      className="absolute w-10 h-10 bg-[#F8FAFC] rounded-full left-1/2 -translate-x-1/2 shadow-lg flex items-center justify-center border border-slate-200/60"
                       animate={
                         hoveredTab ? {
                           scale: [1, 1.15, 1],

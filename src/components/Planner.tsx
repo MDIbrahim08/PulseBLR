@@ -914,12 +914,12 @@ export default function Planner() {
               </div>
 
               {/* Headline */}
-              <h1 className="font-fustat font-bold text-[44px] sm:text-[60px] md:text-[80px] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)] leading-[1.1] md:leading-none tracking-[-2px] md:tracking-[-4.8px] mb-[20px] md:mb-[34px]">
+              <h1 className="font-schibsted font-bold text-3xl sm:text-4xl md:text-5xl text-white drop-shadow-lg leading-tight tracking-tight mt-4 mb-3">
                 Master Commutes Quickly
               </h1>
 
               {/* Subtitle */}
-              <p className="font-fustat font-medium text-[18px] md:text-[20px] text-white/80 drop-shadow-md tracking-[-0.4px] max-w-[736px] w-[90%] md:w-[542px] mb-[40px] leading-relaxed">
+              <p className="font-schibsted font-normal text-sm md:text-base text-white/70 tracking-normal max-w-[600px] w-[90%] mb-8 leading-relaxed">
                 Set your origin and destination below to get powerful AI commute insights right away. Avoid traffic and achieve goals effortlessly.
               </p>
 
