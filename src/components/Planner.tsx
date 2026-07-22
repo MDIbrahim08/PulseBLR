@@ -1147,44 +1147,56 @@ export default function Planner() {
                         {msg.recommendation && (
                           <div className="grid grid-cols-1 gap-4 mt-4">
                             
-                            {/* Key Stats Row */}
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col">
-                                <span className="text-white/50 text-xs font-bold uppercase tracking-wider mb-1">Departure</span>
-                                <span className="text-white font-schibsted font-bold text-2xl">{msg.recommendation.recommendedDeparture}</span>
-                              </div>
-                              <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex flex-col">
-                                <span className="text-white/50 text-xs font-bold uppercase tracking-wider mb-1">Arrival</span>
-                                <span className="text-white font-schibsted font-bold text-2xl">{msg.recommendation.expectedArrival}</span>
-                              </div>
-                            </div>
+                            {/* Executive Commute Timeline Bar */}
+                            <div className="bg-[#121218]/80 border border-white/10 rounded-2xl p-4 sm:p-5 backdrop-blur-xl">
+                              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                                
+                                {/* Departure Block */}
+                                <div className="flex items-center gap-3">
+                                  <div className="w-3 h-3 rounded-full bg-emerald-500 shrink-0" />
+                                  <div>
+                                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">DEPARTURE</p>
+                                    <p className="text-white font-semibold text-xl sm:text-2xl mt-0.5">{msg.recommendation.recommendedDeparture}</p>
+                                  </div>
+                                </div>
 
-                            {/* Transport, Time Saved, & Confidence Row */}
-                            <div className="grid grid-cols-3 gap-2">
-                              <div className="bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col">
-                                <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1">Transport</span>
-                                <span className="text-white font-schibsted font-bold text-sm leading-tight">{msg.recommendation.recommendedTransport}</span>
+                                {/* Flow Connector */}
+                                <div className="flex-1 flex flex-col items-center justify-center px-2 py-1 my-1 sm:my-0">
+                                  <div className="w-full flex items-center justify-between text-xs text-white/50 mb-1 px-1">
+                                    <span className="font-medium text-white/80">{msg.recommendation.recommendedTransport}</span>
+                                    <span>{msg.recommendation.timeSavedMinutes && parseInt(msg.recommendation.timeSavedMinutes.toString()) > 0 ? `Saved ~${msg.recommendation.timeSavedMinutes}m` : 'Optimal Route'}</span>
+                                  </div>
+                                  <div className="w-full h-1 bg-white/10 rounded-full relative overflow-hidden">
+                                    <div className="absolute inset-y-0 left-0 bg-sky-500 rounded-full w-3/4" />
+                                  </div>
+                                </div>
+
+                                {/* Arrival Block */}
+                                <div className="flex items-center gap-3 justify-end sm:justify-start">
+                                  <div className="text-right sm:text-left">
+                                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">ESTIMATED ARRIVAL</p>
+                                    <p className="text-white font-semibold text-xl sm:text-2xl mt-0.5">{msg.recommendation.expectedArrival}</p>
+                                  </div>
+                                  <div className="w-3 h-3 rounded-full bg-sky-500 shrink-0" />
+                                </div>
+
                               </div>
-                              <div className="bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col">
-                                <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1">⏱ Time Saved</span>
-                                <span className="text-white font-schibsted font-bold text-sm leading-tight">
-                                  {msg.recommendation.timeSavedMinutes && parseInt(msg.recommendation.timeSavedMinutes.toString()) > 0 ? `~${msg.recommendation.timeSavedMinutes} min` : 'Optimal'}
-                                </span>
-                              </div>
-                              <div className="bg-white/5 p-3 rounded-xl border border-white/10 flex flex-col">
-                                <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1">Confidence</span>
-                                <span className="text-white font-schibsted font-bold text-sm leading-tight">{msg.recommendation.confidenceScore}%</span>
+
+                              {/* Confidence Badge Row */}
+                              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-white/50">
+                                <span>Confidence Score: <strong className="text-white font-semibold">{msg.recommendation.confidenceScore}%</strong></span>
+                                <span>Status: <strong className="text-emerald-400 font-semibold">Live Signals Synchronized</strong></span>
                               </div>
                             </div>
 
                             {/* Explanation */}
-                            <div className="mt-1">
-                              <p className="text-white/80 leading-relaxed font-schibsted text-[14px] whitespace-pre-wrap">{msg.recommendation.explanation}</p>
+                            <div className="mt-2 px-1">
+                              <p className="text-white/85 leading-relaxed text-[14px] whitespace-pre-wrap">{msg.recommendation.explanation}</p>
                             </div>
 
                             {/* Disclaimer (if provided) */}
                             {msg.recommendation.disclaimer && (
-                              <Alert variant="warning" layout="complex" size="sm" className="mt-2 font-schibsted"
+                              <Alert variant="warning" layout="complex" size="sm" className="mt-2"
                                 icon={<AlertCircle size={16} className="text-amber-400" />}
                               >
                                 <AlertTitle className="text-amber-300">Important Notice</AlertTitle>
@@ -1194,17 +1206,17 @@ export default function Planner() {
 
                             {/* Alternative Route (if provided) */}
                             {msg.recommendation.alternativeRoute && (
-                              <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 border-l-4 border-l-blue-500 mt-2">
-                                <p className="font-semibold text-white mb-2 flex items-center gap-2">
-                                  <MapPin size={16} className="text-blue-500" />
-                                  Alternative Route
+                              <div className="bg-white/[0.03] p-4 rounded-xl border border-white/10 border-l-4 border-l-sky-500 mt-2">
+                                <p className="font-semibold text-white mb-1.5 flex items-center gap-2 text-sm">
+                                  <MapPin size={15} className="text-sky-400" />
+                                  Alternative Route Option
                                 </p>
-                                <div className="flex items-center gap-4 mb-2">
-                                  <span className="text-white font-schibsted font-semibold">{msg.recommendation.alternativeRoute.transport}</span>
-                                  <span className="text-slate-500 text-sm">•</span>
-                                  <span className="text-slate-300 font-schibsted">{msg.recommendation.alternativeRoute.time}</span>
+                                <div className="flex items-center gap-3 mb-1.5 text-xs text-white/70">
+                                  <span className="font-medium text-white">{msg.recommendation.alternativeRoute.transport}</span>
+                                  <span>•</span>
+                                  <span>{msg.recommendation.alternativeRoute.time}</span>
                                 </div>
-                                <p className="text-slate-400 text-sm font-schibsted leading-relaxed">
+                                <p className="text-white/50 text-xs leading-relaxed">
                                   {msg.recommendation.alternativeRoute.reason}
                                 </p>
                               </div>
@@ -1214,30 +1226,30 @@ export default function Planner() {
                             {msg.recommendation.reasoning && msg.recommendation.reasoning.length > 0 && (
                               <div className="flex flex-wrap gap-2 mt-2">
                                 {msg.recommendation.reasoning.map((r: string, i: number) => (
-                                  <span key={i} className="text-xs bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-white/70">
+                                  <span key={i} className="text-xs bg-white/5 border border-white/10 px-3 py-1 rounded-full text-white/60">
                                     {r}
                                   </span>
                                 ))}
                               </div>
                             )}
 
-                             {/* Congestion Nudge (Concept 1) */}
+                             {/* Congestion Nudge */}
                              {msg.recommendation.congestionHedgingActive && (
-                               <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                               <div className="mt-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                  <div className="flex-1">
-                                   <p className="text-sm font-semibold text-amber-300 flex items-center gap-1.5 mb-1">
-                                     <AlertTriangle size={15} />
+                                   <p className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 mb-1">
+                                     <AlertTriangle size={14} />
                                      Congestion Hedging Active
                                    </p>
-                                   <p className="text-xs text-amber-200/70 leading-relaxed font-schibsted">
-                                     Peak traffic detected on this route. You can avoid the gridlock by staying off the road. Pivot to a nearby workspace or cafe until traffic drops off.
+                                   <p className="text-xs text-white/70 leading-relaxed">
+                                     Peak traffic detected on this route. Consider pivoting to a nearby workspace or cafe until gridlock subsides.
                                    </p>
                                  </div>
                                  <button
                                    onClick={() => navigate('/smart-pivot')}
-                                   className="shrink-0 flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all text-black font-bold text-xs py-2 px-4 rounded-lg shadow-md"
+                                   className="shrink-0 flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 transition-all text-black font-semibold text-xs py-2 px-3.5 rounded-lg shadow-sm"
                                  >
-                                   Find a Cafe <ArrowRight size={14} />
+                                   Find Workspace <ArrowRight size={14} />
                                  </button>
                                </div>
                              )}
