@@ -902,7 +902,15 @@ export default function Planner() {
                   animate={{ opacity: 1, x: 0 }}
                   className="flex items-center gap-2.5 sm:gap-3 bg-white/10 border border-white/20 backdrop-blur-2xl px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-xl"
                 >
-                  <Sparkles size={15} className="text-amber-300 animate-spin shrink-0" />
+                  {/* 3D Apple Glass Time Orb */}
+                  <div className={`w-3.5 h-3.5 rounded-full shrink-0 relative overflow-hidden border border-white/40 shadow-[0_0_10px_rgba(255,255,255,0.4)] ${
+                    new Date().getHours() < 17 
+                      ? 'bg-gradient-to-tr from-amber-400 via-orange-400 to-amber-200' 
+                      : 'bg-gradient-to-tr from-sky-400 via-indigo-400 to-purple-300'
+                  }`}>
+                    <div className="absolute top-0 left-0 w-full h-1/2 bg-white/40 rounded-t-full pointer-events-none" />
+                  </div>
+
                   <span className="font-bold text-white text-xs sm:text-sm tracking-wide">
                     {new Date().getHours() < 12 ? 'Good Morning 👋' : new Date().getHours() < 17 ? 'Good Afternoon 👋' : 'Good Evening 👋'}
                   </span>

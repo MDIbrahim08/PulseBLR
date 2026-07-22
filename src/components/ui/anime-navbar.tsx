@@ -118,7 +118,7 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
               {isActive && (
                 <motion.div
                   layoutId="anime-mascot"
-                  className="absolute -top-11 left-1/2 -translate-x-1/2 pointer-events-none z-50"
+                  className="absolute -top-10 left-1/2 -translate-x-1/2 pointer-events-none z-50"
                   initial={false}
                   transition={{
                     type: "spring",
@@ -126,128 +126,29 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
                     damping: 30,
                   }}
                 >
-                  <div className="relative w-11 h-11">
+                  <div className="relative flex flex-col items-center">
+                    {/* 3D Apple Liquid Glass Navigation Orb */}
                     <motion.div 
-                      className="absolute w-10 h-10 bg-[#F8FAFC] rounded-full left-1/2 -translate-x-1/2 shadow-lg flex items-center justify-center border border-slate-200/60"
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-white/95 via-sky-100/80 to-sky-400/50 backdrop-blur-2xl border border-white/80 shadow-[0_6px_20px_rgba(56,189,248,0.4)] flex items-center justify-center relative overflow-hidden"
                       animate={
                         hoveredTab ? {
-                          scale: [1, 1.15, 1],
-                          rotate: [0, -6, 6, 0],
-                          transition: {
-                            duration: 0.5,
-                            ease: "easeInOut"
-                          }
+                          scale: [1, 1.2, 1],
+                          transition: { duration: 0.4, ease: "easeInOut" }
                         } : {
-                          y: [0, -4, 0],
-                          transition: {
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }
-                        }
-                      }
-                    >
-                      <motion.div 
-                        className="absolute w-1.5 h-1.5 bg-black rounded-full"
-                        animate={
-                          hoveredTab ? {
-                            scaleY: [1, 0.2, 1],
-                            transition: {
-                              duration: 0.2,
-                              times: [0, 0.5, 1]
-                            }
-                          } : {}
-                        }
-                        style={{ left: '25%', top: '35%' }}
-                      />
-                      <motion.div 
-                        className="absolute w-1.5 h-1.5 bg-black rounded-full"
-                        animate={
-                          hoveredTab ? {
-                            scaleY: [1, 0.2, 1],
-                            transition: {
-                              duration: 0.2,
-                              times: [0, 0.5, 1]
-                            }
-                          } : {}
-                        }
-                        style={{ right: '25%', top: '35%' }}
-                      />
-                      <motion.div 
-                        className="absolute w-1.5 h-1 bg-pink-400 rounded-full"
-                        animate={{
-                          opacity: hoveredTab ? 0.9 : 0.6
-                        }}
-                        style={{ left: '15%', top: '50%' }}
-                      />
-                      <motion.div 
-                        className="absolute w-1.5 h-1 bg-pink-400 rounded-full"
-                        animate={{
-                          opacity: hoveredTab ? 0.9 : 0.6
-                        }}
-                        style={{ right: '15%', top: '50%' }}
-                      />
-                      
-                      <motion.div 
-                        className="absolute w-3 h-1.5 border-b-2 border-black rounded-full"
-                        animate={
-                          hoveredTab ? {
-                            scaleY: 1.5,
-                            y: -1
-                          } : {
-                            scaleY: 1,
-                            y: 0
-                          }
-                        }
-                        style={{ left: '30%', top: '55%' }}
-                      />
-                      <AnimatePresence>
-                        {hoveredTab && (
-                          <>
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0 }}
-                              className="absolute -top-1 -right-1 text-[10px]"
-                            >
-                              ✨
-                            </motion.div>
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0 }}
-                              transition={{ delay: 0.1 }}
-                              className="absolute -top-2 left-0 text-[10px]"
-                            >
-                              ✨
-                            </motion.div>
-                          </>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                    <motion.div
-                      className="absolute -bottom-1 left-1/2 w-3 h-3 -translate-x-1/2"
-                      animate={
-                        hoveredTab ? {
                           y: [0, -3, 0],
-                          transition: {
-                            duration: 0.3,
-                            repeat: Infinity,
-                            repeatType: "reverse"
-                          }
-                        } : {
-                          y: [0, 2, 0],
-                          transition: {
-                            duration: 1,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                            delay: 0.5
-                          }
+                          transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
                         }
                       }
                     >
-                      <div className="w-full h-full bg-white rotate-45 transform origin-center" />
+                      {/* Top Specular Glare Reflection */}
+                      <div className="absolute top-0 inset-x-0 h-3.5 bg-gradient-to-b from-white/90 to-transparent rounded-t-full pointer-events-none" />
+
+                      {/* Live Location Pulse Core */}
+                      <div className="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_8px_#38BDF8] relative z-10 animate-pulse" />
                     </motion.div>
+
+                    {/* 3D Glass Teardrop Pointer */}
+                    <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[6px] border-t-white/80 -mt-0.5 filter drop-shadow-sm" />
                   </div>
                 </motion.div>
               )}
