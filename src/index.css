@@ -220,3 +220,15 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(51, 65, 85, 0.5) transparent;
 }
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}

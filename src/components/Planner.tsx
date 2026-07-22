@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck, AlertTriangle, Volume2, MicOff, Activity
+  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck, AlertTriangle, Volume2, MicOff, Activity, Building2, Laptop, Plane, Coffee
 } from 'lucide-react';
 import {
   pulseCoreAgent,
@@ -20,6 +20,7 @@ import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 import { LocationAutocomplete } from './ui/LocationAutocomplete';
 import { WeatherCloudMascot } from './ui/weather-cloud-mascot';
 import { AnimatedMetroTrack } from './ui/animated-metro-track';
+import { AnimeNavBar } from './ui/anime-navbar';
 
 type ChatMessage = {
   id: string;
@@ -1118,37 +1119,34 @@ export default function Planner() {
                 </button>
               </div>
 
-              {/* Feature 4: One-Tap Commute Quick Preset Chips */}
-              <div className="mt-4 pt-3 border-t border-white/10 flex items-center gap-2 overflow-x-auto custom-scrollbar px-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 shrink-0">Quick Presets:</span>
-                <button
-                  type="button"
-                  onClick={() => { setCurrentAddress('Indiranagar'); setDestination('Manyata Tech Park'); }}
-                  className="shrink-0 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
-                >
-                  <span>🏢 Home ➔ Manyata</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setCurrentAddress('Koramangala'); setDestination('EcoSpace, ORR'); }}
-                  className="shrink-0 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
-                >
-                  <span>💻 Home ➔ EcoSpace</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setCurrentAddress('Hebbal'); setDestination('KIAL Airport'); }}
-                  className="shrink-0 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
-                >
-                  <span>✈️ Airport Express</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/smart-pivot')}
-                  className="shrink-0 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
-                >
-                  <span>☕ Workspace Pivot</span>
-                </button>
+              {/* Feature 4: AnimeNavBar Quick Presets Component */}
+              <div className="mt-4 pt-3 border-t border-white/10 flex flex-col items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">Quick Presets</span>
+                <AnimeNavBar 
+                  items={[
+                    {
+                      name: "Home ➔ Manyata",
+                      icon: Building2,
+                      onClick: () => { setCurrentAddress('Indiranagar'); setDestination('Manyata Tech Park'); }
+                    },
+                    {
+                      name: "Home ➔ EcoSpace",
+                      icon: Laptop,
+                      onClick: () => { setCurrentAddress('Koramangala'); setDestination('EcoSpace, ORR'); }
+                    },
+                    {
+                      name: "Airport Express",
+                      icon: Plane,
+                      onClick: () => { setCurrentAddress('Hebbal'); setDestination('KIAL Airport'); }
+                    },
+                    {
+                      name: "Workspace Pivot",
+                      icon: Coffee,
+                      onClick: () => navigate('/smart-pivot')
+                    }
+                  ]}
+                  defaultActive="Home ➔ Manyata"
+                />
               </div>
 
               {cooldownMsg && (
