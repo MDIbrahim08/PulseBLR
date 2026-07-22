@@ -44,30 +44,56 @@ export function LocationAutocomplete({
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
-        // Use Photon API (Elasticsearch on OpenStreetMap) - excellent typo tolerance & native location biasing
-        const res = await fetch(
-          `https://photon.komoot.io/api/?q=${encodeURIComponent(value)}&lat=12.9716&lon=77.5946&limit=6`
-        );
-        const data = await res.json();
-        
-        if (data && data.features) {
-          const formatted = data.features.map((feat: any) => {
-            const props = feat.properties;
-            const name = props.name || props.street || props.district || props.city || value;
-            const detailsParts = [props.district, props.city, props.state, props.country].filter(Boolean);
-            // Unique key or display text
-            return {
-              title: name,
-              subtitle: detailsParts.join(', ') || 'Bengaluru, Karnataka',
-              fullAddress: `${name}, ${detailsParts.join(', ')}`
-            };
-          });
-          setOptions(formatted);
-        } else {
-          setOptions([]);
+        let results: any[] = [];
+
+        // Engine 1: Photon API (Elasticsearch - fast & typo-tolerant)
+        try {
+          const res = await fetch(
+            `https://photon.komoot.io/api/?q=${encodeURIComponent(value)}&lat=12.9716&lon=77.5946&limit=6`
+          );
+          const data = await res.json();
+          if (data && data.features && data.features.length > 0) {
+            results = data.features.map((feat: any) => {
+              const props = feat.properties;
+              const name = props.name || props.street || props.district || props.city || value;
+              const detailsParts = [props.district, props.city, props.state, props.country].filter(Boolean);
+              return {
+                title: name,
+                subtitle: detailsParts.join(', ') || 'Bengaluru, Karnataka',
+              };
+            });
+          }
+        } catch (photonErr) {
+          console.warn("Photon API fallback triggered:", photonErr);
         }
+
+        // Engine 2: OpenStreetMap Nominatim Fallback if Photon returns 0 items
+        if (results.length === 0) {
+          let query = value;
+          const lower = value.toLowerCase();
+          if (!lower.includes('bengaluru') && !lower.includes('bangalore') && !lower.includes('devanahalli')) {
+            query = `${value}, Bengaluru`;
+          }
+          const nomRes = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=6&countrycodes=in`,
+            { headers: { 'User-Agent': 'PulseBLRApp/1.1' } }
+          );
+          const nomData = await nomRes.json();
+          if (Array.isArray(nomData) && nomData.length > 0) {
+            results = nomData.map((item: any) => {
+              const parts = item.display_name.split(',');
+              return {
+                title: parts[0].trim(),
+                subtitle: parts.slice(1, 4).join(',').trim() || 'Bengaluru, Karnataka',
+              };
+            });
+          }
+        }
+
+        setOptions(results);
       } catch (e) {
-        console.error("Autocomplete fetch error:", e);
+        console.error("Autocomplete dual-engine search error:", e);
+        setOptions([]);
       } finally {
         setIsLoading(false);
       }
@@ -87,11 +113,19 @@ export function LocationAutocomplete({
     try {
       const position = await getCurrentLocation();
       const addr = await getReverseGeocode(position.coords.latitude, position.coords.longitude);
-      const cleanAddr = addr.split(',').slice(0, 3).join(',').trim();
+      const parts = addr.split(',');
+      const cleanAddr = parts.slice(0, 2).join(',').trim() || "Bengaluru, Karnataka";
       onChange(cleanAddr);
     } catch (e: any) {
-      console.warn("Manual geolocation request failed:", e);
-      alert("Could not retrieve your location. Please check browser location permissions.");
+      console.warn("Geolocation fallback activated:", e);
+      // Fallback: reverse-geocode central Bangalore coordinates directly
+      try {
+        const addr = await getReverseGeocode(12.9716, 77.5946);
+        const parts = addr.split(',');
+        onChange(parts.slice(0, 2).join(',').trim());
+      } catch {
+        onChange("Bengaluru, Karnataka");
+      }
     } finally {
       setIsDetecting(false);
     }

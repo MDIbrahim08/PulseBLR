@@ -7,7 +7,11 @@ export const getCurrentLocation = (): Promise<GeolocationPosition> => {
     if (!navigator.geolocation) {
       reject(new Error("Geolocation is not supported by your browser"));
     } else {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 8000,
+        maximumAge: 10000
+      });
     }
   });
 };

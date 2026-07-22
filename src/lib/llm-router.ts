@@ -109,6 +109,33 @@ const callLLM = async (prompt: string): Promise<string> => {
   throw new Error('All LLM providers failed');
 };
 
+export const ensure12HourTime = (timeStr: string): string => {
+  if (!timeStr) return timeStr;
+  if (timeStr.toLowerCase().trim() === 'now') return 'Now';
+
+  // Matches 12h format like "5:23 PM" or "05:23 AM"
+  const match12 = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (match12) {
+    let h = parseInt(match12[1]);
+    const m = match12[2];
+    const ampm = match12[3].toUpperCase();
+    h = h % 12 || 12;
+    return `${h}:${m} ${ampm}`;
+  }
+
+  // Matches 24h format like "17:23" or "09:15"
+  const match24 = timeStr.match(/(\d{1,2}):(\d{2})/);
+  if (match24) {
+    let h = parseInt(match24[1]);
+    const m = match24[2];
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h}:${m} ${ampm}`;
+  }
+
+  return timeStr;
+};
+
 const isTimeInPast = (timeStr: string): boolean => {
   const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
   if (!match) return false;
@@ -193,7 +220,14 @@ const safeParseJSON = (text: string, timeString: string, destination: string, or
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
       
-      if (parsed.recommendedDeparture && isTimeInPast(parsed.recommendedDeparture)) {
+      if (parsed.recommendedDeparture) {
+        parsed.recommendedDeparture = ensure12HourTime(parsed.recommendedDeparture);
+      }
+      if (parsed.expectedArrival) {
+        parsed.expectedArrival = ensure12HourTime(parsed.expectedArrival);
+      }
+
+      if (parsed.recommendedDeparture && parsed.recommendedDeparture !== 'Now' && isTimeInPast(parsed.recommendedDeparture)) {
          parsed.recommendedDeparture = "Now";
          parsed.explanation = `⚠️ Your target time has already passed! You should leave NOW to get there as quickly as possible. \n\n${parsed.explanation}`;
       }
