@@ -21,6 +21,7 @@ import { LocationAutocomplete } from './ui/LocationAutocomplete';
 import { WeatherCloudMascot } from './ui/weather-cloud-mascot';
 import { AnimatedMetroTrack } from './ui/animated-metro-track';
 import { AnimeNavBar } from './ui/anime-navbar';
+import { WavyBackground } from './ui/wavy-background';
 
 type ChatMessage = {
   id: string;
@@ -872,58 +873,59 @@ export default function Planner() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="w-full flex flex-col items-center justify-center relative z-10 h-full"
-    >
-      <AnimatePresence mode="wait">
-        {chatHistory.length === 0 && (
-          <motion.div 
-            key="hero"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col items-center text-center w-full max-w-[1000px] px-4"
-          >
-            {/* Apple Dynamic Island Live Status Header */}
-            <div className="w-full max-w-[760px] mb-8">
-              <div className="bg-black/60 backdrop-blur-3xl border border-white/20 rounded-full px-5 py-3 flex flex-wrap items-center justify-between shadow-[0_12px_40px_rgba(0,0,0,0.6)] gap-3">
-                <div className="flex items-center gap-3">
-                  <WeatherCloudMascot 
-                    condition={weatherData?.condition || "Clear"} 
-                    temperature={weatherData?.temperature || "28°C"} 
-                  />
-                  <span className="text-white/20 hidden sm:inline">•</span>
-                  <AnimatedMetroTrack lineName="Purple Line" statusText="3-min Frequency" className="hidden sm:inline-flex" />
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 bg-white/10 px-3.5 py-1.5 rounded-full text-xs text-white border border-white/15 backdrop-blur-md">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    <span className="font-bold tracking-wide">
-                      {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 17 ? 'Good Afternoon' : 'Good Evening'}
-                    </span>
+    <WavyBackground containerClassName="bg-[#080c17] min-h-screen py-8" waveOpacity={0.65} speed="fast">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="w-full flex flex-col items-center justify-center relative z-10 h-full max-w-[1200px] mx-auto px-4"
+      >
+        <AnimatePresence mode="wait">
+          {chatHistory.length === 0 && (
+            <motion.div 
+              key="hero"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
+              transition={{ duration: 0.4 }}
+              className="flex flex-col items-center text-center w-full max-w-[1000px] px-4"
+            >
+              {/* Apple Dynamic Island Live Status Header */}
+              <div className="w-full max-w-[760px] mb-8">
+                <div className="bg-black/60 backdrop-blur-3xl border border-white/20 rounded-full px-5 py-3 flex flex-wrap items-center justify-between shadow-[0_12px_40px_rgba(0,0,0,0.6)] gap-3">
+                  <div className="flex items-center gap-3">
+                    <WeatherCloudMascot 
+                      condition={weatherData?.condition || "Clear"} 
+                      temperature={weatherData?.temperature || "28°C"} 
+                    />
+                    <span className="text-white/20 hidden sm:inline">•</span>
+                    <AnimatedMetroTrack lineName="Purple Line" statusText="3-min Frequency" className="hidden sm:inline-flex" />
                   </div>
 
-                  <div className="hidden md:flex items-center gap-1.5 text-xs text-white/80 bg-white/5 border border-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-md">
-                    <Activity size={14} className="text-sky-400 animate-pulse" />
-                    <span>Gridlock: <strong className="text-white font-bold">78%</strong></span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 bg-white/10 px-3.5 py-1.5 rounded-full text-xs text-white border border-white/15 backdrop-blur-md">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      <span className="font-bold tracking-wide">
+                        {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 17 ? 'Good Afternoon' : 'Good Evening'}
+                      </span>
+                    </div>
+
+                    <div className="hidden md:flex items-center gap-1.5 text-xs text-white/80 bg-white/5 border border-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+                      <Activity size={14} className="text-sky-400 animate-pulse" />
+                      <span>Gridlock: <strong className="text-white font-bold">78%</strong></span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Headline */}
-            <h1 className="font-fustat font-bold text-[44px] sm:text-[60px] md:text-[80px] text-black drop-shadow-sm leading-[1.1] md:leading-none tracking-[-2px] md:tracking-[-4.8px] mb-[20px] md:mb-[34px]">
-              Master Commutes Quickly
-            </h1>
+              {/* Headline */}
+              <h1 className="font-fustat font-bold text-[44px] sm:text-[60px] md:text-[80px] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)] leading-[1.1] md:leading-none tracking-[-2px] md:tracking-[-4.8px] mb-[20px] md:mb-[34px]">
+                Master Commutes Quickly
+              </h1>
 
-            {/* Subtitle */}
-            <p className="font-fustat font-medium text-[18px] md:text-[20px] text-black/80 drop-shadow-sm tracking-[-0.4px] max-w-[736px] w-[90%] md:w-[542px] mb-[40px] leading-relaxed">
-              Set your origin and destination below to get powerful AI commute insights right away. Avoid traffic and achieve goals effortlessly.
-            </p>
+              {/* Subtitle */}
+              <p className="font-fustat font-medium text-[18px] md:text-[20px] text-white/80 drop-shadow-md tracking-[-0.4px] max-w-[736px] w-[90%] md:w-[542px] mb-[40px] leading-relaxed">
+                Set your origin and destination below to get powerful AI commute insights right away. Avoid traffic and achieve goals effortlessly.
+              </p>
 
             {/* Rain Alert Banner */}
             {isRaining && (
@@ -1490,5 +1492,6 @@ export default function Planner() {
         PULSEBLR v{APP_VERSION}
       </div>
     </motion.div>
+    </WavyBackground>
   );
 }
