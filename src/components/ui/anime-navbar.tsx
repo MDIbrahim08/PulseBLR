@@ -33,9 +33,9 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
   if (!mounted) return null;
 
   return (
-    <div className={cn("relative z-30 w-full flex justify-center pt-9 pb-1", className)}>
+    <div className={cn("relative z-30 w-full flex justify-center pt-9 pb-2 overflow-x-auto scrollbar-none touch-pan-x px-3", className)}>
       <motion.div 
-        className="flex items-center gap-1.5 bg-black/70 border border-white/20 backdrop-blur-2xl py-2 px-3 rounded-full shadow-2xl relative max-w-full"
+        className="flex items-center gap-1.5 bg-black/70 border border-white/20 backdrop-blur-2xl py-2 px-3 rounded-full shadow-2xl relative shrink-0"
         initial={{ y: 10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{

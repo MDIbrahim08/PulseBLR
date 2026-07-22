@@ -890,7 +890,7 @@ export default function Planner() {
               className="flex flex-col items-center text-center w-full max-w-[1000px] px-4"
             >
               {/* Spacious Header: Giant Interactive 3D Weather Mascot & Animated Greeting */}
-              <div className="w-full max-w-[850px] mb-6 flex flex-col sm:flex-row items-center justify-between gap-6 px-4">
+              <div className="w-full max-w-[850px] mb-3 sm:mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6 px-2 sm:px-4">
                 <WeatherCloudMascot 
                   condition={weatherData?.condition || "Clear"} 
                   temperature={weatherData?.temperature || "28°C"} 
@@ -900,26 +900,26 @@ export default function Planner() {
                 <motion.div 
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center gap-3 bg-white/10 border border-white/20 backdrop-blur-2xl px-5 py-2.5 rounded-full shadow-xl"
+                  className="flex items-center gap-2.5 sm:gap-3 bg-white/10 border border-white/20 backdrop-blur-2xl px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-xl"
                 >
-                  <Sparkles size={16} className="text-amber-300 animate-spin" />
-                  <span className="font-bold text-white text-sm tracking-wide">
+                  <Sparkles size={15} className="text-amber-300 animate-spin shrink-0" />
+                  <span className="font-bold text-white text-xs sm:text-sm tracking-wide">
                     {new Date().getHours() < 12 ? 'Good Morning 👋' : new Date().getHours() < 17 ? 'Good Afternoon 👋' : 'Good Evening 👋'}
                   </span>
                   <span className="text-white/30">•</span>
-                  <span className="text-sky-300 text-xs font-semibold">
+                  <span className="text-sky-300 text-[11px] sm:text-xs font-semibold">
                     {new Date().getHours() >= 8 && new Date().getHours() <= 11 ? 'Morning Peak' : new Date().getHours() >= 17 && new Date().getHours() <= 20 ? 'Evening Rush' : 'Optimal Window'}
                   </span>
                 </motion.div>
               </div>
 
               {/* Headline */}
-              <h1 className="font-schibsted font-bold text-3xl sm:text-4xl md:text-5xl text-white drop-shadow-lg leading-tight tracking-tight mt-4 mb-3">
+              <h1 className="font-schibsted font-bold text-2xl sm:text-4xl md:text-5xl text-white drop-shadow-lg leading-tight tracking-tight mt-2 sm:mt-4 mb-2 sm:mb-3">
                 Master Commutes Quickly
               </h1>
 
               {/* Subtitle */}
-              <p className="font-schibsted font-normal text-sm md:text-base text-white/70 tracking-normal max-w-[600px] w-[90%] mb-8 leading-relaxed">
+              <p className="font-schibsted font-normal text-xs sm:text-sm md:text-base text-white/70 tracking-normal max-w-[600px] w-[92%] mb-4 sm:mb-8 leading-normal sm:leading-relaxed">
                 Set your origin and destination below to get powerful AI commute insights right away. Avoid traffic and achieve goals effortlessly.
               </p>
 
