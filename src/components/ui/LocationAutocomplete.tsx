@@ -36,8 +36,7 @@ export function LocationAutocomplete({
   });
 
   useEffect(() => {
-    // Only search if user has typed at least 3 characters and the dropdown is open
-    if (value.length < 3 || !isOpen) {
+    if (value.length < 2 || !isOpen) {
       setOptions([]);
       return;
     }
@@ -45,33 +44,40 @@ export function LocationAutocomplete({
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
-        // Bias towards Bangalore and Devanahalli
-        let query = value;
-        const lower = value.toLowerCase();
-        if (!lower.includes('bengaluru') && !lower.includes('bangalore') && !lower.includes('devanahalli')) {
-          query = `${value}, Bengaluru, Karnataka`;
-        }
-
+        // Use Photon API (Elasticsearch on OpenStreetMap) - excellent typo tolerance & native location biasing
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=in`,
-          { headers: { 'User-Agent': 'PulseBLRApp/1.0' } }
+          `https://photon.komoot.io/api/?q=${encodeURIComponent(value)}&lat=12.9716&lon=77.5946&limit=6`
         );
         const data = await res.json();
-        setOptions(data);
+        
+        if (data && data.features) {
+          const formatted = data.features.map((feat: any) => {
+            const props = feat.properties;
+            const name = props.name || props.street || props.district || props.city || value;
+            const detailsParts = [props.district, props.city, props.state, props.country].filter(Boolean);
+            // Unique key or display text
+            return {
+              title: name,
+              subtitle: detailsParts.join(', ') || 'Bengaluru, Karnataka',
+              fullAddress: `${name}, ${detailsParts.join(', ')}`
+            };
+          });
+          setOptions(formatted);
+        } else {
+          setOptions([]);
+        }
       } catch (e) {
         console.error("Autocomplete fetch error:", e);
       } finally {
         setIsLoading(false);
       }
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [value, isOpen]);
 
   const handleSelect = (item: any) => {
-    const parts = item.display_name.split(',');
-    const cleanAddress = parts.slice(0, 3).join(',').trim();
-    onChange(cleanAddress);
+    onChange(item.title);
     setIsOpen(false);
   };
 
@@ -85,11 +91,7 @@ export function LocationAutocomplete({
       onChange(cleanAddr);
     } catch (e: any) {
       console.warn("Manual geolocation request failed:", e);
-      if (e.code === 1) {
-        alert("Location permission denied. Please enable it in your browser.");
-      } else {
-        alert("Could not retrieve your location. Please type it manually.");
-      }
+      alert("Could not retrieve your location. Please check browser location permissions.");
     } finally {
       setIsDetecting(false);
     }
@@ -117,15 +119,18 @@ export function LocationAutocomplete({
         )}
       </div>
 
-      {isOpen && (value.length >= 3 || type === 'origin') && (
-        <div className="absolute top-full left-0 mt-3 w-full min-w-[280px] sm:min-w-[350px] max-w-[90vw] bg-[#09090b]/80 backdrop-blur-3xl border border-white/[0.08] rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] z-50 overflow-hidden ring-1 ring-white/[0.02] p-1.5">
+      {isOpen && (value.length >= 2 || type === 'origin') && (
+        <div className="absolute top-full left-0 mt-3 w-full min-w-[280px] sm:min-w-[350px] max-w-[90vw] bg-[#09090b]/90 backdrop-blur-3xl border border-white/[0.08] rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] z-50 overflow-hidden ring-1 ring-white/[0.02] p-1.5">
           
           {/* Always show "Use Current Location" for Origin input at the top */}
           {type === 'origin' && (
             <div className="mb-1.5">
               <button
                 type="button"
-                onClick={handleUseCurrentLocation}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  handleUseCurrentLocation();
+                }}
                 className="w-full flex items-center gap-3.5 px-3 py-3 rounded-xl hover:bg-pulse-500/10 transition-all duration-300 text-left bg-pulse-500/5 group border border-pulse-500/20"
               >
                 <div className="bg-pulse-500/20 p-2 rounded-[10px] text-pulse-400 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_-3px_rgba(14,165,233,0.3)]">
@@ -140,7 +145,7 @@ export function LocationAutocomplete({
           )}
 
           <div className="max-h-[300px] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] flex flex-col gap-1">
-            {isLoading && value.length >= 3 ? (
+            {isLoading && value.length >= 2 ? (
               <div className="p-8 flex flex-col items-center justify-center gap-3 text-white/40 text-sm font-medium">
                 <Loader2 size={20} className="animate-spin text-pulse-400" /> 
                 <span>Searching locations...</span>
@@ -150,7 +155,10 @@ export function LocationAutocomplete({
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => handleSelect(item)}
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    handleSelect(item);
+                  }}
                   className="w-full flex items-start gap-3.5 px-3 py-3 rounded-xl hover:bg-white/[0.06] transition-all duration-200 text-left group"
                 >
                   <div className="bg-white/[0.04] border border-white/[0.05] p-2 rounded-[10px] text-white/30 group-hover:text-white/90 group-hover:bg-white/[0.08] transition-all duration-300 shrink-0 mt-0.5">
@@ -158,15 +166,15 @@ export function LocationAutocomplete({
                   </div>
                   <div className="flex flex-col min-w-0 justify-center">
                     <span className="text-white/80 group-hover:text-white text-[13px] font-medium truncate w-full tracking-wide transition-colors">
-                      {item.display_name.split(',')[0]}
+                      {item.title}
                     </span>
                     <span className="text-white/30 group-hover:text-white/50 text-[11px] truncate w-full mt-1 leading-relaxed transition-colors">
-                      {item.display_name.split(',').slice(1).join(',').trim()}
+                      {item.subtitle}
                     </span>
                   </div>
                 </button>
               ))
-            ) : value.length >= 3 ? (
+            ) : value.length >= 2 ? (
               <div className="p-8 text-center flex flex-col items-center justify-center gap-2">
                 <div className="bg-white/[0.03] p-3 rounded-full mb-2">
                   <MapPin size={20} className="text-white/20" />

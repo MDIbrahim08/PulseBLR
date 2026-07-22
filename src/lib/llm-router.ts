@@ -426,14 +426,34 @@ export const pulseCoreAgent = async (
     ? `The target time ${targetTimeDouble} is in the PAST (earlier than current time ${currentActualTimeDouble}).`
     : `The target time ${targetTimeDouble} is in the FUTURE (later than current time ${currentActualTimeDouble}).`;
 
+  // Extract actual travel duration from live traffic signal
+  let durationMins = 45;
+  const durMatch = traffic.match(/duration:\s*(\d+)\s*minutes/i) || traffic.match(/(\d+)\s*min/i);
+  if (durMatch) {
+    durationMins = parseInt(durMatch[1]);
+  }
+
+  // Calculate accurate departure and arrival times in JS
+  const now = new Date();
+  const arrDate = new Date(now.getTime() + durationMins * 60000);
+  
+  const format12H = (d: Date) => {
+    let h = d.getHours();
+    const m = d.getMinutes().toString().padStart(2, '0');
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h}:${m} ${ampm}`;
+  };
+
+  const computedDeparture = "Now";
+  const computedArrival = format12H(arrDate);
+
   const goalInstruction = `User wants to travel from "${origin || 'current location'}" to "${destination || 'their destination'}".
-The user provided this request/timing: "${userPrompt || 'No specific time provided. Assume they want to leave now.'}". 
 The current time right now is ${currentActualTimeDouble}.
-The user starting coordinates are: Latitude ${userCoordinates.lat}, Longitude ${userCoordinates.lon}.
-
+Live traffic duration for this route: ${durationMins} minutes.
+Calculated Real-Time Departure: "${computedDeparture}".
+Calculated Real-Time Arrival: "${computedArrival}".
 ${pastText}
-
-Extract their desired timing from the request. Calculate the expected departure and arrival times based on an estimated travel time of roughly 45-60 minutes.
 
 PREDICTIVE TRAFFIC RULE: If the user asks for the "best time to leave" or wants to avoid traffic, analyze the current time against Bangalore's known peak hours (Morning: 8:30-11:30 AM, Evening: 5:30-8:30 PM). If they are currently in a peak hour or approaching one, mathematically calculate and suggest the exact time the peak hour ends (e.g., 8:40 PM) or begins (e.g., 5:10 PM) as the best time to leave for a much faster commute. Explain this traffic drop-off logic clearly in your explanation!`;
 
@@ -444,8 +464,12 @@ ${goalInstruction}
 Current Signals -> Weather: ${weather}, Traffic: ${traffic}, Transit: ${transit}.
 User Preference: Avoid Tolls and Traffic = ${avoidTollsOrTraffic}. If true, you MUST prioritize alternative routes that avoid heavy traffic and tolls, and calculate the estimated cost accordingly.
 
-ALL times in output JSON values and text fields MUST be formatted strictly in clean 12-hour format with AM/PM (e.g. 6:20 PM, 6:35 PM). DO NOT include the 24-hour format or parentheses in the output (e.g. "17:40 (6:20 PM)" is strictly forbidden). Hours MUST be between 1 and 12. Under NO circumstances should you output hours greater than 12 with AM/PM (e.g. "13:30 PM" or "14:22 PM" are strictly forbidden. You must convert these to "1:30 PM" and "2:22 PM").
-CRITICAL LANGUAGE AND STYLE RULE: You MUST output all text fields (like explanation, reasoning, disclaimer, alternativeRoute.reason) in ${language}. Use emojis naturally throughout your explanation and reasoning to make the text interesting and engaging! The keys in the JSON must remain in English, but the values should be translated to ${language}.
+STRICT TIMING REQUIREMENT:
+You MUST set "recommendedDeparture" to "${computedDeparture}" (or the optimized departure time if recommending a peak-hour delay).
+You MUST set "expectedArrival" to "${computedArrival}" (or Departure Time + ${durationMins} minutes). Under NO circumstances should expectedArrival be in the past or contradict the current time (${currentActualTimeDouble}).
+
+ALL times in output JSON values and text fields MUST be formatted strictly in clean 12-hour format with AM/PM (e.g. 6:20 PM, 6:35 PM). DO NOT include 24-hour format or parentheses.
+CRITICAL LANGUAGE AND STYLE RULE: You MUST output all text fields in ${language}. Use emojis naturally throughout your explanation and reasoning to make the text interesting and engaging! The keys in the JSON must remain in English, but the values should be translated to ${language}.
 
 CRITICAL TEMPORAL COMPARISON RULE: 
 - Current Time is ${currentActualTimeDouble}.
