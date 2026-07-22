@@ -35,39 +35,39 @@ export default function Dashboard() {
         <header className="w-full px-4 md:px-[120px] py-4 flex justify-between items-center bg-transparent relative z-50">
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer z-50" onClick={() => navigate('/dashboard')}>
-             <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 shadow-lg bg-black/90">
+             <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center overflow-hidden border border-white/20 shadow-lg bg-black/90">
                 <img src="/logo.png" alt="PulseBLR Logo" className="w-full h-full object-cover scale-[1.3]" />
              </div>
-             <span className="font-schibsted font-semibold text-xl md:text-2xl tracking-tight text-black">
+             <span className="font-schibsted font-bold text-xl md:text-2xl tracking-tight text-white drop-shadow-md">
                 PulseBLR
              </span>
           </div>
 
           {/* Desktop Menu Items */}
-          <nav className="hidden md:flex items-center gap-8 font-schibsted font-medium text-[15px] tracking-[-0.2px] text-black/60">
+          <nav className="hidden md:flex items-center gap-8 font-schibsted font-medium text-[15px] tracking-[-0.2px] text-white/70">
              <button 
                onClick={() => navigate('/dashboard')} 
-               className="transition-all duration-300 relative text-black"
+               className="transition-all duration-300 relative text-white font-semibold"
              >
                Commute Planner
-               <motion.div layoutId="nav-pill" className="absolute -bottom-1 left-0 w-full h-[2px] bg-black" />
+               <motion.div layoutId="nav-pill" className="absolute -bottom-1 left-0 w-full h-[2px] bg-white shadow-[0_0_8px_#FFF]" />
              </button>
              <button 
                onClick={() => navigate('/smart-pivot')} 
-               className="flex items-center gap-1 transition-all duration-300 relative hover:text-black/80"
+               className="flex items-center gap-1 transition-all duration-300 relative hover:text-white"
              >
                Smart Pivot
              </button>
              <button 
                onClick={() => navigate('/feedback')} 
-               className="flex items-center gap-1 transition-all duration-300 relative hover:text-black/80"
+               className="flex items-center gap-1 transition-all duration-300 relative hover:text-white"
              >
-               <MessageSquareHeart size={14} className="opacity-60" />
+               <MessageSquareHeart size={14} className="opacity-80 text-white" />
                Feedback
              </button>
              <button 
                onClick={() => navigate('/admin/feedbacks')} 
-               className="flex items-center gap-1 transition-all duration-300 relative hover:text-black/80 text-orange-600 font-semibold"
+               className="flex items-center gap-1 transition-all duration-300 relative hover:text-orange-400 text-orange-500 font-semibold"
              >
                Admin Portal
              </button>
@@ -75,10 +75,10 @@ export default function Dashboard() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-4 font-schibsted font-medium text-base tracking-[-0.2px]">
-             <span className="text-black/70 font-semibold">{userName || 'Explorer'}</span>
+             <span className="text-white font-semibold drop-shadow-sm">{userName || 'Explorer'}</span>
              <button 
                onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
-               className="flex items-center gap-2 w-[101px] justify-center py-2 bg-black text-white rounded-lg hover:bg-black/80 transition-colors shadow-lg border border-black/10"
+               className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all shadow-lg border border-white/20 backdrop-blur-md"
              >
                <LogOut size={16} /> Exit
              </button>
