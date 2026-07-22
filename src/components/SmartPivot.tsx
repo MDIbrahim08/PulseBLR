@@ -20,26 +20,25 @@ export default function SmartPivot() {
     try {
       const loc = await getCurrentLocation();
       const addr = await getReverseGeocode(loc.coords.latitude, loc.coords.longitude);
-      setPivotOrigin(addr);
+      setPivotOrigin(addr.split(',').slice(0, 2).join(',').trim());
     } catch (err) {
       console.warn("Geolocation failed or denied.");
-      alert("Please enable location permissions in your browser.");
+      alert("Could not retrieve live location. Please type your location manually.");
     }
     setGettingLocation(false);
   };
 
   const handlePivot = async () => {
     if (!pivotOrigin) {
-      alert("Please enter a location or use live location first.");
+      alert("Please enter your current location or use live GPS.");
       return;
     }
     setIsAnalyzing(true);
     const destName = globalDestination || "Manyata Tech Park";
 
     try {
-      // 1. Try to get lat/lon for the pivotOrigin
-      let lat = 13.045; // fallback Manyata
-      let lon = 77.6206;
+      let lat = 12.9716;
+      let lon = 77.5946;
       
       const geo = await getForwardGeocode(pivotOrigin);
       if (geo) {
@@ -47,10 +46,7 @@ export default function SmartPivot() {
         lon = geo.lon;
       }
 
-      // 2. Fetch REAL nearby cafes from OSM Overpass API
       const realCafes = await getNearbyCafes(lat, lon);
-
-      // 3. Feed the real cafes into the AI so it doesn't hallucinate
       const dynamicCafes = await pulseSmartPivotAgent(pivotOrigin, destName, realCafes as string[]);
       if (dynamicCafes && dynamicCafes.length > 0) {
         setCafes(dynamicCafes);
@@ -73,124 +69,132 @@ export default function SmartPivot() {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }}
-      className="w-full max-w-5xl px-4 md:px-8 pb-24 flex flex-col items-center"
+      className="w-full max-w-5xl px-4 md:px-8 pb-24 flex flex-col items-center mx-auto"
     >
-      <div className="w-full flex flex-col gap-12 mt-6">
+      <div className="w-full flex flex-col gap-8 mt-6">
 
-        {/* Hero Section */}
-        <GradientCard className="p-8 md:p-12">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-rose-500/10 blur-[100px] rounded-full -mr-40 -mt-40 pointer-events-none transition-all duration-500" />
+        {/* Clean Executive Card Header */}
+        <div className="bg-[#121218] border border-white/10 rounded-2xl p-6 md:p-10 shadow-2xl relative overflow-hidden">
           
-          <div className="relative z-10 flex items-center gap-5 mb-8">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-2xl group-hover:bg-blue-500/50 transition-all duration-500"></div>
-              <div className="relative w-14 h-14 bg-gradient-to-br from-blue-500/20 to-slate-900/80 rounded-2xl flex items-center justify-center border border-blue-500/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-md">
-                <Compass size={26} className="text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]" />
-              </div>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
+              <Compass size={24} className="text-sky-400" />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-3xl font-schibsted font-semibold tracking-tight text-white drop-shadow-sm">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
                 AI Smart Pivot
               </h1>
-              <p className="text-slate-400 font-medium text-sm tracking-wide uppercase mt-1">
-                The Commute Escape Hatch
+              <p className="text-white/40 font-semibold text-xs tracking-wider uppercase mt-0.5">
+                Commute Escape Hatch
               </p>
             </div>
           </div>
 
-          <p className="text-lg text-slate-300 font-medium leading-relaxed mb-10 relative z-10">
-            Stuck in massive Outer Ring Road gridlock? Don't waste hours in traffic. Let PulseMind instantly pivot you to a highly-rated workspace nearby, complete with a drafted Slack message for your manager.
+          <p className="text-sm md:text-base text-white/70 font-normal leading-relaxed mb-8 max-w-3xl">
+            Stuck in heavy congestion? Pivot to a verified nearby workspace or cafe with high-speed Wi-Fi, and automatically copy a professional status update for your manager.
           </p>
 
           {!isAnalyzed ? (
-            <div className="relative z-10 flex flex-col items-center justify-center py-10 border border-slate-800/60 rounded-3xl bg-slate-950/50">
+            <div className="p-6 md:p-8 border border-white/10 rounded-xl bg-white/[0.02]">
               {isAnalyzing ? (
-                <div className="flex flex-col items-center gap-6">
-                  <div className="w-12 h-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-lg text-slate-300 font-medium">Scanning for nearby workspaces & WiFi...</p>
+                <div className="flex flex-col items-center justify-center py-8 gap-4">
+                  <div className="w-10 h-10 border-3 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-white/70 font-medium">Scanning live nearby workspaces & Wi-Fi signals...</p>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-6 w-full max-w-md px-4">
-                  <div className="w-full flex flex-col gap-3">
-                    <label className="text-sm font-medium text-slate-400 self-start">Where are you stuck?</label>
+                <div className="flex flex-col gap-5 w-full max-w-xl mx-auto">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-white/50">Current Location / Junction</label>
                     <div className="flex gap-2">
                       <input 
                         type="text" 
                         value={pivotOrigin}
                         onChange={(e) => setPivotOrigin(e.target.value)}
-                        placeholder="e.g. Silk Board Junction" 
-                        className="flex-1 bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-pulse-500 transition-colors"
+                        placeholder="e.g. Silk Board, Marathahalli, ORR" 
+                        className="flex-1 bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-sky-500 transition-colors placeholder:text-white/30"
                       />
                       <button 
                         onClick={handleLiveLocation}
                         disabled={gettingLocation}
-                        className="bg-slate-800 hover:bg-slate-700 text-pulse-400 px-4 py-3 rounded-xl transition-colors shrink-0 disabled:opacity-50"
-                        title="Use Live Location"
+                        type="button"
+                        className="bg-white/5 hover:bg-white/10 text-sky-400 px-4 py-3 rounded-xl transition-colors shrink-0 border border-white/10 disabled:opacity-50 flex items-center justify-center"
+                        title="Use Live GPS"
                       >
-                        <Navigation size={20} className={gettingLocation ? "animate-spin" : ""} />
+                        <Navigation size={18} className={gettingLocation ? "animate-spin" : ""} />
                       </button>
                     </div>
                   </div>
 
                   <button 
                     onClick={handlePivot}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-schibsted font-semibold text-lg transition-all shadow-md flex items-center justify-center gap-3 mt-2"
+                    type="button"
+                    className="w-full bg-sky-600 hover:bg-sky-500 text-white px-6 py-3.5 rounded-xl font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 mt-1"
                   >
-                    <Coffee size={20} />
-                    {gettingLocation ? 'Locating...' : 'Trigger Escape Hatch'}
+                    <Coffee size={18} />
+                    {gettingLocation ? 'Locating...' : 'Find Workspaces Nearby'}
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <div className="relative z-10 flex flex-col max-h-[60vh]">
-              <h3 className="text-xl font-bold text-white mb-4 shrink-0">Recommended Pivots Near {pivotOrigin}</h3>
-              <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar pb-4">
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-white">Workspaces Near {pivotOrigin}</h3>
+                <button 
+                  onClick={() => setIsAnalyzed(false)}
+                  className="text-xs text-white/50 hover:text-white underline"
+                >
+                  Change Location
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
                 {cafes.map((cafe, i) => (
-                  <GradientCard key={i} className="p-6 flex flex-col md:flex-row gap-6 hover:scale-[1.01] transition-transform duration-300">
+                  <div key={i} className="bg-white/[0.03] border border-white/10 rounded-xl p-5 flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
                     
                     {/* Left Info */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h4 className="text-2xl font-bold text-slate-100">{cafe.name}</h4>
-                        <div className="px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h4 className="text-lg font-bold text-white">{cafe.name}</h4>
+                        <span className="px-2.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-md flex items-center gap-1.5">
                           <Wifi size={12} /> {cafe.wifiSpeed}
-                        </div>
+                        </span>
+                        <span className="text-white/40 text-xs flex items-center gap-1 font-medium">
+                          <Navigation size={12} /> {cafe.distance}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-4 text-sm font-medium text-slate-400 mb-4">
-                        <span className="flex items-center gap-1"><Navigation size={14} /> {cafe.distance}</span>
-                        <span>•</span>
-                        <span>{cafe.atmosphere}</span>
-                      </div>
-                      <div className="relative p-[1px] rounded-xl bg-gradient-to-r from-slate-800 to-slate-700 overflow-hidden">
-                        <p className="text-slate-300 bg-slate-900/90 backdrop-blur-sm p-4 rounded-xl text-sm italic font-medium">
-                          "{cafe.slackMessage}"
-                        </p>
+
+                      <p className="text-white/50 text-xs">{cafe.atmosphere}</p>
+
+                      <div className="bg-black/40 border border-white/5 p-3 rounded-lg text-xs text-white/80 font-mono leading-relaxed mt-2">
+                        "{cafe.slackMessage}"
                       </div>
                     </div>
                     
                     {/* Actions */}
-                    <div className="flex flex-col gap-3 justify-center md:w-48 shrink-0">
+                    <div className="flex flex-row md:flex-col gap-2 w-full md:w-44 shrink-0">
                       <button 
                         onClick={() => copyToClipboard(`slack-${i}`, cafe.slackMessage)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800/80 hover:bg-slate-700 text-white rounded-xl text-sm font-bold transition-all shadow-md border border-slate-700 hover:border-slate-500"
+                        type="button"
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-lg text-xs font-semibold transition-all border border-white/10"
                       >
-                        {copiedId === `slack-${i}` ? <CheckCircle2 size={16} className="text-emerald-400" /> : <Copy size={16} />}
-                        {copiedId === `slack-${i}` ? 'Copied Message' : 'Copy Slack Msg'}
+                        {copiedId === `slack-${i}` ? <CheckCircle2 size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                        {copiedId === `slack-${i}` ? 'Copied' : 'Copy Slack Msg'}
                       </button>
                       <button 
                         onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cafe.name + ' ' + pivotOrigin)}`, '_blank')}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-pulse-600 to-pulse-500 hover:from-pulse-500 hover:to-pulse-400 text-white rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                        type="button"
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold transition-all shadow-sm"
                       >
-                        Route Here <ArrowRight size={16} />
+                        Route <ArrowRight size={14} />
                       </button>
                     </div>
-                  </GradientCard>
+                  </div>
                 ))}
               </div>
             </div>
           )}
-        </GradientCard>
+        </div>
       </div>
     </motion.div>
   );
