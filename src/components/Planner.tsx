@@ -18,6 +18,8 @@ import { AIVoiceInput } from './ui/ai-voice-input';
 import { FluidDropdown } from './ui/fluid-dropdown';
 import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 import { LocationAutocomplete } from './ui/LocationAutocomplete';
+import { WeatherCloudMascot } from './ui/weather-cloud-mascot';
+import { AnimatedMetroTrack } from './ui/animated-metro-track';
 
 type ChatMessage = {
   id: string;
@@ -884,24 +886,10 @@ export default function Planner() {
             transition={{ duration: 0.4 }}
             className="flex flex-col items-center text-center w-full max-w-[1000px] px-4"
           >
-            {/* Feature 1: Bangalore Live Pulse Ticker */}
-            <div className="w-full max-w-[728px] mb-6">
-              <div className="bg-[#121218]/90 border border-white/10 backdrop-blur-xl rounded-full px-4 py-2 flex items-center justify-between shadow-xl text-xs text-white/80 overflow-hidden">
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="font-bold text-white uppercase tracking-wider text-[10px]">PULSE BLR LIVE</span>
-                </div>
-                <div className="flex items-center gap-2 overflow-hidden truncate px-3 text-[11px] text-white/70">
-                  <span>🚦 ORR Gridlock: Heavy (+24m)</span>
-                  <span className="text-white/30">•</span>
-                  <span>🌧️ Weather: Clear (28°C)</span>
-                  <span className="text-white/30">•</span>
-                  <span>🚌 Metro: 3-min Frequency</span>
-                </div>
-                <div className="hidden sm:flex items-center gap-1.5 shrink-0 text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
-                  <span>78% Gridlock Index</span>
-                </div>
-              </div>
+            {/* Top Interactive Animated Widgets Bar */}
+            <div className="w-full max-w-[728px] mb-6 flex flex-wrap items-center justify-center sm:justify-between gap-3 px-2">
+              <WeatherCloudMascot condition="Clear" temperature="28°C" />
+              <AnimatedMetroTrack lineName="Purple Line" statusText="3-min Frequency" />
             </div>
 
             {/* Headline */}
@@ -914,21 +902,31 @@ export default function Planner() {
               Set your origin and destination below to get powerful AI commute insights right away. Avoid traffic and achieve goals effortlessly.
             </p>
 
-            {/* Feature 2 & 3: Dynamic Time-Aware Greeting & Gridlock Index Bar */}
-            <div className="w-full max-w-[728px] flex items-center justify-between mb-3 px-2 text-xs">
-              <div className="flex items-center gap-2 text-left">
-                <span className="font-bold text-white text-sm">
-                  {new Date().getHours() < 12 ? 'Good Morning 👋' : new Date().getHours() < 17 ? 'Good Afternoon 👋' : 'Good Evening 👋'}
+            {/* Executive Animated Greeting & Live Gridlock Bar */}
+            <div className="w-full max-w-[728px] flex items-center justify-between mb-3 px-2">
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-2.5 bg-[#121218]/90 border border-white/10 backdrop-blur-xl px-4 py-2 rounded-full shadow-lg"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span className="font-bold text-white text-xs tracking-wide">
+                  {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 17 ? 'Good Afternoon' : 'Good Evening'}
                 </span>
-                <span className="text-white/40 hidden sm:inline">•</span>
-                <span className="text-white/60 text-xs hidden sm:inline font-medium">
-                  {new Date().getHours() >= 8 && new Date().getHours() <= 11 ? 'Morning Peak Hour Active' : new Date().getHours() >= 17 && new Date().getHours() <= 20 ? 'Evening Rush Hour Active' : 'Optimal Commute Window'}
+                <span className="text-white/30">•</span>
+                <span className="text-white/70 text-[11px] font-medium">
+                  {new Date().getHours() >= 8 && new Date().getHours() <= 11 ? 'Morning Peak Active' : new Date().getHours() >= 17 && new Date().getHours() <= 20 ? 'Evening Rush Active' : 'Optimal Commute Window'}
                 </span>
-              </div>
-              <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-white/80">
-                <Activity size={13} className="text-sky-400" />
-                <span className="text-[11px]">Gridlock Index: <strong className="text-white font-semibold">78%</strong></span>
-              </div>
+              </motion.div>
+
+              <motion.div 
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="hidden sm:flex items-center gap-2 bg-[#121218]/90 border border-white/10 backdrop-blur-xl px-4 py-2 rounded-full shadow-lg"
+              >
+                <Activity size={14} className="text-sky-400 animate-pulse" />
+                <span className="text-[11px] text-white/70">Gridlock Index: <strong className="text-white font-bold">78%</strong></span>
+              </motion.div>
             </div>
 
             {/* Rain Alert Banner */}
