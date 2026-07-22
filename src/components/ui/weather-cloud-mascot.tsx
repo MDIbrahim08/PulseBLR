@@ -44,16 +44,16 @@ export function WeatherCloudMascot({
     }
   };
 
-  // 3D Cartoon Color Gradients (No Pitch Black!)
+  // 3D Cartoon Color Gradients (Bright Luminous Pearlescent Colors for All Weather!)
   const getGradient = () => {
     if (isHoldingWater) {
-      return { stop1: "#CBD5E1", stop2: "#64748B", stop3: "#334155", glow: "#38BDF8", cheek: "#F43F5E" };
+      return { stop1: "#FFFFFF", stop2: "#CBD5E1", stop3: "#7DD3FC", glow: "#38BDF8", cheek: "#F43F5E" };
     }
     if (isRainy) {
-      return { stop1: "#E2E8F0", stop2: "#64748B", stop3: "#475569", glow: "#38BDF8", cheek: "#F43F5E" };
+      return { stop1: "#F0F9FF", stop2: "#BAE6FD", stop3: "#38BDF8", glow: "#38BDF8", cheek: "#F43F5E" };
     }
     if (isCloudy) {
-      return { stop1: "#FFFFFF", stop2: "#E2E8F0", stop3: "#94A3B8", glow: "#CBD5E1", cheek: "#FB7185" };
+      return { stop1: "#FFFFFF", stop2: "#F1F5F9", stop3: "#E2E8F0", glow: "#E2E8F0", cheek: "#FB7185" };
     }
     // Clear / Sunny Default
     return { stop1: "#FFFFFF", stop2: "#F0F9FF", stop3: "#7DD3FC", glow: "#38BDF8", cheek: "#F43F5E" };

@@ -912,7 +912,7 @@ export default function Planner() {
                   </div>
 
                   <span className="font-bold text-white text-xs sm:text-sm tracking-wide">
-                    {new Date().getHours() < 12 ? 'Good Morning 👋' : new Date().getHours() < 17 ? 'Good Afternoon 👋' : 'Good Evening 👋'}
+                    {new Date().getHours() < 12 ? 'Good Morning' : new Date().getHours() < 17 ? 'Good Afternoon' : 'Good Evening'}
                   </span>
                   <span className="text-white/30">•</span>
                   <span className="text-sky-300 text-[11px] sm:text-xs font-semibold">
