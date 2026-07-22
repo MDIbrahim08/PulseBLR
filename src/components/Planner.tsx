@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck, AlertTriangle, Volume2, MicOff
+  Clock, MapPin, Search, Brain, ArrowRight, CheckCircle2, User, Sparkles, Star, ChevronDown, Paperclip, Mic, ArrowUp, AlertCircle, Bookmark, Bell, Globe, Navigation, CloudRain, Car, BookmarkCheck, AlertTriangle, Volume2, MicOff, Activity
 } from 'lucide-react';
 import {
   pulseCoreAgent,
@@ -884,15 +884,52 @@ export default function Planner() {
             transition={{ duration: 0.4 }}
             className="flex flex-col items-center text-center w-full max-w-[1000px] px-4"
           >
+            {/* Feature 1: Bangalore Live Pulse Ticker */}
+            <div className="w-full max-w-[728px] mb-6">
+              <div className="bg-[#121218]/90 border border-white/10 backdrop-blur-xl rounded-full px-4 py-2 flex items-center justify-between shadow-xl text-xs text-white/80 overflow-hidden">
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-bold text-white uppercase tracking-wider text-[10px]">PULSE BLR LIVE</span>
+                </div>
+                <div className="flex items-center gap-2 overflow-hidden truncate px-3 text-[11px] text-white/70">
+                  <span>🚦 ORR Gridlock: Heavy (+24m)</span>
+                  <span className="text-white/30">•</span>
+                  <span>🌧️ Weather: Clear (28°C)</span>
+                  <span className="text-white/30">•</span>
+                  <span>🚌 Metro: 3-min Frequency</span>
+                </div>
+                <div className="hidden sm:flex items-center gap-1.5 shrink-0 text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                  <span>78% Gridlock Index</span>
+                </div>
+              </div>
+            </div>
+
             {/* Headline */}
             <h1 className="font-fustat font-bold text-[44px] sm:text-[60px] md:text-[80px] text-black drop-shadow-sm leading-[1.1] md:leading-none tracking-[-2px] md:tracking-[-4.8px] mb-[20px] md:mb-[34px]">
               Master Commutes Quickly
             </h1>
 
             {/* Subtitle */}
-            <p className="font-fustat font-medium text-[18px] md:text-[20px] text-black/80 drop-shadow-sm tracking-[-0.4px] max-w-[736px] w-[90%] md:w-[542px] mb-[44px] leading-relaxed">
+            <p className="font-fustat font-medium text-[18px] md:text-[20px] text-black/80 drop-shadow-sm tracking-[-0.4px] max-w-[736px] w-[90%] md:w-[542px] mb-[32px] leading-relaxed">
               Set your origin and destination below to get powerful AI commute insights right away. Avoid traffic and achieve goals effortlessly.
             </p>
+
+            {/* Feature 2 & 3: Dynamic Time-Aware Greeting & Gridlock Index Bar */}
+            <div className="w-full max-w-[728px] flex items-center justify-between mb-3 px-2 text-xs">
+              <div className="flex items-center gap-2 text-left">
+                <span className="font-bold text-white text-sm">
+                  {new Date().getHours() < 12 ? 'Good Morning 👋' : new Date().getHours() < 17 ? 'Good Afternoon 👋' : 'Good Evening 👋'}
+                </span>
+                <span className="text-white/40 hidden sm:inline">•</span>
+                <span className="text-white/60 text-xs hidden sm:inline font-medium">
+                  {new Date().getHours() >= 8 && new Date().getHours() <= 11 ? 'Morning Peak Hour Active' : new Date().getHours() >= 17 && new Date().getHours() <= 20 ? 'Evening Rush Hour Active' : 'Optimal Commute Window'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-white/80">
+                <Activity size={13} className="text-sky-400" />
+                <span className="text-[11px]">Gridlock Index: <strong className="text-white font-semibold">78%</strong></span>
+              </div>
+            </div>
 
             {/* Rain Alert Banner */}
             {isRaining && (
@@ -1090,6 +1127,40 @@ export default function Planner() {
                   )}
                 </button>
               </div>
+
+              {/* Feature 4: One-Tap Commute Quick Preset Chips */}
+              <div className="mt-4 pt-3 border-t border-white/10 flex items-center gap-2 overflow-x-auto custom-scrollbar px-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 shrink-0">Quick Presets:</span>
+                <button
+                  type="button"
+                  onClick={() => { setCurrentAddress('Indiranagar'); setDestination('Manyata Tech Park'); }}
+                  className="shrink-0 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
+                >
+                  <span>🏢 Home ➔ Manyata</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setCurrentAddress('Koramangala'); setDestination('EcoSpace, ORR'); }}
+                  className="shrink-0 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
+                >
+                  <span>💻 Home ➔ EcoSpace</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setCurrentAddress('Hebbal'); setDestination('KIAL Airport'); }}
+                  className="shrink-0 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
+                >
+                  <span>✈️ Airport Express</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/smart-pivot')}
+                  className="shrink-0 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs px-3 py-1 rounded-full transition-all flex items-center gap-1.5"
+                >
+                  <span>☕ Workspace Pivot</span>
+                </button>
+              </div>
+
               {cooldownMsg && (
                 <p className="text-center text-xs text-orange-400 mt-2 animate-pulse">{cooldownMsg}</p>
               )}
