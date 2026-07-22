@@ -33,9 +33,9 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
   if (!mounted) return null;
 
   return (
-    <div className={cn("relative z-30 w-full flex justify-center", className)}>
+    <div className={cn("relative z-30 w-full flex justify-center pt-9 pb-1", className)}>
       <motion.div 
-        className="flex items-center gap-1.5 bg-black/60 border border-white/15 backdrop-blur-2xl py-1.5 px-2 rounded-full shadow-2xl relative max-w-full overflow-x-auto custom-scrollbar"
+        className="flex items-center gap-1.5 bg-black/70 border border-white/20 backdrop-blur-2xl py-2 px-3 rounded-full shadow-2xl relative max-w-full"
         initial={{ y: 10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{
@@ -61,7 +61,7 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
               onMouseEnter={() => setHoveredTab(item.name)}
               onMouseLeave={() => setHoveredTab(null)}
               className={cn(
-                "relative cursor-pointer text-xs font-semibold px-4 sm:px-5 py-2 rounded-full transition-all duration-300 flex items-center gap-2 shrink-0 select-none",
+                "relative cursor-pointer text-xs font-semibold px-4 sm:px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shrink-0 select-none",
                 "text-white/70 hover:text-white",
                 isActive && "text-white font-bold"
               )}
@@ -71,7 +71,7 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
                   className="absolute inset-0 rounded-full -z-10 overflow-hidden"
                   initial={{ opacity: 0 }}
                   animate={{ 
-                    opacity: [0.3, 0.6, 0.3],
+                    opacity: [0.4, 0.7, 0.4],
                     scale: [1, 1.02, 1]
                   }}
                   transition={{
@@ -80,9 +80,9 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
                     ease: "easeInOut"
                   }}
                 >
-                  <div className="absolute inset-0 bg-sky-500/30 rounded-full blur-md" />
-                  <div className="absolute inset-[-4px] bg-sky-400/20 rounded-full blur-xl" />
-                  <div className="absolute inset-[-8px] bg-sky-500/10 rounded-full blur-2xl" />
+                  <div className="absolute inset-0 bg-sky-500/35 rounded-full blur-md" />
+                  <div className="absolute inset-[-4px] bg-sky-400/25 rounded-full blur-xl" />
+                  <div className="absolute inset-[-8px] bg-sky-500/15 rounded-full blur-2xl" />
                   
                   <div 
                     className="absolute inset-0 bg-gradient-to-r from-sky-400/0 via-sky-400/30 to-sky-400/0"
@@ -118,7 +118,7 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
               {isActive && (
                 <motion.div
                   layoutId="anime-mascot"
-                  className="absolute -top-10 left-1/2 -translate-x-1/2 pointer-events-none"
+                  className="absolute -top-11 left-1/2 -translate-x-1/2 pointer-events-none z-50"
                   initial={false}
                   transition={{
                     type: "spring",
@@ -126,19 +126,19 @@ export function AnimeNavBar({ items, className, defaultActive }: AnimeNavBarProp
                     damping: 30,
                   }}
                 >
-                  <div className="relative w-9 h-9">
+                  <div className="relative w-11 h-11">
                     <motion.div 
-                      className="absolute w-8 h-8 bg-white rounded-full left-1/2 -translate-x-1/2 shadow-md flex items-center justify-center"
+                      className="absolute w-10 h-10 bg-white rounded-full left-1/2 -translate-x-1/2 shadow-[0_4px_16px_rgba(255,255,255,0.4)] flex items-center justify-center border-2 border-sky-400"
                       animate={
                         hoveredTab ? {
-                          scale: [1, 1.1, 1],
-                          rotate: [0, -5, 5, 0],
+                          scale: [1, 1.15, 1],
+                          rotate: [0, -6, 6, 0],
                           transition: {
                             duration: 0.5,
                             ease: "easeInOut"
                           }
                         } : {
-                          y: [0, -3, 0],
+                          y: [0, -4, 0],
                           transition: {
                             duration: 2,
                             repeat: Infinity,
