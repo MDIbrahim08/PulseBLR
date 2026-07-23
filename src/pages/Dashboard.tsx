@@ -4,7 +4,6 @@ import { LogOut, MessageSquareHeart, Star, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Planner from '../components/Planner';
 import { supabase } from '../lib/supabase';
-import VideoBackground from '../components/ui/VideoBackground';
 import { AnimatedHamburger } from '../components/ui/animated-hamburger';
 
 export default function Dashboard() {
@@ -24,12 +23,9 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full bg-black overflow-hidden font-sans">
-      {/* Video Background Layer */}
-      <VideoBackground />
-
+    <div className="relative min-h-screen w-full bg-[#080c17] overflow-hidden font-sans">
       {/* Main UI Overlay */}
-      <div className="relative z-10 flex flex-col h-screen overflow-hidden">
+      <div className="relative z-10 flex flex-col min-h-screen">
         
         {/* Navigation Bar */}
         <header className="w-full px-4 md:px-[120px] py-4 flex justify-between items-center bg-transparent relative z-50">

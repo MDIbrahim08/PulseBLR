@@ -60,6 +60,7 @@ export function WeatherCloudMascot({
   };
 
   const grad = getGradient();
+  const safeGradId = `cartoonCloudGrad-${condition.replace(/[^a-zA-Z0-9_-]/g, '_')}-${isHoldingWater}`;
 
   return (
     <motion.div
@@ -118,7 +119,7 @@ export function WeatherCloudMascot({
           className="w-full h-full drop-shadow-[0_10px_25px_rgba(56,189,248,0.4)] relative z-10"
         >
           <defs>
-            <linearGradient id={`cartoonCloudGrad-${condition}-${isHoldingWater}`} x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={safeGradId} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor={grad.stop1} />
               <stop offset="55%" stopColor={grad.stop2} />
               <stop offset="100%" stopColor={grad.stop3} />
@@ -140,7 +141,7 @@ export function WeatherCloudMascot({
             {/* Base Cloud Silhouette */}
             <path
               d="M 25 65 C 12 65 5 52 14 38 C 12 20 32 10 48 20 C 60 8 82 18 80 34 C 92 40 90 65 75 65 Z"
-              fill={`url(#cartoonCloudGrad-${condition}-${isHoldingWater})`}
+              fill={`url(#${safeGradId})`}
             />
 
             {/* Top Glossy Highlight Curves for 3D Volume */}

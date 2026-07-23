@@ -157,6 +157,10 @@ export default function Planner() {
       let transit = 'Standard Bangalore Transit (Metro/BMTC) operating normally';
 
       try {
+        // Fetch real live Bengaluru weather immediately
+        const initialWeather = await getLiveWeather(12.9716, 77.5946);
+        if (initialWeather) setWeatherData(initialWeather);
+
         const position = await getCurrentLocation();
         setAndRefPosition(position);
         const { latitude: lat, longitude: lon } = position.coords;
@@ -164,7 +168,7 @@ export default function Planner() {
         address = addr.split(',').slice(0, 3).join(',');
         setCurrentAddress(address);
 
-        // Fetch weather and emit to observer
+        // Fetch weather for exact GPS position and emit to observer
         const wt0 = performance.now();
         wData = await getLiveWeather(lat, lon);
         const wMs = Math.round(performance.now() - wt0);
@@ -172,7 +176,6 @@ export default function Planner() {
         setAPIStatus('weather', 'online', wMs);
         addEvent(`Weather API — live data fetched in ${wMs}ms`, 'success', 'Nimbus');
 
-        // Removed hardcoded traffic fetch on mount. It will be fetched dynamically on Analyze Route.
         setAPIStatus('traffic', 'cached');
         tData = { summary: 'Waiting for route analysis...' };
         
@@ -182,16 +185,16 @@ export default function Planner() {
         setAPIStatus('metro', 'online');
         addEvent('Metro API — transit status verified', 'success', 'TransitIQ');
       } catch (err) {
-        console.warn("Could not gather location/weather signals automatically:", err);
+        console.warn("Could not gather location signals automatically, fetching live Bengaluru weather:", err);
         setCurrentAddress(address);
-        wData = { temperature: '26°C', condition: 'Partly Cloudy', precipitation: '0mm', summary: 'Pleasant weather, 26°C, Partly Cloudy' };
+        wData = await getLiveWeather(12.9716, 77.5946);
         tData = { distanceKm: 12.5, durationMinutes: 45, staticDurationMinutes: 45, summary: 'Moderate congestion' };
         setWeatherData(wData);
         setTrafficData(tData);
         setTransitData(transit);
-        setAPIStatus('weather', 'cached');
+        setAPIStatus('weather', 'online');
         setAPIStatus('traffic', 'cached');
-        addEvent('Live signals unavailable — using cached fallback data', 'warning', 'PulseCore');
+        addEvent('Live Bengaluru weather synchronized', 'success', 'PulseCore');
       } finally {
         setGeolocationLoading(false);
       }
