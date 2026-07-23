@@ -23,9 +23,9 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full bg-[#080c17] overflow-hidden font-sans">
+    <div className="relative min-h-screen w-full bg-[#080c17] font-sans">
       {/* Main UI Overlay */}
-      <div className="relative z-10 flex flex-col min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-screen w-full">
         
         {/* Navigation Bar */}
         <header className="w-full px-4 md:px-[120px] py-4 flex justify-between items-center bg-transparent relative z-50">
@@ -94,25 +94,25 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-0 left-0 w-full h-screen bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center gap-8 pt-20"
+              className="absolute top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center gap-8 pt-20"
             >
-              <button onClick={() => { setIsMobileMenuOpen(false); navigate('/dashboard'); }} className="text-2xl font-semibold text-black">Commute Planner</button>
-              <button onClick={() => { setIsMobileMenuOpen(false); navigate('/smart-pivot'); }} className="text-2xl font-semibold text-black">Smart Pivot</button>
-              <button onClick={() => { setIsMobileMenuOpen(false); navigate('/feedback'); }} className="text-2xl font-semibold text-black flex items-center gap-2"><MessageSquareHeart size={24}/> Feedback</button>
-              <button onClick={() => { setIsMobileMenuOpen(false); navigate('/admin/feedbacks'); }} className="text-2xl font-semibold text-orange-600">Admin Portal</button>
-              <div className="w-full max-w-[200px] h-[1px] bg-black/10 my-4" />
+              <button onClick={() => { setIsMobileMenuOpen(false); navigate('/dashboard'); }} className="text-2xl font-semibold text-white">Commute Planner</button>
+              <button onClick={() => { setIsMobileMenuOpen(false); navigate('/smart-pivot'); }} className="text-2xl font-semibold text-white">Smart Pivot</button>
+              <button onClick={() => { setIsMobileMenuOpen(false); navigate('/feedback'); }} className="text-2xl font-semibold text-white flex items-center gap-2"><MessageSquareHeart size={24}/> Feedback</button>
+              <button onClick={() => { setIsMobileMenuOpen(false); navigate('/admin/feedbacks'); }} className="text-2xl font-semibold text-orange-400">Admin Portal</button>
+              <div className="w-full max-w-[200px] h-[1px] bg-white/10 my-4" />
               <button 
                 onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
-                className="flex items-center gap-2 px-8 py-3 bg-black text-white rounded-xl text-lg shadow-lg"
+                className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white rounded-xl text-lg shadow-lg border border-white/20"
               >
-                <LogOut size={20} /> Logout
+                <LogOut size={20} /> Exit
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Dynamic Main Content Container */}
-        <main className="flex-1 w-full h-full relative z-0 flex flex-col items-center justify-start overflow-y-auto overflow-x-hidden pt-20 pb-20">
+        <main className="flex-1 w-full relative z-0 flex flex-col items-center justify-start pb-20">
           
           <AnimatePresence mode="wait">
             <motion.div

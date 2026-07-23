@@ -15,11 +15,15 @@ export function WeatherCloudMascot({
   const [isBlinking, setIsBlinking] = useState(false);
   const [isHoldingWater, setIsHoldingWater] = useState(false);
   const [isSpitting, setIsSpitting] = useState(false);
+  const [isInteractiveActive, setIsInteractiveActive] = useState(false);
 
   const condLower = condition.toLowerCase();
-  const isRainy = condLower.includes('rain') || condLower.includes('drizzle') || condLower.includes('thunderstorm') || isSpitting;
+  const isRainy = condLower.includes('rain') || condLower.includes('drizzle') || isSpitting;
   const isDrizzling = condLower.includes('drizzle');
-  const isCloudy = condLower.includes('cloud') || condLower.includes('overcast') || condLower.includes('fog');
+  const isStorm = condLower.includes('thunder') || condLower.includes('storm');
+  const isCloudy = (condLower.includes('cloud') || condLower.includes('overcast') || condLower.includes('fog')) && !isRainy && !isStorm;
+  const isSunny = condLower.includes('clear') || condLower.includes('sun');
+  const isCold = condLower.includes('snow') || condLower.includes('freezing') || condLower.includes('cold');
 
   // Periodic eye blink logic
   useEffect(() => {
@@ -30,24 +34,32 @@ export function WeatherCloudMascot({
     return () => clearInterval(interval);
   }, []);
 
-  const handleStartHold = () => {
+  const handleStartInteraction = () => {
     if (isRainy) {
       setIsHoldingWater(true);
+    } else {
+      setIsInteractiveActive(true);
     }
   };
 
-  const handleEndHold = () => {
+  const handleEndInteraction = () => {
     if (isHoldingWater) {
       setIsHoldingWater(false);
       setIsSpitting(true);
       setTimeout(() => setIsSpitting(false), 1000);
     }
+    setTimeout(() => {
+      setIsInteractiveActive(false);
+    }, 1500);
   };
 
-  // 3D Cartoon Color Gradients (Bright Luminous Pearlescent Colors for All Weather!)
+  // 3D Cartoon Color Gradients
   const getGradient = () => {
     if (isHoldingWater) {
       return { stop1: "#FFFFFF", stop2: "#CBD5E1", stop3: "#7DD3FC", glow: "#38BDF8", cheek: "#F43F5E" };
+    }
+    if (isStorm) {
+      return { stop1: "#E2E8F0", stop2: "#64748B", stop3: "#1E293B", glow: "#818CF8", cheek: "#F43F5E" };
     }
     if (isRainy) {
       return { stop1: "#F0F9FF", stop2: "#BAE6FD", stop3: "#38BDF8", glow: "#38BDF8", cheek: "#F43F5E" };
@@ -64,21 +76,76 @@ export function WeatherCloudMascot({
 
   return (
     <motion.div
-      onMouseDown={handleStartHold}
-      onMouseUp={handleEndHold}
-      onMouseLeave={handleEndHold}
-      onTouchStart={handleStartHold}
-      onTouchEnd={handleEndHold}
+      onMouseDown={handleStartInteraction}
+      onMouseUp={handleEndInteraction}
+      onMouseLeave={handleEndInteraction}
+      onTouchStart={handleStartInteraction}
+      onTouchEnd={handleEndInteraction}
       whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: isRainy ? 1.25 : 0.95 }}
+      whileTap={{ scale: isRainy ? 1.25 : 1.1 }}
       animate={isHoldingWater ? { scale: 1.25 } : { scale: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 18 }}
       className={`relative inline-flex flex-col sm:flex-row items-center gap-4 cursor-pointer select-none py-2 px-3 ${className}`}
     >
       {/* 3D Disney/Apple Style Cartoon Cloud Mascot */}
       <div className="relative w-28 h-24 flex items-center justify-center shrink-0">
-        
-        {/* Animated Water Droplets (Only for Rainy Weather) */}
+
+        {/* ☀️ Sunny Mode: Floating Sunbeam Sparkles Overlay */}
+        <AnimatePresence>
+          {(isSunny && isInteractiveActive) && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5, rotate: 0 }}
+                animate={{ opacity: 1, scale: 1.4, rotate: 180 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-full border-2 border-amber-300/60 border-dashed pointer-events-none z-0"
+              />
+              {[0, 72, 144, 216, 288].map((angle, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0.5, 1.2, 0.5],
+                    x: Math.cos((angle * Math.PI) / 180) * 35,
+                    y: Math.sin((angle * Math.PI) / 180) * 35,
+                  }}
+                  transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
+                  className="absolute text-sm font-bold text-amber-300 pointer-events-none z-20"
+                >
+                  ✨
+                </motion.div>
+              ))}
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* ☁️ Cloudy Mode: Floating Zzz Sleeping Bubbles Overlay */}
+        <AnimatePresence>
+          {(isCloudy && isInteractiveActive) && (
+            <div className="absolute -top-6 right-2 flex flex-col items-center pointer-events-none z-30">
+              {[0, 1, 2].map((i) => (
+                <motion.span
+                  key={i}
+                  initial={{ y: 0, opacity: 0, scale: 0.5 }}
+                  animate={{
+                    y: -24 - i * 12,
+                    x: (i % 2 === 0 ? 1 : -1) * 8,
+                    opacity: [0, 1, 0],
+                    scale: [0.6, 1.2, 0.8],
+                  }}
+                  transition={{ duration: 1.6, repeat: Infinity, delay: i * 0.4 }}
+                  className="text-xs font-black text-sky-300 drop-shadow-md"
+                >
+                  Zzz...
+                </motion.span>
+              ))}
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* 🌧️ Rainy Mode: Animated Water Droplets */}
         <AnimatePresence>
           {(isRainy && !isHoldingWater) && (
             <div className="absolute inset-x-0 bottom-0 top-14 flex justify-around pointer-events-none z-0 px-3">
@@ -105,6 +172,22 @@ export function WeatherCloudMascot({
           )}
         </AnimatePresence>
 
+        {/* ⚡ Storm Mode: Animated Lightning Flash */}
+        <AnimatePresence>
+          {(isStorm || (isStorm && isInteractiveActive)) && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: [0.2, 1, 0.4, 1, 0.2], y: [0, 5, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              className="absolute inset-x-0 bottom-[-8px] flex justify-center pointer-events-none z-0"
+            >
+              <div className="text-xl font-bold text-amber-300 drop-shadow-[0_0_12px_#F59E0B]">
+                ⚡
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* 3D Multi-Layered Cartoon Cloud SVG Body */}
         <motion.svg
           animate={
@@ -112,9 +195,13 @@ export function WeatherCloudMascot({
               ? { scale: [1.2, 1.25, 1.2] } 
               : isSpitting 
               ? { scale: [1.1, 0.95, 1], rotate: [0, -3, 3, 0] } 
+              : isInteractiveActive && isCold
+              ? { x: [-3, 3, -3, 3, 0] }
+              : isInteractiveActive && isSunny
+              ? { scale: [1, 1.15, 1], rotate: [0, -5, 5, 0] }
               : { y: [0, -4, 0] }
           }
-          transition={{ duration: isHoldingWater ? 0.5 : 2.5, repeat: isHoldingWater ? Infinity : (isSpitting ? 1 : Infinity), ease: "easeInOut" }}
+          transition={{ duration: isHoldingWater ? 0.5 : (isInteractiveActive ? 0.4 : 2.5), repeat: isHoldingWater ? Infinity : (isSpitting ? 1 : Infinity), ease: "easeInOut" }}
           viewBox="0 0 100 80"
           className="w-full h-full drop-shadow-[0_10px_25px_rgba(56,189,248,0.4)] relative z-10"
         >
@@ -155,8 +242,20 @@ export function WeatherCloudMascot({
             />
           </g>
 
-          {/* Animated Cartoon Eyes based on Weather & State */}
-          {isHoldingWater ? (
+          {/* ☀️ Cool 3D Sunglasses overlay when Tapped on Sunny Day */}
+          {(isSunny && isInteractiveActive) ? (
+            <g fill="#0F172A" stroke="#F59E0B" strokeWidth="1.5">
+              {/* Left Lens */}
+              <path d="M 32 37 L 46 37 C 46 45 32 45 32 37 Z" />
+              {/* Right Lens */}
+              <path d="M 54 37 L 68 37 C 68 45 54 45 54 37 Z" />
+              {/* Bridge */}
+              <line x1="46" y1="39" x2="54" y2="39" strokeWidth="2" />
+              {/* Glare Lines */}
+              <line x1="34" y1="39" x2="38" y2="43" stroke="#FFFFFF" strokeWidth="1" />
+              <line x1="56" y1="39" x2="60" y2="43" stroke="#FFFFFF" strokeWidth="1" />
+            </g>
+          ) : isHoldingWater ? (
             // Holding water >_< anime eyes
             <g stroke="#38BDF8" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
               <path d="M 34 38 L 41 42 L 34 46" />
@@ -215,6 +314,9 @@ export function WeatherCloudMascot({
           ) : isSpitting ? (
             // Spitting mouth wide open
             <ellipse cx="50" cy="50" rx="5" ry="6" fill="#0284C7" />
+          ) : isSunny && isInteractiveActive ? (
+            // Cool Smirk Smile
+            <path d="M 45 50 Q 52 54 58 48" stroke="#F59E0B" strokeWidth="3" strokeLinecap="round" fill="none" />
           ) : isRainy ? (
             // Worried O-mouth
             <ellipse cx="50" cy="50" rx="3" ry="4" fill="#1E293B" />
