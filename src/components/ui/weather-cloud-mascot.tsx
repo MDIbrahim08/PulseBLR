@@ -50,7 +50,7 @@ export function WeatherCloudMascot({
     }
     setTimeout(() => {
       setIsInteractiveActive(false);
-    }, 1500);
+    }, 1800);
   };
 
   // 3D Cartoon Color Gradients
@@ -90,7 +90,7 @@ export function WeatherCloudMascot({
       {/* 3D Disney/Apple Style Cartoon Cloud Mascot */}
       <div className="relative w-28 h-24 flex items-center justify-center shrink-0">
 
-        {/* ☀️ Sunny Mode: Floating Sunbeam Sparkles Overlay */}
+        {/* ☀️ Sunny Mode: Pure 3D Vector Sparkle Stars (No Emojis!) */}
         <AnimatePresence>
           {(isSunny && isInteractiveActive) && (
             <>
@@ -98,8 +98,8 @@ export function WeatherCloudMascot({
                 initial={{ opacity: 0, scale: 0.5, rotate: 0 }}
                 animate={{ opacity: 1, scale: 1.4, rotate: 180 }}
                 exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 rounded-full border-2 border-amber-300/60 border-dashed pointer-events-none z-0"
+                transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-full border-2 border-amber-300/50 border-dashed pointer-events-none z-0"
               />
               {[0, 72, 144, 216, 288].map((angle, i) => (
                 <motion.div
@@ -107,45 +107,54 @@ export function WeatherCloudMascot({
                   initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
                   animate={{
                     opacity: [0, 1, 0],
-                    scale: [0.5, 1.2, 0.5],
-                    x: Math.cos((angle * Math.PI) / 180) * 35,
-                    y: Math.sin((angle * Math.PI) / 180) * 35,
+                    scale: [0.4, 1.2, 0.4],
+                    x: Math.cos((angle * Math.PI) / 180) * 38,
+                    y: Math.sin((angle * Math.PI) / 180) * 38,
                   }}
                   transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
-                  className="absolute text-sm font-bold text-amber-300 pointer-events-none z-20"
+                  className="absolute pointer-events-none z-20 w-5 h-5"
                 >
-                  ✨
+                  {/* Pure 4-Point Cartoon Vector Star SVG */}
+                  <svg viewBox="0 0 24 24" className="w-full h-full drop-shadow-[0_0_8px_#F59E0B]">
+                    <path
+                      d="M12 0 C12 6.5 17.5 12 24 12 C17.5 12 12 17.5 12 24 C12 17.5 6.5 12 0 12 C6.5 12 12 6.5 12 0 Z"
+                      fill="url(#starGoldGrad)"
+                    />
+                  </svg>
                 </motion.div>
               ))}
             </>
           )}
         </AnimatePresence>
 
-        {/* ☁️ Cloudy Mode: Floating Zzz Sleeping Bubbles Overlay */}
+        {/* ☁️ Cloudy Mode: Pure Translucent Glass Vector Sleep Bubbles (No "Zzz..." Text!) */}
         <AnimatePresence>
           {(isCloudy && isInteractiveActive) && (
             <div className="absolute -top-6 right-2 flex flex-col items-center pointer-events-none z-30">
               {[0, 1, 2].map((i) => (
-                <motion.span
+                <motion.div
                   key={i}
                   initial={{ y: 0, opacity: 0, scale: 0.5 }}
                   animate={{
-                    y: -24 - i * 12,
+                    y: -24 - i * 14,
                     x: (i % 2 === 0 ? 1 : -1) * 8,
                     opacity: [0, 1, 0],
-                    scale: [0.6, 1.2, 0.8],
+                    scale: [0.6, 1.3, 0.8],
                   }}
                   transition={{ duration: 1.6, repeat: Infinity, delay: i * 0.4 }}
-                  className="text-xs font-black text-sky-300 drop-shadow-md"
+                  className="w-5 h-5 my-0.5"
                 >
-                  Zzz...
-                </motion.span>
+                  <svg viewBox="0 0 24 24" className="w-full h-full drop-shadow-[0_0_6px_#38BDF8]">
+                    <circle cx="12" cy="12" r="10" fill="url(#bubbleGrad)" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5"/>
+                    <ellipse cx="8" cy="8" rx="3" ry="1.5" fill="#FFFFFF" opacity="0.8" transform="rotate(-30 8 8)"/>
+                  </svg>
+                </motion.div>
               ))}
             </div>
           )}
         </AnimatePresence>
 
-        {/* 🌧️ Rainy Mode: Animated Water Droplets */}
+        {/* 🌧️ Rainy Mode: Animated Vector Water Droplets */}
         <AnimatePresence>
           {(isRainy && !isHoldingWater) && (
             <div className="absolute inset-x-0 bottom-0 top-14 flex justify-around pointer-events-none z-0 px-3">
@@ -154,7 +163,7 @@ export function WeatherCloudMascot({
                   key={i}
                   initial={{ y: 0, opacity: 0 }}
                   animate={{
-                    y: isSpitting ? [0, 26, 40] : [0, 16, 26],
+                    y: isSpitting ? [0, 28, 44] : [0, 16, 26],
                     opacity: [0, 1, 0],
                     scaleY: isSpitting ? [1, 2.5, 0.5] : [0.8, 1.4, 0.5],
                     scaleX: isSpitting ? 1.5 : 1
@@ -165,25 +174,29 @@ export function WeatherCloudMascot({
                     ease: "easeOut",
                     delay: i * 0.1
                   }}
-                  className="w-1.5 h-4 bg-sky-400 rounded-full shadow-[0_0_10px_#38BDF8]"
-                />
+                  className="w-2 h-4"
+                >
+                  <svg viewBox="0 0 10 20" className="w-full h-full drop-shadow-[0_0_8px_#38BDF8]">
+                    <path d="M5 0 C5 0 0 10 0 14 C0 17.3 2.2 20 5 20 C7.8 20 10 17.3 10 14 C10 10 5 0 5 0 Z" fill="url(#dropGrad)"/>
+                  </svg>
+                </motion.div>
               ))}
             </div>
           )}
         </AnimatePresence>
 
-        {/* ⚡ Storm Mode: Animated Lightning Flash */}
+        {/* ⚡ Storm Mode: Pure 3D Vector Lightning Bolt (No Emoji!) */}
         <AnimatePresence>
           {(isStorm || (isStorm && isInteractiveActive)) && (
             <motion.div
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: [0.2, 1, 0.4, 1, 0.2], y: [0, 5, 0] }}
               transition={{ duration: 0.8, repeat: Infinity }}
-              className="absolute inset-x-0 bottom-[-8px] flex justify-center pointer-events-none z-0"
+              className="absolute inset-x-0 bottom-[-10px] flex justify-center pointer-events-none z-0 w-8 h-8"
             >
-              <div className="text-xl font-bold text-amber-300 drop-shadow-[0_0_12px_#F59E0B]">
-                ⚡
-              </div>
+              <svg viewBox="0 0 24 24" className="w-full h-full drop-shadow-[0_0_12px_#F59E0B]">
+                <polygon points="13,2 4,13 11,13 9,22 20,10 12,10" fill="url(#lightningGoldGrad)"/>
+              </svg>
             </motion.div>
           )}
         </AnimatePresence>
@@ -218,6 +231,32 @@ export function WeatherCloudMascot({
               <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
             </linearGradient>
 
+            {/* Gold Vector Star Gradient */}
+            <linearGradient id="starGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FDE047" />
+              <stop offset="100%" stopColor="#F59E0B" />
+            </linearGradient>
+
+            {/* Translucent Glass Bubble Gradient */}
+            <radialGradient id="bubbleGrad" cx="30%" cy="30%" r="70%">
+              <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.9" />
+              <stop offset="60%" stopColor="#38BDF8" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#0284C7" stopOpacity="0.8" />
+            </radialGradient>
+
+            {/* Water Droplet Aqua Gradient */}
+            <linearGradient id="dropGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#7DD3FC" />
+              <stop offset="100%" stopColor="#0284C7" />
+            </linearGradient>
+
+            {/* Lightning Bolt Gradient */}
+            <linearGradient id="lightningGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FEF08A" />
+              <stop offset="50%" stopColor="#FDE047" />
+              <stop offset="100%" stopColor="#EAB308" />
+            </linearGradient>
+
             <filter id="soft3DGlow" x="-30%" y="-30%" width="160%" height="160%">
               <feDropShadow dx="0" dy="5" stdDeviation="4" floodColor={grad.glow} floodOpacity="0.5" />
             </filter>
@@ -242,18 +281,28 @@ export function WeatherCloudMascot({
             />
           </g>
 
-          {/* ☀️ Cool 3D Sunglasses overlay when Tapped on Sunny Day */}
+          {/* ☁️ Cartoon Sleeping Beanie Cap for Cloudy Sleep Mode */}
+          {(isCloudy && isInteractiveActive) && (
+            <g>
+              {/* Cap Fold Body */}
+              <path d="M 38 18 Q 48 8 62 14 Q 70 20 66 26 C 55 20 42 22 38 18 Z" fill="#38BDF8" stroke="#0284C7" strokeWidth="1.5" />
+              {/* Pom Pom */}
+              <circle cx="66" cy="26" r="4" fill="#FFFFFF" />
+            </g>
+          )}
+
+          {/* ☀️ Pure Vector 3D Sunglasses overlay when Tapped on Sunny Day (No Emoji!) */}
           {(isSunny && isInteractiveActive) ? (
-            <g fill="#0F172A" stroke="#F59E0B" strokeWidth="1.5">
-              {/* Left Lens */}
-              <path d="M 32 37 L 46 37 C 46 45 32 45 32 37 Z" />
-              {/* Right Lens */}
-              <path d="M 54 37 L 68 37 C 68 45 54 45 54 37 Z" />
-              {/* Bridge */}
-              <line x1="46" y1="39" x2="54" y2="39" strokeWidth="2" />
-              {/* Glare Lines */}
-              <line x1="34" y1="39" x2="38" y2="43" stroke="#FFFFFF" strokeWidth="1" />
-              <line x1="56" y1="39" x2="60" y2="43" stroke="#FFFFFF" strokeWidth="1" />
+            <g>
+              {/* Gold Metal Frame Outer Glow */}
+              <path d="M 28 35 Q 50 33 72 35 Q 74 46 64 47 Q 50 48 50 40 Q 50 48 36 47 Q 26 46 28 35 Z" fill="#0F172A" stroke="#F59E0B" strokeWidth="2.5" />
+              {/* Left Tinted Dark Lens */}
+              <path d="M 31 37 Q 40 36 47 37 Q 46 44 38 44 Q 30 44 31 37 Z" fill="#020617" />
+              {/* Right Tinted Dark Lens */}
+              <path d="M 53 37 Q 60 36 69 37 Q 70 44 62 44 Q 54 44 53 37 Z" fill="#020617" />
+              {/* Metallic White Glare Lines */}
+              <line x1="33" y1="38" x2="38" y2="42" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+              <line x1="55" y1="38" x2="60" y2="42" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
             </g>
           ) : isHoldingWater ? (
             // Holding water >_< anime eyes
@@ -315,8 +364,8 @@ export function WeatherCloudMascot({
             // Spitting mouth wide open
             <ellipse cx="50" cy="50" rx="5" ry="6" fill="#0284C7" />
           ) : isSunny && isInteractiveActive ? (
-            // Cool Smirk Smile
-            <path d="M 45 50 Q 52 54 58 48" stroke="#F59E0B" strokeWidth="3" strokeLinecap="round" fill="none" />
+            // Cool Vector Smirk Smile
+            <path d="M 44 49 Q 52 55 58 47" stroke="#F59E0B" strokeWidth="3.5" strokeLinecap="round" fill="none" />
           ) : isRainy ? (
             // Worried O-mouth
             <ellipse cx="50" cy="50" rx="3" ry="4" fill="#1E293B" />
