@@ -22,6 +22,7 @@ import { WeatherCloudMascot } from './ui/weather-cloud-mascot';
 import { AnimatedMetroTrack } from './ui/animated-metro-track';
 import { AnimeNavBar } from './ui/anime-navbar';
 import { WavyBackground } from './ui/wavy-background';
+import { Footer } from './ui/footer';
 
 type ChatMessage = {
   id: string;
@@ -1511,6 +1512,9 @@ export default function Planner() {
           </span>
         </div>
       )}
+
+      {/* Footer Component */}
+      <Footer />
 
       {/* Version Watermark */}
       <div className="absolute bottom-2 right-4 text-[10px] text-white/30 font-mono tracking-widest select-none pointer-events-none">
