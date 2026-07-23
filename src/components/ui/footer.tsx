@@ -8,8 +8,8 @@ export function Footer() {
 
   return (
     <footer className="w-full max-w-[1000px] mt-16 pt-8 pb-12 border-t border-white/10 flex flex-col items-center gap-6 px-4 z-20 relative">
-      {/* Top Row: Logo & Live Status */}
-      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* Top Row: Logo */}
+      <div className="w-full flex items-center justify-center sm:justify-start">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-black/80 border border-white/20 flex items-center justify-center shadow-lg overflow-hidden">
             <img src="/logo.png" alt="PulseBLR Logo" className="w-full h-full object-cover scale-[1.3]" />
@@ -18,12 +18,6 @@ export function Footer() {
             <span className="font-schibsted font-bold text-white text-lg tracking-tight">PulseBLR</span>
             <span className="text-xs text-white/50 font-schibsted">AI-Powered Intelligent Commute Platform</span>
           </div>
-        </div>
-
-        {/* Live Signal Badge */}
-        <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 rounded-full text-xs text-emerald-300 font-semibold backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span>Bengaluru Live Signals: 100% Operational</span>
         </div>
       </div>
 
